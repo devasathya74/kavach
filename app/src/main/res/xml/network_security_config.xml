@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Network Security Config — Kavach App
+
+  Policy:
+  1. Production traffic: HTTPS only (SSL Pinning to be enabled after cert deployment)
+  2. Debug/emulator: HTTP allowed to localhost (10.0.2.2) ONLY
+  3. No cleartext traffic to any external host
+
+  ──────────────────────────────────────────────────────────────────────────────
+  🔐 TO ENABLE SSL PINNING (after you have your server's real cert hash):
+
+  Step 1 — Get your public key hash:
+    openssl s_client -connect YOUR_SERVER.com:443 </dev/null 2>/dev/null \
+    | openssl x509 -pubkey -noout \
+    | openssl pkey -pubin -outform der \
+    | openssl dgst -sha256 -binary \
+    | openssl enc -base64
+
+  Step 2 — Replace the commented <pin-set> block below with:
+    <pin-set expiration="2027-01-01">
+        <pin digest="SHA-256">YOUR_PRIMARY_HASH_HERE=</pin>
+        <pin digest="SHA-256">YOUR_BACKUP_HASH_HERE=</pin>
+    </pin-set>
+  ──────────────────────────────────────────────────────────────────────────────
+-->
+<network-security-config>
+
+    <!-- ── Production domain: HTTPS only, system CAs trusted ─────────────── -->
+    <!--
+        ✏️ Replace YOUR_SERVER_DOMAIN.com with your actual backend domain
+           e.g. kavach-api.example.com
+           Do NOT include https:// — just the domain name
+    -->
+    <domain-config cleartextTrafficPermitted="false">
+
+        <domain includeSubdomains="true">YOUR_SERVER_DOMAIN.com</domain>
+
+        <!-- SSL Pinning is DISABLED until real cert hashes are configured.
+             Uncomment and fill the block below to enable pinning:
+
+        <pin-set expiration="2027-01-01">
+            <pin digest="SHA-256">PRIMARY_BASE64_HASH=</pin>
+            <pin digest="SHA-256">BACKUP_BASE64_HASH=</pin>
+        </pin-set>
+        -->
+
+        <trust-anchors>
+            <certificates src="system"/>
+        </trust-anchors>
+
+    </domain-config>
+
+    <!-- ── Debug only: local development server ──────────────────────────── -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">10.0.2.2</domain>   <!-- Android emulator localhost -->
+        <domain includeSubdomains="false">localhost</domain>
+        <trust-anchors>
+            <certificates src="system"/>
+        </trust-anchors>
+    </domain-config>
+
+    <!-- ── Base config: HTTPS everywhere else, reject cleartext ─────────── -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <!-- System CAs only — rejects user-installed proxy certificates -->
+            <certificates src="system"/>
+        </trust-anchors>
+    </base-config>
+
+</network-security-config>
