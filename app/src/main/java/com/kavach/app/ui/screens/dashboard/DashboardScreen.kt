@@ -164,3 +164,75 @@ private fun OrderCard(title: String, priority: String, status: String, timeRemai
         }
     }
 }
+
+/**
+ * RestrictedDashboardScreen — shown when session verification fails but officer
+ * is in Limited Mode. Provides retry and logout actions.
+ * This is the "fail-safe operational mode" screen — NOT a security gate.
+ * The real security gate is on the backend.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RestrictedDashboardScreen(
+    onRetry  : () -> Unit,
+    onLogout : () -> Unit
+) {
+    Scaffold(
+        containerColor = OfficialBackground,
+        topBar = {
+            TopAppBar(
+                title = { Text("सीमित मोड", style = MaterialTheme.typography.titleLarge, color = TextPrimary, fontWeight = FontWeight.Bold) },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = SurfaceWhite)
+            )
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Warning,
+                contentDescription = null,
+                tint = Color(0xFFFFB74D),
+                modifier = Modifier.size(72.dp)
+            )
+            Spacer(Modifier.height(16.dp))
+            Text(
+                text = "सत्र सत्यापन अधूरा है",
+                style = MaterialTheme.typography.headlineSmall,
+                color = TextPrimary,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = "नेटवर्क समस्या के कारण आपकी पहचान सत्यापित नहीं हो सकी। आप सीमित मोड में हैं — डेटा सत्यापित नहीं है।",
+                style = MaterialTheme.typography.bodyMedium,
+                color = TextSecondary,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            )
+            Spacer(Modifier.height(32.dp))
+            Button(
+                onClick = onRetry,
+                colors = ButtonDefaults.buttonColors(containerColor = GoldenYellow),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(Icons.Filled.Refresh, contentDescription = null)
+                Spacer(Modifier.width(8.dp))
+                Text("पुनः प्रयास करें", color = NavyBlueDark, fontWeight = FontWeight.Bold)
+            }
+            Spacer(Modifier.height(12.dp))
+            OutlinedButton(
+                onClick = onLogout,
+                modifier = Modifier.fillMaxWidth(),
+                border = BorderStroke(1.dp, DangerRed)
+            ) {
+                Text("लॉगआउट", color = DangerRed)
+            }
+        }
+    }
+}
+

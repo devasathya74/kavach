@@ -44,6 +44,7 @@ fun OtpVerifyScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .statusBarsPadding()
             .background(Brush.verticalGradient(listOf(NavyBlueDark, NavyBlue, Surface1)))
     ) {
         Column(

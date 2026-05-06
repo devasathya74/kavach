@@ -21,9 +21,10 @@ import com.kavach.app.data.local.entity.*
         QuizQuestionEntity::class,
         OrderEntity::class,
         PendingAckEntity::class,
-        BehaviorEventEntity::class
+        BehaviorEventEntity::class,
+        PendingNavigationEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class KavachDatabase : RoomDatabase() {
@@ -32,4 +33,5 @@ abstract class KavachDatabase : RoomDatabase() {
     abstract fun orderDao()        : OrderDao
     abstract fun pendingAckDao()   : PendingAckDao
     abstract fun behaviorEventDao(): BehaviorEventDao
+    abstract fun navigationDao()   : NavigationDao
 }

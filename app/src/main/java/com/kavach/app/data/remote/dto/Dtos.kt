@@ -36,14 +36,21 @@ data class AuthResponse(
 
 @JsonClass(generateAdapter = true)
 data class UserDto(
-    @Json(name = "id")        val id: String,
-    @Json(name = "pno")       val pno: String,
-    @Json(name = "name")      val name: String,
-    @Json(name = "rank")      val rank: String,
-    @Json(name = "unit")      val unit: String,
-    @Json(name = "device_id") val deviceId: String,
-    @Json(name = "is_active") val isActive: Boolean,
-    @Json(name = "is_staff")  val isStaff: Boolean
+    @Json(name = "id")               val id: String,
+    @Json(name = "pno")              val pno: String,
+    @Json(name = "name")             val name: String,
+    @Json(name = "rank")             val rank: String,
+    @Json(name = "unit")             val unit: String,
+    @Json(name = "role")             val role: String = "USER",
+    @Json(name = "email")            val email: String = "",
+    @Json(name = "device_id")        val deviceId: String = "",
+    @Json(name = "is_active")        val isActive: Boolean = true,
+    @Json(name = "discipline_score") val disciplineScore: Int = 100,
+    @Json(name = "level")            val level: String = "L4",
+    @Json(name = "auto_action")      val autoAction: String = "NONE",
+    @Json(name = "is_high_risk")     val isHighRisk: Boolean = false,
+    @Json(name = "is_staff")         val isStaff: Boolean = false,
+    @Json(name = "device_secret")    val deviceSecret: String = ""
 )
 
 @JsonClass(generateAdapter = true)
@@ -171,9 +178,40 @@ data class AdminOfficerDto(
     @Json(name = "is_blocked")          val isBlocked: Boolean,
     @Json(name = "discipline_score")    val disciplineScore: Int,
     @Json(name = "grade")               val grade: String,
+    @Json(name = "risk_level")          val riskLevel: String = "NORMAL",
+    @Json(name = "trust_level")         val trustLevel: String = "NORMAL",
+    @Json(name = "anomaly_reasons")     val anomalyReasons: List<String> = emptyList(),
+    @Json(name = "predicted_score")     val predictedScore: Int = 100,
+    @Json(name = "trajectory")          val trajectory: String = "STABLE",
+    @Json(name = "last_activity")       val lastActivity: String? = null,
+    
+    // New "Elite" Fields
+    @Json(name = "confidence_score")    val confidenceScore: String = "N/A",
+    @Json(name = "signal_weights")     val signalWeights: Map<String, Float> = emptyMap(),
+    @Json(name = "evidence_preview")    val evidencePreview: Map<String, Any> = emptyMap(),
+    
     @Json(name = "requires_review")     val requiresReview: Boolean,
     @Json(name = "trainings_done")      val trainingsDone: Int,
     @Json(name = "suspicious_sessions") val suspiciousSessions: Int
+)
+
+@JsonClass(generateAdapter = true)
+data class LiveFeedEventDto(
+    @Json(name = "type")      val type      : String,
+    @Json(name = "severity")  val severity  : String,
+    @Json(name = "title")     val title     : String,
+    @Json(name = "pno")       val pno       : String,
+    @Json(name = "name")      val name      : String,
+    @Json(name = "timestamp") val timestamp : String,
+    @Json(name = "details")   val details   : Map<String, Any> = emptyMap()
+)
+
+@JsonClass(generateAdapter = true)
+data class SystemAnalyticsDto(
+    @Json(name = "dates")      val dates      : List<String>,
+    @Json(name = "accuracy")   val accuracy   : List<Float>,
+    @Json(name = "anomalies")  val anomalies  : List<Int>,
+    @Json(name = "confidence") val confidence : List<Float>
 )
 
 @JsonClass(generateAdapter = true)
@@ -226,3 +264,55 @@ data class RefreshTokenResponse(
     @Json(name = "refresh_token") val refreshToken : String?,
     @Json(name = "expires_in")    val expiresIn    : Long?
 )
+
+// ── Play Integrity API ─────────────────────────────────────
+
+/**
+ * Backend response for nonce generation.
+ * Nonce is bound: sha256(userId + deviceId + requestId + timestamp)
+ * NEVER use a random UUID — that would allow replay attacks.
+ */
+@JsonClass(generateAdapter = true)
+data class IntegrityNonceResponse(
+    @Json(name = "nonce")      val nonce     : String,
+    @Json(name = "request_id") val requestId : String   // Server tracks this to prevent double-use
+)
+
+/**
+ * Request sent to backend for integrity verification.
+ * Client ONLY sends the opaque token — never tries to decode it.
+ */
+@JsonClass(generateAdapter = true)
+data class IntegrityVerifyRequest(
+    @Json(name = "integrity_token") val integrityToken : String,
+    @Json(name = "request_id")      val requestId      : String,  // Must match nonce request
+    @Json(name = "device_id")       val deviceId       : String
+)
+
+/**
+ * Backend verdict after Google-side verification.
+ *
+ * FIX 1: No `allowed: Boolean` — rich context returned.
+ *
+ * Policy mirror:
+ *   STRONG  → restricted=false, readOnly=false, blocked=false
+ *   DEVICE  → restricted=false, readOnly=false, blocked=false
+ *   BASIC   → restricted=true,  readOnly=true,  blocked=false  (read-only only)
+ *   FAILED  → blocked=true  (must logout)
+ */
+@JsonClass(generateAdapter = true)
+data class IntegrityVerdict(
+    @Json(name = "integrity_level")      val integrityLevel     : String,   // STRONG|DEVICE|BASIC|DEGRADED|FAILED
+    @Json(name = "restricted")           val restricted         : Boolean,  // No sensitive ops
+    @Json(name = "read_only")            val readOnly           : Boolean,  // No write ops at all
+    @Json(name = "blocked")              val blocked            : Boolean,  // Must logout
+    @Json(name = "trust_window_minutes") val trustWindowMinutes : Int,      // How long this attestation is valid
+    @Json(name = "message")              val message            : String?,
+    @Json(name = "session_tag")          val sessionTag         : String?
+) {
+    /** Helper: can the user perform normal operational tasks? */
+    val canOperate: Boolean get() = !blocked && !restricted
+
+    /** Helper: can the user perform any writes at all? */
+    val canWrite: Boolean get() = !blocked && !readOnly
+}

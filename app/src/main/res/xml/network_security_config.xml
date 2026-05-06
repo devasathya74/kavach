@@ -34,7 +34,7 @@
     -->
     <domain-config cleartextTrafficPermitted="false">
 
-        <domain includeSubdomains="true">YOUR_SERVER_DOMAIN.com</domain>
+        <domain includeSubdomains="true">kavach-api-prod.yourforce.in</domain>
 
         <!-- SSL Pinning is DISABLED until real cert hashes are configured.
              Uncomment and fill the block below to enable pinning:
@@ -54,6 +54,7 @@
     <!-- ── Debug only: local development server ──────────────────────────── -->
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="false">10.0.2.2</domain>   <!-- Android emulator localhost -->
+        <domain includeSubdomains="false">192.168.1.6</domain> <!-- Physical device local connection -->
         <domain includeSubdomains="false">localhost</domain>
         <trust-anchors>
             <certificates src="system"/>

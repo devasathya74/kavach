@@ -40,7 +40,7 @@ android {
     buildTypes {
         debug {
             isDebuggable = true
-            buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:8000/api/\"")
+            buildConfigField("String", "BASE_URL", "\"http://192.168.1.6:8000/api/v1/\"")
         }
         release {
             isMinifyEnabled = true
@@ -130,6 +130,9 @@ dependencies {
     // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.messaging)
+
+    // Play Integrity API — Device Attestation
+    implementation("com.google.android.play:integrity:1.4.0")
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)

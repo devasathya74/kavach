@@ -116,34 +116,39 @@ fun VideoPlayerScreen(
         onDispose { exoPlayer.release() }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(NavyBlueDark)
-    ) {
-        // ── Top Bar ──────────────────────────────────────
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Surface1)
-                .padding(horizontal = 12.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(Icons.Filled.Lock, contentDescription = null, tint = GoldenYellow, modifier = Modifier.size(18.dp))
-            Spacer(Modifier.width(8.dp))
-            Text(
-                text  = state.training?.title ?: "Loading…",
-                style = MaterialTheme.typography.titleMedium,
-                color = OnSurface,
-                modifier = Modifier.weight(1f)
-            )
-            // Elapsed timer display (replaces seekbar)
-            Text(
-                text  = formatTime(elapsedSeconds),
-                style = MaterialTheme.typography.labelSmall,
-                color = GoldenYellow
-            )
+    Scaffold(
+        containerColor = NavyBlueDark,
+        topBar = {
+            // ── Top Bar ──────────────────────────────────────
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Surface1)
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(Icons.Filled.Lock, contentDescription = null, tint = GoldenYellow, modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    text  = state.training?.title ?: "Loading…",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = OnSurface,
+                    modifier = Modifier.weight(1f)
+                )
+                // Elapsed timer display (replaces seekbar)
+                Text(
+                    text  = formatTime(elapsedSeconds),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = GoldenYellow
+                )
+            }
         }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
 
         // ── Video + Watermark ─────────────────────────
         Box(
@@ -236,6 +241,7 @@ fun VideoPlayerScreen(
                         modifier = Modifier.padding(12.dp)
                     )
                 }
+            }
             }
         }
     }

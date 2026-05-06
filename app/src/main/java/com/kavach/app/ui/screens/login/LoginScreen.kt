@@ -50,7 +50,6 @@ fun LoginScreen(
 
     var pno          by remember { mutableStateOf("") }
     var password     by remember { mutableStateOf("") }
-    var isAdminMode  by remember { mutableStateOf(false) }
     var showPassword by remember { mutableStateOf(false) }
 
     // Officer OTP flow navigate
@@ -66,6 +65,7 @@ fun LoginScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .statusBarsPadding()
             .background(
                 Brush.verticalGradient(
                     colors = listOf(NavyBlueDark, NavyBlue, Surface1)
@@ -80,14 +80,12 @@ fun LoginScreen(
             verticalArrangement = Arrangement.Center
         ) {
             // ── Icon ─────────────────────────────────────
-            AnimatedContent(targetState = isAdminMode, label = "icon_anim") { admin ->
-                Icon(
-                    imageVector        = if (admin) Icons.Filled.AdminPanelSettings else Icons.Filled.Security,
-                    contentDescription = null,
-                    tint               = GoldenYellow,
-                    modifier           = Modifier.size(80.dp)
-                )
-            }
+            Icon(
+                imageVector        = Icons.Filled.Security,
+                contentDescription = null,
+                tint               = GoldenYellow,
+                modifier           = Modifier.size(80.dp)
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -97,66 +95,13 @@ fun LoginScreen(
                 color = OnSurface
             )
 
-            AnimatedContent(targetState = isAdminMode, label = "subtitle_anim") { admin ->
-                Text(
-                    text  = if (admin) "कमांड एक्सेस — Admin पोर्टल" else stringResource(R.string.app_tagline),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = if (admin) GoldenYellow else OnSurfaceMid,
-                    modifier = Modifier.padding(top = 4.dp, bottom = 32.dp),
-                    textAlign = TextAlign.Center
-                )
-            }
-
-            // ── Mode Tab ──────────────────────────────────
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        color = Surface1.copy(alpha = 0.4f),
-                        shape = RoundedCornerShape(12.dp)
-                    )
-                    .padding(4.dp),
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                // Officer Tab
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .background(
-                            color = if (!isAdminMode) GoldenYellow else Transparent,
-                            shape = RoundedCornerShape(10.dp)
-                        )
-                        .clickable { isAdminMode = false; password = "" }
-                        .padding(vertical = 10.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text  = "अधिकारी",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = if (!isAdminMode) NavyBlueDark else OnSurfaceMid
-                    )
-                }
-                // Admin Tab
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .background(
-                            color = if (isAdminMode) GoldenYellow else Transparent,
-                            shape = RoundedCornerShape(10.dp)
-                        )
-                        .clickable { isAdminMode = true }
-                        .padding(vertical = 10.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text  = "Admin",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = if (isAdminMode) NavyBlueDark else OnSurfaceMid
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
+            Text(
+                text  = stringResource(R.string.app_tagline),
+                style = MaterialTheme.typography.bodyMedium,
+                color = OnSurfaceMid,
+                modifier = Modifier.padding(top = 4.dp, bottom = 32.dp),
+                textAlign = TextAlign.Center
+            )
 
             // ── PNO Input ─────────────────────────────────
             OutlinedTextField(
@@ -167,7 +112,7 @@ fun LoginScreen(
                 singleLine    = true,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
-                    imeAction    = if (isAdminMode) ImeAction.Next else ImeAction.Done
+                    imeAction    = ImeAction.Next
                 ),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor   = GoldenYellow,
@@ -180,49 +125,42 @@ fun LoginScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // ── Password Field (Admin mode only) ──────────
-            AnimatedVisibility(
-                visible = isAdminMode,
-                enter   = fadeIn() + expandVertically(),
-                exit    = fadeOut() + shrinkVertically()
-            ) {
-                Column {
-                    Spacer(modifier = Modifier.height(12.dp))
-                    OutlinedTextField(
-                        value         = password,
-                        onValueChange = { password = it },
-                        label         = { Text("Admin पासवर्ड") },
-                        leadingIcon   = { Icon(Icons.Filled.Lock, contentDescription = null, tint = GoldenYellow) },
-                        trailingIcon  = {
-                            IconButton(onClick = { showPassword = !showPassword }) {
-                                Icon(
-                                    imageVector = if (showPassword) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
-                                    contentDescription = null,
-                                    tint = OnSurfaceMid
-                                )
-                            }
-                        },
-                        singleLine    = true,
-                        visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Password,
-                            imeAction    = ImeAction.Done
-                        ),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor   = GoldenYellow,
-                            unfocusedBorderColor = OnSurfaceLow,
-                            focusedLabelColor    = GoldenYellow,
-                            cursorColor          = GoldenYellow,
-                            focusedTextColor     = OnSurface,
-                            unfocusedTextColor   = OnSurface
-                        ),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            }
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // ── Password Field (Optional for Admin) ──────────
+            OutlinedTextField(
+                value         = password,
+                onValueChange = { password = it },
+                label         = { Text("पासवर्ड (केवल Admin के लिए)") },
+                leadingIcon   = { Icon(Icons.Filled.Lock, contentDescription = null, tint = GoldenYellow) },
+                trailingIcon  = {
+                    IconButton(onClick = { showPassword = !showPassword }) {
+                        Icon(
+                            imageVector = if (showPassword) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
+                            contentDescription = null,
+                            tint = OnSurfaceMid
+                        )
+                    }
+                },
+                singleLine    = true,
+                visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction    = ImeAction.Done
+                ),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor   = GoldenYellow,
+                    unfocusedBorderColor = OnSurfaceLow,
+                    focusedLabelColor    = GoldenYellow,
+                    cursorColor          = GoldenYellow,
+                    focusedTextColor     = OnSurface,
+                    unfocusedTextColor   = OnSurface
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
 
             // ── Error Message ──────────────────────────────
-            val errorMsg = if (isAdminMode) adminState.error else state.error
+            val errorMsg = state.error ?: adminState.error
             AnimatedVisibility(visible = errorMsg != null) {
                 Text(
                     text  = errorMsg ?: "",
@@ -233,30 +171,47 @@ fun LoginScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
-            // ── Action Button ─────────────────────────────
-            val isLoading = if (isAdminMode) adminState.isLoading else state.isLoading
-            Button(
-                onClick  = {
-                    if (isAdminMode) viewModel.adminLogin(pno, password)
-                    else             viewModel.requestOtp(pno)
-                },
-                enabled  = !isLoading && pno.isNotBlank() && (!isAdminMode || password.isNotBlank()),
-                modifier = Modifier.fillMaxWidth().height(52.dp),
-                shape  = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = GoldenYellow,
-                    contentColor   = NavyBlueDark
-                )
+            // ── Action Buttons ─────────────────────────────
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                if (isLoading) {
-                    CircularProgressIndicator(color = NavyBlueDark, modifier = Modifier.size(22.dp))
-                } else {
-                    Text(
-                        text  = if (isAdminMode) "Admin Login करें" else "OTP भेजें",
-                        style = MaterialTheme.typography.labelLarge
+                // OTP Button
+                Button(
+                    onClick  = { viewModel.requestOtp(pno) },
+                    enabled  = !state.isLoading && !adminState.isLoading && pno.isNotBlank(),
+                    modifier = Modifier.weight(1f).height(52.dp),
+                    shape    = RoundedCornerShape(12.dp),
+                    colors   = ButtonDefaults.buttonColors(
+                        containerColor = Surface1,
+                        contentColor   = OnSurface
                     )
+                ) {
+                    if (state.isLoading) {
+                        CircularProgressIndicator(color = OnSurface, modifier = Modifier.size(22.dp))
+                    } else {
+                        Text("OTP भेजें", style = MaterialTheme.typography.labelMedium)
+                    }
+                }
+
+                // Password Button
+                Button(
+                    onClick  = { viewModel.adminLogin(pno, password) },
+                    enabled  = !state.isLoading && !adminState.isLoading && pno.isNotBlank() && password.isNotBlank(),
+                    modifier = Modifier.weight(1f).height(52.dp),
+                    shape    = RoundedCornerShape(12.dp),
+                    colors   = ButtonDefaults.buttonColors(
+                        containerColor = GoldenYellow,
+                        contentColor   = NavyBlueDark
+                    )
+                ) {
+                    if (adminState.isLoading) {
+                        CircularProgressIndicator(color = NavyBlueDark, modifier = Modifier.size(22.dp))
+                    } else {
+                        Text("पासवर्ड लॉगिन", style = MaterialTheme.typography.labelMedium)
+                    }
                 }
             }
 

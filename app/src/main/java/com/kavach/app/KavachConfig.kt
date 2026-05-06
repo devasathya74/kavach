@@ -28,20 +28,15 @@ object KavachConfig {
      *
      * ✏️ EDIT THIS:
      */
-    const val BASE_URL = "https://api.kavach.yourforce.in/api/"
+    /**
+     * आपके backend server का URL।
+     */
+    const val BASE_URL = "https://kavach-api-prod.yourforce.in/api/v1/"
 
     /**
      * Debug/Development के लिए local server URL।
-     * Android Emulator में localhost = 10.0.2.2
-     * Physical device testing = आपके PC का local IP
-     *
-     * Examples:
-     *   "http://10.0.2.2:8000/api/"      ← Emulator
-     *   "http://192.168.1.100:8000/api/" ← Physical device (same WiFi)
-     *
-     * ✏️ EDIT THIS:
      */
-    const val BASE_URL_DEBUG = "http://10.0.2.2:8000/api/"
+    const val BASE_URL_DEBUG = "http://192.168.1.6:8000/api/v1/"
 
 
     // ══════════════════════════════════════════════════════════════
@@ -78,7 +73,7 @@ object KavachConfig {
      *
      * ✏️ EDIT THIS:
      */
-    const val PINNED_DOMAIN = "YOUR_SERVER_DOMAIN.com"
+    const val PINNED_DOMAIN = "kavach-api-prod.yourforce.in"
 
 
     // ══════════════════════════════════════════════════════════════
@@ -152,36 +147,27 @@ object KavachConfig {
     /**
      * Session idle timeout (minutes)।
      * इतने समय तक कोई interaction नहीं → automatic logout।
-     *
-     * ✏️ EDIT THIS (default: 10 minutes):
+     * ✏️ PILOT FIX: 30 minutes for operational field usage.
      */
-    const val SESSION_TIMEOUT_MINUTES = 10L
+    const val SESSION_TIMEOUT_MINUTES = 30L
 
     /**
      * Session timeout warning (minutes)।
      * Logout से पहले warning dialog कितनी देर पहले दिखाएं।
-     *
-     * ✏️ EDIT THIS (default: 9 minutes = 1 min warning):
      */
-    const val SESSION_TIMEOUT_WARNING_MINUTES = 9L
+    const val SESSION_TIMEOUT_WARNING_MINUTES = 25L
 
     /**
      * क्या rooted device पर app block करनी है?
-     * true  = block + show error
-     * false = allow but log the event (recommended for pilot)
-     *
-     * ✏️ EDIT THIS:
+     * ✏️ PILOT FIX: false (Observe first, punish later).
      */
-    const val BLOCK_ROOTED_DEVICES = true
+    const val BLOCK_ROOTED_DEVICES = false
 
     /**
      * क्या emulator पर app block करनी है?
-     * true  = block (production)
-     * false = allow (development/testing)
-     *
-     * ✏️ EDIT THIS:
+     * ✏️ PILOT FIX: false (Allow during pilot monitoring).
      */
-    const val BLOCK_EMULATORS = true
+    const val BLOCK_EMULATORS = false
 
 
     // ══════════════════════════════════════════════════════════════
@@ -222,12 +208,9 @@ object KavachConfig {
 
     /**
      * Video completion threshold।
-     * Server: अगर quiz_time < video_duration × COMPLETION_THRESHOLD → suspicious।
-     * 0.6 = user ने कम से कम 60% watch करने के बराबर time लिया।
-     *
-     * ✏️ EDIT THIS (default: 0.6):
+     * ✏️ PILOT FIX: 0.6 (Reduced to prevent false positives in early phase).
      */
-    const val VIDEO_COMPLETION_THRESHOLD = 0.8
+    const val VIDEO_COMPLETION_THRESHOLD = 0.6
 
 
     // ══════════════════════════════════════════════════════════════

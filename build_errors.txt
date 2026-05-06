@@ -1,0 +1,127 @@
+﻿> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:generateDebugBuildConfig UP-TO-DATE
+> Task :app:checkDebugAarMetadata UP-TO-DATE
+> Task :app:generateDebugResValues UP-TO-DATE
+> Task :app:mapDebugSourceSetPaths UP-TO-DATE
+> Task :app:generateDebugResources UP-TO-DATE
+> Task :app:mergeDebugResources UP-TO-DATE
+> Task :app:packageDebugResources UP-TO-DATE
+> Task :app:parseDebugLocalResources UP-TO-DATE
+> Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksDebug UP-TO-DATE
+> Task :app:processDebugMainManifest UP-TO-DATE
+> Task :app:processDebugManifest UP-TO-DATE
+> Task :app:processDebugManifestForPackage UP-TO-DATE
+> Task :app:processDebugResources UP-TO-DATE
+> Task :app:kspDebugKotlin UP-TO-DATE
+> Task :app:compileDebugKotlin UP-TO-DATE
+> Task :app:javaPreCompileDebug UP-TO-DATE
+> Task :app:compileDebugJavaWithJavac UP-TO-DATE
+> Task :app:mergeDebugShaders UP-TO-DATE
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :app:mergeDebugAssets UP-TO-DATE
+> Task :app:compressDebugAssets UP-TO-DATE
+> Task :app:desugarDebugFileDependencies UP-TO-DATE
+> Task :app:hiltAggregateDepsDebug UP-TO-DATE
+
+> Task :app:hiltJavaCompileDebug
+.\gradlew : warning: Kapt support in Moshi Kotlin Code Gen is deprecated and will be removed in 2.0. Please migrate to 
+KSP. https://github.com/square/moshi#codegen
+At line:1 char:1
++ .\gradlew assembleDebug 2>&1 | Out-File -FilePath "build_errors.txt"  ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (warning: Kapt s...e/moshi#codegen:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+C:\Users\CO_25\Desktop\kavach\app\build\generated\hilt\component_sources\debug\com\kavach\app\KavachApp_HiltComponents.
+java:152: error: [Dagger/DependencyCycle] Found a dependency cycle:
+  public abstract static class SingletonC implements KavachApp_GeneratedInjector,
+                         ^
+      com.kavach.app.data.remote.api.KavachApiService is injected at
+          [com.kavach.app.KavachApp_HiltComponents.SingletonC] com.kavach.app.security.IntegrityRepository(api, ΓÇª)
+      com.kavach.app.security.IntegrityRepository is injected at
+          [com.kavach.app.KavachApp_HiltComponents.SingletonC] com.kavach.app.data.remote.api.TokenAuthenticator(ΓÇª, 
+integrityRepository, ΓÇª)
+      com.kavach.app.data.remote.api.TokenAuthenticator is injected at
+          [com.kavach.app.KavachApp_HiltComponents.SingletonC] com.kavach.app.di.AppModule.provideOkHttpClient(ΓÇª, 
+tokenAuthenticator)
+      @javax.inject.Named("authed") okhttp3.OkHttpClient is injected at
+          [com.kavach.app.KavachApp_HiltComponents.SingletonC] 
+com.kavach.app.di.AppModule.provideRetrofit(okHttpClient, ΓÇª)
+      retrofit2.Retrofit is injected at
+          [com.kavach.app.KavachApp_HiltComponents.SingletonC] com.kavach.app.di.AppModule.provideApiService(retrofit)
+      com.kavach.app.data.remote.api.KavachApiService is injected at
+          [com.kavach.app.KavachApp_HiltComponents.SingletonC] com.kavach.app.security.IntegrityRepository(api, ΓÇª)
+      ...
+  
+  The cycle is requested via:
+      com.kavach.app.data.remote.api.KavachApiService is injected at
+          [com.kavach.app.KavachApp_HiltComponents.ActivityC] com.kavach.app.MainActivity.apiService
+      com.kavach.app.MainActivity is injected at
+          [com.kavach.app.KavachApp_HiltComponents.ActivityC] 
+com.kavach.app.MainActivity_GeneratedInjector.injectMainActivity(com.kavach.app.MainActivity) 
+[com.kavach.app.KavachApp_HiltComponents.SingletonC ΓåÆ com.kavach.app.KavachApp_HiltComponents.ActivityRetainedC ΓåÆ 
+com.kavach.app.KavachApp_HiltComponents.ActivityC]
+1 error
+1 warning
+
+> Task :app:hiltJavaCompileDebug FAILED
+
+[Incubating] Problems report is available at: file:///C:/Users/CO_25/Desktop/kavach/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:hiltJavaCompileDebug'.
+> Compilation failed; see the compiler output below.
+  warning: Kapt support in Moshi Kotlin Code Gen is deprecated and will be removed in 2.0. Please migrate to KSP. 
+https://github.com/square/moshi#codegen
+  C:\Users\CO_25\Desktop\kavach\app\build\generated\hilt\component_sources\debug\com\kavach\app\KavachApp_HiltComponent
+s.java:152: error: [Dagger/DependencyCycle] Found a dependency cycle:
+    public abstract static class SingletonC implements KavachApp_GeneratedInjector,
+                           ^
+        com.kavach.app.data.remote.api.KavachApiService is injected at
+            [com.kavach.app.KavachApp_HiltComponents.SingletonC] com.kavach.app.security.IntegrityRepository(api, ΓÇª)
+        com.kavach.app.security.IntegrityRepository is injected at
+            [com.kavach.app.KavachApp_HiltComponents.SingletonC] 
+com.kavach.app.data.remote.api.TokenAuthenticator(ΓÇª, integrityRepository, ΓÇª)
+        com.kavach.app.data.remote.api.TokenAuthenticator is injected at
+            [com.kavach.app.KavachApp_HiltComponents.SingletonC] com.kavach.app.di.AppModule.provideOkHttpClient(ΓÇª, 
+tokenAuthenticator)
+        @javax.inject.Named("authed") okhttp3.OkHttpClient is injected at
+            [com.kavach.app.KavachApp_HiltComponents.SingletonC] 
+com.kavach.app.di.AppModule.provideRetrofit(okHttpClient, ΓÇª)
+        retrofit2.Retrofit is injected at
+            [com.kavach.app.KavachApp_HiltComponents.SingletonC] 
+com.kavach.app.di.AppModule.provideApiService(retrofit)
+        com.kavach.app.data.remote.api.KavachApiService is injected at
+            [com.kavach.app.KavachApp_HiltComponents.SingletonC] com.kavach.app.security.IntegrityRepository(api, ΓÇª)
+        ...
+    
+    The cycle is requested via:
+        com.kavach.app.data.remote.api.KavachApiService is injected at
+            [com.kavach.app.KavachApp_HiltComponents.ActivityC] com.kavach.app.MainActivity.apiService
+        com.kavach.app.MainActivity is injected at
+            [com.kavach.app.KavachApp_HiltComponents.ActivityC] 
+com.kavach.app.MainActivity_GeneratedInjector.injectMainActivity(com.kavach.app.MainActivity) 
+[com.kavach.app.KavachApp_HiltComponents.SingletonC ΓåÆ com.kavach.app.KavachApp_HiltComponents.ActivityRetainedC ΓåÆ 
+com.kavach.app.KavachApp_HiltComponents.ActivityC]
+  1 error
+  1 warning
+
+* Try:
+> Check your code and dependencies to fix the compilation error(s)
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.4.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 6s
+24 actionable tasks: 1 executed, 23 up-to-date

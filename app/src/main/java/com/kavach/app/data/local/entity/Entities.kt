@@ -60,3 +60,13 @@ data class BehaviorEventEntity(
     val metadata    : String = "{}"          // JSON string of extra key-value pairs
 )
 
+@Entity(tableName = "pending_navigation")
+data class PendingNavigationEntity(
+    @PrimaryKey val notifId: String,
+    val screen: String,
+    val timestamp: Long,
+    val priority: Int = 0,        // 1 = CRITICAL, 0 = NORMAL
+    val isProcessed: Boolean = false,
+    val isProcessing: Boolean = false
+)
+

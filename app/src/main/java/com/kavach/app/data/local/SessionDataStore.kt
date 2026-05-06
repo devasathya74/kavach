@@ -11,6 +11,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,19 +27,35 @@ class SessionDataStore @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
     companion object {
-        private val KEY_TOKEN         = stringPreferencesKey("auth_token")
-        private val KEY_REFRESH_TOKEN = stringPreferencesKey("refresh_token")
-        private val KEY_TOKEN_EXPIRY  = longPreferencesKey("token_expiry_ms")
-        private val KEY_PNO           = stringPreferencesKey("pno")
-        private val KEY_USER_NAME     = stringPreferencesKey("user_name")
-        private val KEY_RANK          = stringPreferencesKey("rank")
-        private val KEY_UNIT          = stringPreferencesKey("unit")
-        private val KEY_DEVICE_ID     = stringPreferencesKey("registered_device_id")
-        private val KEY_IS_STAFF      = androidx.datastore.preferences.core.booleanPreferencesKey("is_staff")
+        private val KEY_TOKEN            = stringPreferencesKey("auth_token")
+        private val KEY_REFRESH_TOKEN    = stringPreferencesKey("refresh_token")
+        private val KEY_TOKEN_EXPIRY     = longPreferencesKey("token_expiry_ms")
+        private val KEY_PNO              = stringPreferencesKey("pno")
+        private val KEY_USER_NAME        = stringPreferencesKey("user_name")
+        private val KEY_RANK             = stringPreferencesKey("rank")
+        private val KEY_UNIT             = stringPreferencesKey("unit")
+        private val KEY_DEVICE_ID        = stringPreferencesKey("registered_device_id")
+        private val KEY_DEVICE_SECRET    = stringPreferencesKey("device_secret")
+        private val KEY_ROLE             = stringPreferencesKey("user_role")
+        // Integrity Attestation
+        private val KEY_INTEGRITY_LEVEL  = stringPreferencesKey("integrity_level")
+        private val KEY_LAST_ATTESTED_AT = longPreferencesKey("last_attested_at_ms")
         // Consent
         private val KEY_CONSENT_ACCEPTED  = androidx.datastore.preferences.core.booleanPreferencesKey("consent_accepted")
         private val KEY_CONSENT_TIMESTAMP = longPreferencesKey("consent_timestamp_ms")
         private val KEY_PENDING_FORCE_UPDATE = androidx.datastore.preferences.core.booleanPreferencesKey("pending_force_update")
+    }
+
+    // Transient State (In-memory only, reset on every app launch)
+    private val _isVerifiedInThisSession = kotlinx.coroutines.flow.MutableStateFlow(false)
+    val isVerifiedInThisSession = _isVerifiedInThisSession.asStateFlow()
+
+    fun markAsVerified() {
+        _isVerifiedInThisSession.value = true
+    }
+
+    fun markAsUnverified() {
+        _isVerifiedInThisSession.value = false
     }
 
     val token            : Flow<String?>  = context.dataStore.data.map { it[KEY_TOKEN] }
@@ -48,15 +66,40 @@ class SessionDataStore @Inject constructor(
     val rank             : Flow<String?>  = context.dataStore.data.map { it[KEY_RANK] }
     val unit             : Flow<String?>  = context.dataStore.data.map { it[KEY_UNIT] }
     val deviceId         : Flow<String?>  = context.dataStore.data.map { it[KEY_DEVICE_ID] }
-    val isStaff          : Flow<Boolean>  = context.dataStore.data.map { it[KEY_IS_STAFF] ?: false }
+    val deviceSecret     : Flow<String?>  = context.dataStore.data.map { it[KEY_DEVICE_SECRET] }
+    val role             : Flow<String>   = context.dataStore.data.map { it[KEY_ROLE] ?: "" }
     val consentAccepted  : Flow<Boolean>  = context.dataStore.data.map { it[KEY_CONSENT_ACCEPTED] ?: false }
     val consentTimestamp : Flow<Long?>    = context.dataStore.data.map { it[KEY_CONSENT_TIMESTAMP] }
     val pendingForceUpdate: Flow<Boolean> = context.dataStore.data.map { it[KEY_PENDING_FORCE_UPDATE] ?: false }
+
+    /**
+     * Last known integrity level from Play Integrity API.
+     * STRONG | DEVICE | BASIC | DEGRADED | FAILED | (empty = never attested)
+     * This is sent as a header to backend on every request.
+     */
+    val integrityLevel   : Flow<String>   = context.dataStore.data.map { it[KEY_INTEGRITY_LEVEL] ?: "" }
+
+    /**
+     * Timestamp of the last successful attestation in milliseconds.
+     * Backend uses this to enforce the 30-minute trust window.
+     */
+    val lastAttestedAt   : Flow<Long>     = context.dataStore.data.map { it[KEY_LAST_ATTESTED_AT] ?: 0L }
 
     suspend fun saveConsent() {
         context.dataStore.edit { prefs ->
             prefs[KEY_CONSENT_ACCEPTED]  = true
             prefs[KEY_CONSENT_TIMESTAMP] = System.currentTimeMillis()
+        }
+    }
+
+    /**
+     * Saves the integrity level returned by backend after Google-side verification.
+     * Also records timestamp for trust-window enforcement.
+     */
+    suspend fun saveIntegrityLevel(level: String) {
+        context.dataStore.edit { prefs ->
+            prefs[KEY_INTEGRITY_LEVEL]  = level
+            prefs[KEY_LAST_ATTESTED_AT] = System.currentTimeMillis()
         }
     }
 
@@ -69,7 +112,8 @@ class SessionDataStore @Inject constructor(
         rank         : String,
         unit         : String,
         deviceId     : String,
-        isStaff      : Boolean
+        deviceSecret : String,
+        role         : String
     ) {
         val expiryMs = System.currentTimeMillis() + expiresIn * 1000
         context.dataStore.edit { prefs ->
@@ -81,7 +125,8 @@ class SessionDataStore @Inject constructor(
             prefs[KEY_RANK]          = rank
             prefs[KEY_UNIT]          = unit
             prefs[KEY_DEVICE_ID]     = deviceId
-            prefs[KEY_IS_STAFF]      = isStaff
+            prefs[KEY_DEVICE_SECRET] = deviceSecret
+            prefs[KEY_ROLE]          = role
         }
     }
 

@@ -13,7 +13,9 @@ sealed class Screen(val route: String) {
     // Main
     object Dashboard : Screen("dashboard")
     object AdminDashboard : Screen("admin_dashboard")
-    object LiveBroadcast : Screen("live_broadcast")
+    object PilotDashboard : Screen("pilot_dashboard")
+    object Restricted     : Screen("restricted")
+    object LiveBroadcast  : Screen("live_broadcast")
 
     // Training
     object TrainingList : Screen("training_list")

@@ -2,11 +2,11 @@ package com.kavach.app.ui.screens.admin
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kavach.app.data.remote.dto.AdminOfficerDto
-import com.kavach.app.data.remote.dto.SuspiciousSessionDto
+import com.kavach.app.data.remote.dto.*
 import com.kavach.app.data.remote.repository.AdminRepository
 import com.kavach.app.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,7 +20,20 @@ data class AdminDashboardUiState(
     val suspiciousSessions : List<SuspiciousSessionDto> = emptyList(),
     val isActionLoading    : Boolean                   = false,
     val actionMessage      : String?                   = null,
-    val selectedTab        : Int                       = 0
+    val selectedTab        : Int                       = 0,
+    
+    // Filters
+    val searchQuery        : String                    = "",
+    val rankFilter         : String?                   = null,
+    
+    // High Fidelity Data
+    val liveFeed           : List<LiveFeedEventDto>    = emptyList(),
+    val analytics          : SystemAnalyticsDto?       = null,
+    val remoteConfig       : Map<String, Any>          = emptyMap(),
+    
+    val totalRollbacks     : Int                       = 0,
+    val activeViolations   : Int                       = 0,
+    val pilotMetrics       : Map<String, Any>          = emptyMap()
 )
 
 @HiltViewModel
@@ -42,6 +55,28 @@ class AdminDashboardViewModel @Inject constructor(
     fun loadAll() {
         loadOfficers()
         loadSuspicious()
+        loadLiveFeed()
+        loadAnalytics()
+        loadRemoteConfig()
+    }
+
+    fun onSearchQueryChange(query: String) {
+        _uiState.value = _uiState.value.copy(searchQuery = query)
+    }
+
+    fun onRankFilterChange(rank: String?) {
+        _uiState.value = _uiState.value.copy(rankFilter = rank)
+    }
+
+    fun loadPilotMetrics() {
+        // Mockup for audit
+        _uiState.value = _uiState.value.copy(
+            pilotMetrics = mapOf(
+                "avg_confidence" to 0.92f,
+                "avg_review_time" to "45s",
+                "blind_approvals" to 12
+            )
+        )
     }
 
     fun loadOfficers() {
@@ -98,6 +133,49 @@ class AdminDashboardViewModel @Inject constructor(
                 }
                 else -> {}
             }
+        }
+    }
+
+    fun loadLiveFeed() {
+        viewModelScope.launch {
+            while(true) {
+                when (val result = adminRepository.getLiveFeed()) {
+                    is Resource.Success -> {
+                        _uiState.value = _uiState.value.copy(liveFeed = result.data ?: emptyList())
+                    }
+                    else -> {}
+                }
+                delay(5000) // Poll every 5s for live feed
+            }
+        }
+    }
+
+    fun loadAnalytics() {
+        viewModelScope.launch {
+            when (val result = adminRepository.getAnalytics()) {
+                is Resource.Success -> {
+                    _uiState.value = _uiState.value.copy(analytics = result.data)
+                }
+                else -> {}
+            }
+        }
+    }
+
+    fun loadRemoteConfig() {
+        viewModelScope.launch {
+            when (val result = adminRepository.getRemoteConfig()) {
+                is Resource.Success -> {
+                    _uiState.value = _uiState.value.copy(remoteConfig = result.data ?: emptyMap())
+                }
+                else -> {}
+            }
+        }
+    }
+
+    fun updateThreshold(key: String, value: Any) {
+        viewModelScope.launch {
+            adminRepository.updateConfig(key, value)
+            loadRemoteConfig()
         }
     }
 
