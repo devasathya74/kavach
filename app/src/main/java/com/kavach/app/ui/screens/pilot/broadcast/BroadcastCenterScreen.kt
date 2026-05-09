@@ -106,7 +106,7 @@ fun BroadcastItem(broadcast: BroadcastDto, onAck: () -> Unit) {
                 Spacer(Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(broadcast.title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.ExtraBold)
-                    Text("By: ${broadcast.actorName}", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
+                    Text("By: ${broadcast.senderName ?: broadcast.senderPno ?: "Unknown"}", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
                 }
                 Surface(color = priorityColor.copy(alpha = 0.1f), shape = RoundedCornerShape(6.dp)) {
                     Text(broadcast.priority, modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp), fontSize = 10.sp, fontWeight = FontWeight.Bold, color = priorityColor)
@@ -114,14 +114,14 @@ fun BroadcastItem(broadcast: BroadcastDto, onAck: () -> Unit) {
             }
             
             Spacer(Modifier.height(12.dp))
-            Text(broadcast.content, style = MaterialTheme.typography.bodySmall, color = Color.DarkGray)
+            Text(broadcast.content ?: broadcast.message ?: "No content.", style = MaterialTheme.typography.bodySmall, color = Color.DarkGray)
             
             Spacer(Modifier.height(20.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.People, contentDescription = null, modifier = Modifier.size(14.dp), tint = Color.Gray)
                     Spacer(Modifier.width(4.dp))
-                    Text("${broadcast.ackCount} Acknowledgments", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
+                    Text(if (broadcast.acknowledged) "✓ Acknowledged" else "Pending", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
                 }
                 Button(
                     onClick = onAck,

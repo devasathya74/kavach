@@ -19,7 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.kavach.app.data.remote.dto.personnel.OfficerActivityDto
+import com.kavach.app.data.remote.dto.v2.OfficerActivityDto
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -126,14 +126,14 @@ fun AuditItem(activity: OfficerActivityDto) {
                     Text(activity.createdAt.take(16).replace("T", " "), style = MaterialTheme.typography.labelSmall, color = Color.Gray)
                 }
                 Spacer(Modifier.height(4.dp))
-                Text("Actor: ${activity.pno}", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Medium)
-                if (activity.metadata != null) {
-                    Text(activity.metadata.toString(), style = MaterialTheme.typography.labelSmall, color = Color.Gray)
+                Text("Actor: ${activity.actorPno ?: activity.actorName ?: "Unknown"}", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Medium)
+                if (activity.detail != null) {
+                    Text(activity.detail, style = MaterialTheme.typography.labelSmall, color = Color.Gray)
                 }
             }
             Spacer(Modifier.width(8.dp))
             Surface(color = severityColor.copy(alpha = 0.1f), shape = RoundedCornerShape(4.dp)) {
-                Text(activity.result, modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp), fontSize = 8.sp, fontWeight = FontWeight.ExtraBold, color = severityColor)
+                Text(activity.severity, modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp), fontSize = 8.sp, fontWeight = FontWeight.ExtraBold, color = severityColor)
             }
         }
     }

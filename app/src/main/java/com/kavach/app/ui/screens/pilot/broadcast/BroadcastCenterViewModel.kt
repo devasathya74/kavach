@@ -37,7 +37,18 @@ class BroadcastCenterViewModel @Inject constructor(
             }
 
             try {
-                val results = api.getBroadcasts()
+                val results = api.getBroadcasts().map { v2 ->
+                    BroadcastDto(
+                        id           = v2.id,
+                        title        = v2.title,
+                        content      = v2.message,
+                        senderPno    = v2.senderPno,
+                        senderName   = v2.senderName,
+                        priority     = v2.priority,
+                        createdAt    = v2.createdAt,
+                        acknowledged = v2.acknowledged
+                    )
+                }
                 _state.update { it.copy(broadcasts = results, isLoading = false, isRefreshing = false, error = null) }
             } catch (e: Exception) {
                 _state.update { it.copy(isLoading = false, isRefreshing = false, error = e.message) }

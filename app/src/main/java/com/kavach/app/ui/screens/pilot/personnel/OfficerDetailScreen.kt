@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kavach.app.ui.components.RoleBadge
 import com.kavach.app.ui.components.StatusBadge
-import com.kavach.app.data.remote.dto.personnel.OfficerDeviceDto
+import com.kavach.app.data.remote.dto.personnel.DeviceDto
 import com.kavach.app.data.remote.dto.personnel.OfficerDto
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -95,9 +95,9 @@ fun OfficerDetailContent(
         item {
             InfoSection("Personnel Context", Icons.Default.AssignmentInd) {
                 InfoRow("PNO ID", officer.pno)
-                InfoRow("Unit", officer.unit.name)
-                InfoRow("Company", officer.profile.company?.name ?: "N/A")
-                InfoRow("Status", officer.profile.serviceStatus)
+                InfoRow("Unit", officer.unit?.name ?: "N/A")
+                InfoRow("Company", officer.profile?.company?.name ?: "N/A")
+                InfoRow("Status", officer.profile?.serviceStatus ?: if (officer.isActive) "Active" else "Inactive")
             }
         }
 
@@ -119,7 +119,7 @@ fun OfficerDetailContent(
         item {
             InfoSection("Operational Security", Icons.Default.Shield) {
                 InfoRow("Role Authority", officer.role)
-                InfoRow("Integrity State", officer.devices.firstOrNull()?.integrityLevel ?: "N/A")
+                InfoRow("Integrity State", officer.devices.firstOrNull()?.status ?: "N/A")
                 InfoRow("Account Integrity", if (officer.isActive) "SECURE" else "LOCKED")
             }
         }
@@ -149,7 +149,7 @@ fun ActivityItem(action: String, severity: String, timestamp: String, result: St
 
 @Composable
 fun DeviceIntelligencePanel(
-    devices: List<OfficerDeviceDto>,
+    devices: List<DeviceDto>,
     onRevoke: (String) -> Unit
 ) {
     InfoSection("Device Intelligence", Icons.Default.Terminal) {
@@ -165,14 +165,14 @@ fun DeviceIntelligencePanel(
 
 @Composable
 fun DeviceIntelligenceItem(
-    device: OfficerDeviceDto,
+    device: DeviceDto,
     onRevoke: (String) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(device.deviceName, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
-                Text("Trust Score: ${device.trustScore}%", style = MaterialTheme.typography.labelSmall, color = if(device.trustScore > 80) Color(0xFF4CAF50) else Color(0xFFF44336))
+                Text(device.deviceModel ?: device.deviceId, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+                Text("Status: ${device.status}", style = MaterialTheme.typography.labelSmall, color = if(device.status == "active") Color(0xFF4CAF50) else Color(0xFFF44336))
             }
             StatusBadge(device.status)
         }
@@ -182,7 +182,7 @@ fun DeviceIntelligenceItem(
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
             Text("Last Sync: ${device.lastActive?.take(16) ?: "Never"}", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
             
-            if (device.status == "ACTIVE") {
+            if (device.status == "active") {
                 TextButton(
                     onClick = { onRevoke(device.deviceId) },
                     colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
@@ -201,15 +201,15 @@ fun DeviceIntelligenceItem(
 fun HeaderSection(officer: OfficerDto) {
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         Box(modifier = Modifier.size(80.dp).clip(CircleShape).background(Brush.linearGradient(colors = listOf(Color(0xFF6200EE), Color(0xFF03DAC6)))), contentAlignment = Alignment.Center) {
-            Text(officer.profile.name.take(1).uppercase(), color = Color.White, fontSize = 32.sp, fontWeight = FontWeight.Bold)
+            Text((officer.profile?.name ?: officer.pno).take(1).uppercase(), color = Color.White, fontSize = 32.sp, fontWeight = FontWeight.Bold)
         }
         Spacer(Modifier.height(16.dp))
-        Text(officer.profile.name, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-        Text("${officer.profile.rank.name} | ${officer.pno}", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+        Text(officer.profile?.name ?: officer.pno, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+        Text("${officer.profile?.rank?.name ?: ""} | ${officer.pno}", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
         
         Spacer(Modifier.height(12.dp))
         Row {
-            StatusBadge(officer.profile.serviceStatus)
+            StatusBadge(officer.profile?.serviceStatus ?: if (officer.isActive) "Active" else "Inactive")
             Spacer(Modifier.width(8.dp))
             RoleBadge(officer.role)
         }

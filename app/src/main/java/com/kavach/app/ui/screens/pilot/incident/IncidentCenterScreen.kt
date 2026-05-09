@@ -116,7 +116,7 @@ fun IncidentItem(incident: IncidentDto) {
                 }
                 Spacer(Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(incident.incidentId, style = MaterialTheme.typography.labelSmall, color = Color.Gray)
+                    Text(incident.id.take(8), style = MaterialTheme.typography.labelSmall, color = Color.Gray)
                     Text(incident.title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.ExtraBold)
                 }
                 Surface(color = severityColor.copy(alpha = 0.1f), shape = RoundedCornerShape(6.dp)) {
@@ -125,16 +125,16 @@ fun IncidentItem(incident: IncidentDto) {
             }
             
             Spacer(Modifier.height(12.dp))
-            Text(incident.summary, style = MaterialTheme.typography.bodySmall, color = Color.DarkGray, maxLines = 3)
+            Text(incident.description ?: "No description provided.", style = MaterialTheme.typography.bodySmall, color = Color.DarkGray, maxLines = 3)
             
             Spacer(Modifier.height(16.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.Person, contentDescription = null, modifier = Modifier.size(14.dp), tint = Color.Gray)
                     Spacer(Modifier.width(4.dp))
-                    Text("By: ${incident.reportedByName}", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
+                    Text("By: ${incident.reporterPno ?: "Unknown"}", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
                 }
-                Text(incident.reportedAt.take(10), style = MaterialTheme.typography.labelSmall, color = Color.Gray)
+                Text(incident.createdAt?.take(10) ?: "N/A", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
             }
         }
     }

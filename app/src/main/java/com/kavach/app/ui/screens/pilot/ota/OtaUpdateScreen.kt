@@ -71,7 +71,7 @@ fun UpdateDetailView(state: OtaUpdateState, onDownload: () -> Unit) {
             Spacer(Modifier.width(16.dp))
             Column {
                 Text("Version ${update.versionName}", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.ExtraBold)
-                Text("Build ${update.versionCode} • Released ${update.releasedAt?.take(10) ?: "Just now"}", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
+                Text("Build ${update.versionCode} • Released ${update.publishedAt?.take(10) ?: "Just now"}", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
             }
         }
         
@@ -85,13 +85,13 @@ fun UpdateDetailView(state: OtaUpdateState, onDownload: () -> Unit) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text("CHANGELOG", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
                 Spacer(Modifier.height(8.dp))
-                Text(update.changelog, style = MaterialTheme.typography.bodySmall, color = Color.DarkGray)
+                Text(update.releaseNotes ?: "No changelog available.", style = MaterialTheme.typography.bodySmall, color = Color.DarkGray)
             }
         }
         
         Spacer(Modifier.height(24.dp))
         
-        if (update.isMandatory) {
+        if (update.isForceUpdate) {
             Surface(color = MaterialTheme.colorScheme.error.copy(alpha = 0.1f), shape = RoundedCornerShape(8.dp)) {
                 Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.Error, contentDescription = null, tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(16.dp))
@@ -129,6 +129,6 @@ fun UpdateDetailView(state: OtaUpdateState, onDownload: () -> Unit) {
         }
         
         Spacer(Modifier.height(12.dp))
-        Text("SHA256: ${update.sha256.take(24)}...", modifier = Modifier.align(Alignment.CenterHorizontally), style = MaterialTheme.typography.labelSmall, color = Color.Gray, fontFamily = FontFamily.Monospace)
+        Text("URL: ${update.downloadUrl?.take(32) ?: "N/A"}...", modifier = Modifier.align(Alignment.CenterHorizontally), style = MaterialTheme.typography.labelSmall, color = Color.Gray, fontFamily = FontFamily.Monospace)
     }
 }

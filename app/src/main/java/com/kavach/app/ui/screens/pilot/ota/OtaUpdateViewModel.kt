@@ -34,8 +34,16 @@ class OtaUpdateViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
             try {
-                val update = api.getLatestUpdate()
-                _state.update { it.copy(latestUpdate = update, isLoading = false, error = null) }
+                val v2 = api.getLatestUpdate()
+                val mapped = OtaUpdateDto(
+                    versionCode  = v2.versionCode,
+                    versionName  = v2.versionName,
+                    isForceUpdate = v2.isForceUpdate,
+                    downloadUrl  = v2.downloadUrl,
+                    releaseNotes = v2.releaseNotes,
+                    publishedAt  = v2.publishedAt
+                )
+                _state.update { it.copy(latestUpdate = mapped, isLoading = false, error = null) }
             } catch (e: Exception) {
                 _state.update { it.copy(isLoading = false, error = e.message) }
             }

@@ -171,13 +171,13 @@ fun BroadcastCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "BY: ${broadcast.actorName}",
+                    text = "BY: ${broadcast.senderName ?: broadcast.senderPno ?: "Unknown"}",
                     color = GoldenYellow.copy(alpha = 0.7f),
                     style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.Bold
                 )
                 
-                if (broadcast.isAcknowledged) {
+                if (broadcast.acknowledged) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             Icons.Default.CheckCircle,

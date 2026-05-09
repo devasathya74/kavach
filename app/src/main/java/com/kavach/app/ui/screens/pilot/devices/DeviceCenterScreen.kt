@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.text.font.FontFamily
-import com.kavach.app.data.remote.dto.personnel.OfficerDeviceDto
+import com.kavach.app.data.remote.dto.v2.OfficerDeviceDto
 import com.kavach.app.ui.components.StatusBadge
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -103,7 +103,7 @@ fun DeviceCard(
                 }
                 Spacer(Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(device.deviceName, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.ExtraBold)
+                    Text(device.deviceModel ?: device.deviceId, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.ExtraBold)
                     Text("ID: ${device.deviceId.take(16)}...", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
                 }
                 StatusBadge(device.status)
@@ -112,14 +112,14 @@ fun DeviceCard(
             Spacer(Modifier.height(16.dp))
             
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                IntelligenceMetric("Trust Score", "${device.trustScore}%", if(device.trustScore > 80) Color(0xFF4CAF50) else Color(0xFFF44336))
-                IntelligenceMetric("Integrity", device.integrityLevel, if(device.integrityLevel == "STRONG") Color(0xFF4CAF50) else Color(0xFFFF9800))
-                IntelligenceMetric("Last Heartbeat", device.lastActive?.take(10) ?: "N/A", Color.Gray)
+                IntelligenceMetric("Officer", device.officerPno ?: "N/A", Color.Gray)
+                IntelligenceMetric("Status", device.status, if(device.status == "active") Color(0xFF4CAF50) else Color(0xFFFF9800))
+                IntelligenceMetric("Last Active", device.lastActive?.take(10) ?: "N/A", Color.Gray)
             }
             
             Spacer(Modifier.height(20.dp))
             
-            if (device.status == "ACTIVE") {
+            if (device.status == "active") {
                 Button(
                     onClick = onRevoke,
                     modifier = Modifier.fillMaxWidth(),

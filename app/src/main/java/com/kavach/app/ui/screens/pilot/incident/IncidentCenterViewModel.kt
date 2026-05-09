@@ -61,9 +61,22 @@ class IncidentCenterViewModel @Inject constructor(
                     severity = _state.value.filterSeverity
                 )
                 
+                val mapped = response.results.map { v2 ->
+                    IncidentDto(
+                        id          = v2.id,
+                        title       = v2.title,
+                        description = v2.description,
+                        status      = v2.status,
+                        severity    = v2.severity,
+                        reporterPno = v2.reporterPno,
+                        createdAt   = v2.createdAt,
+                        updatedAt   = v2.updatedAt,
+                        mediaUrl    = v2.mediaUrl
+                    )
+                }
                 _state.update { current ->
                     current.copy(
-                        incidents = if (isRefresh) response.results else current.incidents + response.results,
+                        incidents = if (isRefresh) mapped else current.incidents + mapped,
                         isLoading = false,
                         isRefreshing = false,
                         page = current.page + 1,

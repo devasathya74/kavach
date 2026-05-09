@@ -92,10 +92,12 @@ class AutoUpdateManager @Inject constructor(
 
         // 1. Check for sufficient storage space
         val availableSpace = getAvailableStorage()
-        if (availableSpace < updateInfo.apkSize * 2) { 
-            Log.e("UpdateManager", "Storage full! Needed: ${updateInfo.apkSize * 2}, Available: $availableSpace")
-            _updateStatus.value = UpdateStatus.Error("स्टोरेज भर गया है। कृपया कम से कम ${updateInfo.apkSize / 1024 / 1024 * 2} MB खाली करें।")
-            reportEvent("storage_full", mapOf("needed" to updateInfo.apkSize, "available" to availableSpace))
+        val requiredSpace = (updateInfo.apkSize ?: 0L) * 2
+        if (availableSpace < requiredSpace) { 
+            Log.e("UpdateManager", "Storage full! Needed: $requiredSpace, Available: $availableSpace")
+            val mbNeeded = (updateInfo.apkSize ?: 0L) / 1024 / 1024 * 2
+            _updateStatus.value = UpdateStatus.Error("स्टोरेज भर गया है। कृपया कम से कम $mbNeeded MB खाली करें।")
+            reportEvent("storage_full", mapOf<String, Any>("needed" to requiredSpace, "available" to availableSpace))
             return
         }
 
@@ -103,10 +105,11 @@ class AutoUpdateManager @Inject constructor(
 
         val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         val base = BuildConfig.BASE_URL.removeSuffix("api/").removeSuffix("/")
-        val fullUrl = if (updateInfo.downloadUrl.startsWith("http")) {
-            updateInfo.downloadUrl
+        val dlUrl = updateInfo.downloadUrl ?: ""
+        val fullUrl = if (dlUrl.startsWith("http")) {
+            dlUrl
         } else {
-            "$base/${updateInfo.downloadUrl.removePrefix("/")}"
+            "$base/${dlUrl.removePrefix("/")}"
         }
         
         val uri = Uri.parse(fullUrl)
@@ -118,7 +121,7 @@ class AutoUpdateManager @Inject constructor(
             .addRequestHeader("X-Device-Id", DeviceIdUtil.getDeviceId(context)) // Hardened Binding
 
         val downloadId = downloadManager.enqueue(request)
-        reportEvent("download_started", mapOf("version" to updateInfo.versionCode, "size" to updateInfo.apkSize))
+        reportEvent("download_started", mapOf<String, Any>("version" to updateInfo.versionCode, "size" to (updateInfo.apkSize ?: 0L)))
 
         val onComplete = object : BroadcastReceiver() {
             override fun onReceive(ctxt: Context, intent: Intent) {
@@ -189,8 +192,8 @@ class AutoUpdateManager @Inject constructor(
             if (!actualHash.equals(info.apkHash, ignoreCase = true)) {
                 Log.e("UpdateManager", "HASH MISMATCH! Expected: ${info.apkHash}, Actual: $actualHash")
                 _updateStatus.value = UpdateStatus.Error("फाइल करप्ट हो गई है (Hash Mismatch)।")
-                reportEvent("integrity_fail", mapOf(
-                    "expected" to info.apkHash,
+                reportEvent("integrity_fail", mapOf<String, Any>(
+                    "expected" to (info.apkHash ?: ""),
                     "actual" to actualHash,
                     "version" to info.versionCode
                 ))

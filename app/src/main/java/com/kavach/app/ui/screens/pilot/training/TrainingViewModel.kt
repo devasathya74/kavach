@@ -37,7 +37,18 @@ class TrainingViewModel @Inject constructor(
             }
 
             try {
-                val results = api.getTrainingModules()
+                val results = api.getTrainingModules().map { dto ->
+                    TrainingModuleDto(
+                        id          = dto.id,
+                        title       = dto.title,
+                        description = dto.description ?: "",
+                        videoUrl    = dto.videoUrl,
+                        durationSec = dto.durationSec,
+                        isMandatory = false,
+                        isCompleted = dto.acknowledged,
+                        acknowledged = dto.acknowledged
+                    )
+                }
                 _state.update { it.copy(modules = results, isLoading = false, isRefreshing = false, error = null) }
             } catch (e: Exception) {
                 _state.update { it.copy(isLoading = false, isRefreshing = false, error = e.message) }

@@ -3,7 +3,7 @@ package com.kavach.app.ui.screens.pilot.data
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kavach.app.data.remote.api.KavachApiV2
-import com.kavach.app.data.remote.dto.system.FieldDataDto
+import com.kavach.app.data.remote.dto.v2.FieldDataDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

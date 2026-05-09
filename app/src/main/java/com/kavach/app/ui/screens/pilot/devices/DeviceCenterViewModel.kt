@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.kavach.app.utils.onSuccess
 import com.kavach.app.utils.onFailure
-import com.kavach.app.data.remote.dto.personnel.OfficerDeviceDto
+import com.kavach.app.data.remote.dto.v2.OfficerDeviceDto
 
 data class DeviceCenterState(
     val devices: List<OfficerDeviceDto> = emptyList(),

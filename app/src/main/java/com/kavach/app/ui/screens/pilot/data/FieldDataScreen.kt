@@ -18,7 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.kavach.app.data.remote.dto.system.FieldDataDto
+import com.kavach.app.data.remote.dto.v2.FieldDataDto
 import androidx.compose.ui.text.font.FontFamily
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -98,7 +98,7 @@ fun DataCard(doc: FieldDataDto) {
                 Spacer(Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(doc.title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.ExtraBold)
-                    Text("${(doc.sizeBytes / 1024)} KB • ${doc.uploaderName}", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
+                    Text("${doc.uploaderPno ?: "Unknown"} • ${doc.createdAt.take(10)}", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
                 }
                 Surface(color = categoryColor.copy(alpha = 0.1f), shape = RoundedCornerShape(6.dp)) {
                     Text(doc.category, modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp), fontSize = 10.sp, fontWeight = FontWeight.Bold, color = categoryColor)
@@ -106,7 +106,7 @@ fun DataCard(doc: FieldDataDto) {
             }
             
             Spacer(Modifier.height(12.dp))
-            Text("SHA256: ${doc.sha256.take(16)}...", style = MaterialTheme.typography.labelSmall, color = Color.Gray, fontFamily = FontFamily.Monospace)
+            Text("URL: ${doc.fileUrl?.take(40) ?: "N/A"}...", style = MaterialTheme.typography.labelSmall, color = Color.Gray, fontFamily = FontFamily.Monospace)
             
             Spacer(Modifier.height(16.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
