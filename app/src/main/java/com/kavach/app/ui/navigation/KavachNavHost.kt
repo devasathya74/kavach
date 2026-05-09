@@ -24,6 +24,7 @@ import androidx.navigation.navArgument
 import com.kavach.app.data.local.SessionDataStore
 import com.kavach.app.ui.screens.dashboard.DashboardScreen
 import com.kavach.app.ui.screens.dashboard.RestrictedDashboardScreen
+import com.kavach.app.ui.screens.dashboard.UnifiedDashboardScreen
 import com.kavach.app.ui.screens.login.ConsentScreen
 import com.kavach.app.ui.screens.login.LoginScreen
 import com.kavach.app.ui.screens.login.OtpVerifyScreen
@@ -34,8 +35,13 @@ import com.kavach.app.ui.screens.training.QuizResultScreen
 import com.kavach.app.ui.screens.training.QuizScreen
 import com.kavach.app.ui.screens.training.TrainingListScreen
 import com.kavach.app.ui.screens.training.VideoPlayerScreen
+import com.kavach.app.ui.screens.pilot.personnel.PersonnelListScreen
+import com.kavach.app.ui.screens.pilot.personnel.OfficerDetailScreen
+import com.kavach.app.ui.screens.pilot.approvals.ApprovalListScreen
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import com.kavach.app.util.ConnectionStatus
+import com.kavach.app.ui.components.ConnectivityBanner
 
 
 /**
@@ -61,13 +67,31 @@ fun KavachNavHost(
     val lifecycleOwner     = androidx.lifecycle.compose.LocalLifecycleOwner.current
     
     val consentAccepted    by sessionDataStore.consentAccepted.collectAsState(initial = false)
-    val role               by sessionDataStore.role.collectAsState(initial = "")
+    val permissionsHandled by sessionDataStore.permissionsHandled.collectAsState(initial = false)
+    val role               by sessionDataStore.role.collectAsState(initial = null)
     val token              by sessionDataStore.token.collectAsState(initial = null)
 
-    val isVerifiedInThisSession by viewModel.isVerifiedInThisSession.collectAsState()
+    var sessionReady by remember { androidx.compose.runtime.mutableStateOf(false) }
+
+    LaunchedEffect(token, role) {
+        sessionReady = true
+    }
+
+    val isVerifiedInThisSession by viewModel.isVerifiedInThisSession.collectAsState(initial = false)
     val isLimitedMode           by viewModel.isLimitedMode.collectAsState()
     val isRecovering            by viewModel.isRecovering.collectAsState()
     val recoveryError           by viewModel.error.collectAsState()
+    val connectionStatus        by viewModel.connectionStatus.collectAsState(initial = ConnectionStatus.AVAILABLE)
+
+    if (!sessionReady) {
+        androidx.compose.foundation.layout.Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            androidx.compose.material3.CircularProgressIndicator(color = com.kavach.app.ui.theme.GoldenYellow)
+        }
+        return
+    }
 
     // Lifecycle Authority Guard: Sync on Every Resume
     DisposableEffect(lifecycleOwner) {
@@ -84,41 +108,6 @@ fun KavachNavHost(
 
 
 
-    // Reactive Navigation Logic: 
-    // Redirect whenever a verified Role is detected
-    LaunchedEffect(role, isVerifiedInThisSession, isLimitedMode) {
-        val currentEntry = navController.currentBackStackEntry
-        if (currentEntry != null) {
-            
-            // SECURITY RULE: Never trust yesterday's truth.
-            // If not verified in this session AND NOT in limited mode, we wait.
-            // If in Limited Mode, we force the lowest privilege (Standard Dashboard).
-            val dest = if (isVerifiedInThisSession) {
-                when (role) {
-                    "ADMIN", "SUPERUSER" -> Screen.AdminDashboard.route
-                    "PILOT" -> Screen.PilotDashboard.route
-                    else -> Screen.Dashboard.route
-                }
-            } else if (isLimitedMode) {
-                Screen.Restricted.route
-            } else {
-                return@LaunchedEffect // Wait for verification or manual Limited Mode choice
-            }
-            
-            val currentRoute = currentEntry.destination.route
-            val isAtAuthScreen = currentRoute == null || 
-                                currentRoute == Screen.Login.route || 
-                                currentRoute == Screen.OtpVerify.route || 
-                                currentRoute == Screen.Consent.route
-
-            if (isAtAuthScreen && currentRoute != dest) {
-                navController.navigate(dest) {
-                    popUpTo(Screen.Login.route) { inclusive = true }
-                    launchSingleTop = true
-                }
-            }
-        }
-    }
 
     // Adaptive Resilience: Exponential Backoff Retry logic with Jitter
     // Capped to 4 attempts (approx 15-20s total) to preserve battery/backend load
@@ -139,25 +128,78 @@ fun KavachNavHost(
         }
     }
 
-    // Determine start destination (Initial App Boot)
-    val startDestination = if (!consentAccepted) Screen.Consent.route
-                          else if (token.isNullOrBlank()) Screen.Login.route
-                          else Screen.Dashboard.route 
+    val deviceSecret       by sessionDataStore.deviceSecret.collectAsState(initial = null)
+
+    val startDestination = when {
+        !consentAccepted -> Screen.Consent.route
+        !permissionsHandled -> Screen.PermissionGate.route
+        token.isNullOrBlank() || deviceSecret.isNullOrBlank() -> Screen.Login.route
+        role == "COMMANDING_OFFICER" -> Screen.AdminDashboard.route
+        role == "PILOT" -> Screen.PilotDashboard.route
+        role == "USER" -> Screen.Dashboard.route
+        else -> Screen.Login.route
+    }
+    
+    // ── Global Session Monitor ─────────────────────────────
+    // If token is cleared (e.g. by Authenticator on refresh failure), 
+    // force immediate redirect to Login.
+    LaunchedEffect(token) {
+        if (sessionReady && token.isNullOrBlank()) {
+            navController.navigate(Screen.Login.route) {
+                popUpTo(0) { inclusive = true }
+            }
+        }
+    }
+
+    if (!sessionReady) {
+        androidx.compose.foundation.layout.Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            androidx.compose.material3.CircularProgressIndicator(color = com.kavach.app.ui.theme.GoldenYellow)
+        }
+        return
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        NavHost(
-            navController    = navController,
-            startDestination = startDestination,
-            modifier = Modifier.pointerInput(Unit) {
-                // Any touch anywhere → ping session timeout timer
-                awaitPointerEventScope {
-                    while (true) {
-                        awaitPointerEvent()
-                        onUserInteraction()
+        Column {
+            ConnectivityBanner(status = connectionStatus)
+            NavHost(
+                navController    = navController,
+                startDestination = startDestination,
+                modifier = Modifier.pointerInput(Unit) {
+                    // Any touch anywhere → ping session timeout timer
+                    awaitPointerEventScope {
+                        while (true) {
+                            awaitPointerEvent()
+                            onUserInteraction()
+                        }
                     }
                 }
+            ) {
+                
+                /* ── Connectivity Diagnostic (Pilot Fast Fail) ── */
+            composable(Screen.ConnectivityTest.route) {
+                com.kavach.app.ui.screens.pilot.ConnectivityScreen(
+                    onSuccess = {
+                        val dest = if (!consentAccepted) {
+                            Screen.Consent.route
+                        } else if (token.isNullOrBlank()) {
+                            Screen.Login.route
+                        } else {
+                            when (role) {
+                                "COMMANDING_OFFICER" -> Screen.AdminDashboard.route
+                                "PILOT" -> Screen.PilotDashboard.route
+                                "USER" -> Screen.Dashboard.route
+                                else -> Screen.Login.route
+                            }
+                        }
+                        navController.navigate(dest) {
+                            popUpTo(Screen.ConnectivityTest.route) { inclusive = true }
+                        }
+                    }
+                )
             }
-        ) {
             // ... (rest of NavHost content)
             /* ── Consent (first launch) ── */
             composable(Screen.Consent.route) {
@@ -165,9 +207,28 @@ fun KavachNavHost(
                     onAccepted = {
                         scope.launch {
                             sessionDataStore.saveConsent()
-                            navController.navigate(Screen.Login.route) {
+                            navController.navigate(Screen.PermissionGate.route) {
                                 popUpTo(Screen.Consent.route) { inclusive = true }
                             }
+                        }
+                    }
+                )
+            }
+
+            /* ── Mission Readiness Gate (Permissions) ── */
+            composable(Screen.PermissionGate.route) {
+                com.kavach.app.ui.screens.permissions.PermissionGateScreen(
+                    onContinue = {
+                        val dest = if (token.isNullOrBlank()) Screen.Login.route else {
+                            when (role) {
+                                "COMMANDING_OFFICER" -> Screen.AdminDashboard.route
+                                "PILOT" -> Screen.PilotDashboard.route
+                                "USER" -> Screen.Dashboard.route
+                                else -> Screen.Login.route
+                            }
+                        }
+                        navController.navigate(dest) {
+                            popUpTo(Screen.PermissionGate.route) { inclusive = true }
                         }
                     }
                 )
@@ -179,7 +240,29 @@ fun KavachNavHost(
                     onLoginSuccess = { pno ->
                         navController.navigate(Screen.OtpVerify.createRoute(pno))
                     },
-                    onAdminLoggedIn = { /* LaunchedEffect will handle redirection */ }
+                    onAdminLoggedIn = {
+                        scope.launch {
+                            val currentRole = sessionDataStore.role.first()
+                            val dest = when (currentRole) {
+                                "COMMANDING_OFFICER" -> Screen.AdminDashboard.route
+                                "PILOT" -> Screen.PilotDashboard.route
+                                "USER" -> Screen.Dashboard.route
+                                else -> Screen.Login.route
+                            }
+                            navController.navigate(dest) {
+                                popUpTo(Screen.Login.route) { inclusive = true }
+                            }
+                        }
+                    },
+                    onDiagnosticsClick = {
+                        navController.navigate(Screen.PilotDiagnostics.route)
+                    }
+                )
+            }
+
+            composable(Screen.PilotDiagnostics.route) {
+                com.kavach.app.ui.screens.pilot.PilotDiagnosticsScreen(
+                    onClose = { navController.popBackStack() }
                 )
             }
 
@@ -188,7 +271,20 @@ fun KavachNavHost(
                 arguments = listOf(navArgument("pno") { type = NavType.StringType })
             ) {
                 OtpVerifyScreen(
-                    onVerified = { /* LaunchedEffect will handle redirection */ }
+                    onVerified = {
+                        scope.launch {
+                            val currentRole = sessionDataStore.role.first()
+                            val dest = when (currentRole) {
+                                "COMMANDING_OFFICER" -> Screen.AdminDashboard.route
+                                "PILOT" -> Screen.PilotDashboard.route
+                                "USER" -> Screen.Dashboard.route
+                                else -> Screen.Login.route
+                            }
+                            navController.navigate(dest) {
+                                popUpTo(Screen.OtpVerify.route) { inclusive = true }
+                            }
+                        }
+                    }
                 )
             }
 
@@ -205,39 +301,89 @@ fun KavachNavHost(
                 )
             }
 
-            /* ── Dashboard ── */
+            /* ── Unified Dashboard (Role-Based) ── */
             composable(Screen.Dashboard.route) {
-                DashboardScreen(
-                    onGoToLive     = { navController.navigate(Screen.LiveBroadcast.route) },
-                    onGoToOrders   = { navController.navigate(Screen.OrderList.route) },
-                    onGoToProfile  = { navController.navigate(Screen.Profile.route) }
+                UnifiedDashboardScreen(
+                    role = role ?: "USER",
+                    onNavigate = { route -> navController.navigate(route) }
+                )
+            }
+            
+            composable(Screen.AdminDashboard.route) {
+                UnifiedDashboardScreen(
+                    role = "COMMANDING_OFFICER",
+                    onNavigate = { route -> navController.navigate(route) }
+                )
+            }
+
+            composable(Screen.PilotDashboard.route) {
+                UnifiedDashboardScreen(
+                    role = "PILOT",
+                    onNavigate = { route -> navController.navigate(route) }
                 )
             }
 // ... rest of routes ...
 
-            /* ── Admin Dashboard ── */
-            composable(Screen.AdminDashboard.route) {
-                com.kavach.app.ui.screens.admin.AdminDashboardScreen(
-                    onLogout = {
-                        viewModel.logout()
-                        navController.navigate(Screen.Login.route) {
-                            popUpTo(Screen.Login.route) { inclusive = true }
-                        }
+
+
+            composable(Screen.UserManagement.route) {
+                PersonnelListScreen(
+                    onUserClick = { userId -> 
+                        navController.navigate(Screen.UserDetail.createRoute(userId))
                     }
                 )
             }
 
-            /* ── Pilot Dashboard ── */
-            composable(Screen.PilotDashboard.route) {
-                com.kavach.app.ui.screens.pilot.PilotDashboardScreen(
-                    onLogout = {
-                        viewModel.logout()
-                        navController.navigate(Screen.Login.route) {
-                            popUpTo(Screen.Login.route) { inclusive = true }
-                        }
-                    }
+            composable(
+                route = Screen.UserDetail.route,
+                arguments = listOf(navArgument("userId") { type = NavType.StringType })
+            ) {
+                OfficerDetailScreen(
+                    onBack = { navController.popBackStack() }
                 )
             }
+            composable(Screen.PendingApprovals.route) {
+                ApprovalListScreen(
+                    onBack = { navController.popBackStack() }
+                )
+            }
+            composable(Screen.IncidentCenter.route) {
+                com.kavach.app.ui.screens.pilot.incident.IncidentCenterScreen(
+                    onBack = { navController.popBackStack() }
+                )
+            }
+            composable(Screen.BroadcastInbox.route) {
+                com.kavach.app.ui.screens.broadcast.BroadcastInboxScreen(
+                    onBack = { navController.popBackStack() }
+                )
+            }
+            composable(Screen.BroadcastCenter.route) {
+                com.kavach.app.ui.screens.pilot.broadcast.BroadcastCenterScreen(
+                    onBack = { navController.popBackStack() },
+                    onCreateBroadcast = { navController.navigate(Screen.CreateBroadcast.route) }
+                )
+            }
+            composable(Screen.CreateBroadcast.route) {
+                com.kavach.app.ui.screens.broadcast.CreateBroadcastScreen(
+                    onBack = { navController.popBackStack() }
+                )
+            }
+            composable(Screen.DeviceMonitor.route) {
+                com.kavach.app.ui.screens.device.DeviceStatusScreen(
+                    onBack = { navController.popBackStack() }
+                )
+            }
+            composable(Screen.OtaUpdate.route) { 
+                com.kavach.app.ui.screens.ota.OtaUpdateScreen(
+                    onBack = { navController.popBackStack() }
+                )
+            }
+            composable(Screen.FieldData.route) { 
+                com.kavach.app.ui.screens.field.FieldDataScreen(
+                    onBack = { navController.popBackStack() }
+                )
+            }
+            composable(Screen.AuditCenter.route) { androidx.compose.material3.Text("Audit Center Screen Placeholder") }
 
             /* ── Live Broadcast ── */
             composable(Screen.LiveBroadcast.route) {
@@ -327,9 +473,10 @@ fun KavachNavHost(
                 )
             }
         }
+    }
 
-        // Loading Overlay for pending Role resolution
-        if (!token.isNullOrBlank() && role.isBlank()) {
+    // Loading Overlay for pending Role resolution
+        if (!token.isNullOrBlank() && role.isNullOrBlank()) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()

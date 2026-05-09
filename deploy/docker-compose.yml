@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=kavach
+      - POSTGRES_USER=kavach_user
+      - POSTGRES_PASSWORD=kavach_pass_secure # Change in production!
+
+  redis:
+    image: redis:7-alpine
+
+  backend:
+    build: 
+      context: ../backend
+      dockerfile: Dockerfile
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             gunicorn kavach_backend.wsgi:application --bind 0.0.0.0:8000 --workers 3"
+    volumes:
+      - ../backend:/app
+      - static_volume:/app/static
+      - media_volume:/app/media
+    environment:
+      - DATABASE_URL=postgres://kavach_user:kavach_pass_secure@db:5432/kavach
+      - REDIS_URL=redis://redis:6379/0
+      - DJANGO_SETTINGS_MODULE=kavach_backend.settings
+      - DEBUG=False
+    depends_on:
+      - db
+      - redis
+
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - static_volume:/app/static
+      - media_volume:/app/media
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:

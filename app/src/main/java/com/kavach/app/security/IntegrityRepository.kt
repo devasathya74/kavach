@@ -2,9 +2,10 @@ package com.kavach.app.security
 
 import android.content.Context
 import com.kavach.app.data.remote.api.KavachApiService
-import com.kavach.app.data.remote.dto.IntegrityVerdict
-import com.kavach.app.data.remote.dto.IntegrityVerifyRequest
+import com.kavach.app.data.remote.dto.auth.IntegrityVerdict
+import com.kavach.app.data.remote.dto.auth.IntegrityVerifyRequest
 import com.kavach.app.utils.DeviceIdUtil
+import timber.log.Timber
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -60,23 +61,29 @@ class IntegrityRepository @Inject constructor(
      */
     suspend fun attest(): AttestationResult {
         return try {
+            Timber.d("Starting integrity attestation cycle...")
+            
             // Step 1: Get a server-bound nonce
             val nonceResp = api.getIntegrityNonce()
-            if (!nonceResp.isSuccessful || nonceResp.body()?.data == null) {
+            val nonceData = nonceResp.body()?.data
+            if (!nonceResp.isSuccessful || nonceData == null) {
+                Timber.e("Integrity Error: Nonce fetch failed [${nonceResp.code()}]")
                 return AttestationResult.Failed(
                     "Nonce fetch failed [${nonceResp.code()}] — cannot proceed"
                 )
             }
-            val nonceData = nonceResp.body()!!.data!!
+            Timber.d("Attestation: Nonce received.")
 
             // Step 2: Request Google Play integrity token
             val integrityResult = integrityManager.requestIntegrityToken(nonceData.nonce)
             if (integrityResult is IntegrityResult.Error) {
+                Timber.e("Integrity Error: Google Play token request failed: ${integrityResult.reason}")
                 return AttestationResult.Failed(integrityResult.reason)
             }
             val token = (integrityResult as IntegrityResult.Success).token
+            Timber.d("Attestation: Token generated.")
 
-            // Step 3: Backend verifies with Google, returns rich verdict (FIX 1)
+            // Step 3: Backend verifies with Google
             val deviceId   = DeviceIdUtil.getDeviceId(context)
             val verifyResp = api.verifyIntegrityToken(
                 IntegrityVerifyRequest(
@@ -86,15 +93,16 @@ class IntegrityRepository @Inject constructor(
                 )
             )
 
-            if (!verifyResp.isSuccessful || verifyResp.body()?.data == null) {
+            val verdict = verifyResp.body()?.data
+            if (!verifyResp.isSuccessful || verdict == null) {
+                Timber.e("Integrity Error: Backend verification failed [${verifyResp.code()}]")
                 return AttestationResult.Failed(
                     "Backend verification failed [${verifyResp.code()}]"
                 )
             }
 
-            val verdict = verifyResp.body()!!.data!!
+            Timber.d("Attestation Result: ${verdict.integrityLevel} (Blocked=${verdict.blocked}, Restricted=${verdict.restricted})")
 
-            // FIX 1: Decision based on rich verdict — not a boolean
             when {
                 verdict.blocked -> AttestationResult.Failed(
                     verdict.message ?: "Device blocked by integrity policy"
@@ -107,6 +115,7 @@ class IntegrityRepository @Inject constructor(
             }
 
         } catch (e: Exception) {
+            Timber.w(e, "Attestation Degraded: Network or API failure")
             AttestationResult.Degraded("Network unavailable: ${e.message}")
         }
     }

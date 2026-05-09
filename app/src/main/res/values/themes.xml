@@ -1,5 +1,8 @@
 <resources>
-    <style name="Theme.Kavach" parent="Theme.Material3.DayNight.NoActionBar" />
+    <style name="Theme.Kavach" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
     <style name="Theme.Kavach.SplashScreen" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/splash_bg</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_kavach_shield</item>

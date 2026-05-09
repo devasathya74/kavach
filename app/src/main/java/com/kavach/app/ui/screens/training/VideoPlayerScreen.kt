@@ -26,6 +26,9 @@ import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.kavach.app.ui.components.WatermarkOverlay
 import com.kavach.app.ui.theme.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import kotlinx.coroutines.delay
 
 /**
@@ -112,8 +115,32 @@ fun VideoPlayerScreen(
         isPlaying = true
     }
 
-    DisposableEffect(Unit) {
-        onDispose { exoPlayer.release() }
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_PAUSE -> {
+                    exoPlayer.pause()
+                    isPlaying = false
+                }
+                Lifecycle.Event.ON_RESUME -> {
+                    // Only resume if it was already playing
+                    // but we forced it to stop on completion or error
+                    // so better to let the user play manually if needed, 
+                    // or just auto-play if the state was PLAYING
+                    if (state.training != null) {
+                        exoPlayer.play()
+                        isPlaying = true
+                    }
+                }
+                else -> {}
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+            exoPlayer.release()
+        }
     }
 
     Scaffold(

@@ -4,6 +4,8 @@ import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.kavach.app.utils.KavachSyncWorker
+import com.kavach.app.data.remote.worker.PersonnelSyncWorker
+import timber.log.Timber
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
@@ -15,9 +17,15 @@ class KavachApp : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
 
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
+
         // Schedule unified background sync (acks + behavior events)
-        // Uses ExistingPeriodicWorkPolicy.KEEP → safe to call on every launch
         KavachSyncWorker.schedule(this)
+        
+        // Schedule personnel cache warming
+        PersonnelSyncWorker.schedule(this)
     }
 
     // ── WorkManager + Hilt integration ────────────────────

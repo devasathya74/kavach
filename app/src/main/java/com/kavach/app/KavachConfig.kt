@@ -12,6 +12,12 @@ package com.kavach.app
  * ╚══════════════════════════════════════════════════════════════╝
  */
 object KavachConfig {
+    /**
+     * Pilot Mode — Production-ready backend but relaxed client-side enforcement
+     * for early phase monitoring and debugging.
+     */
+    const val PILOT_MODE = true
+
 
 
     // ══════════════════════════════════════════════════════════════
@@ -31,7 +37,7 @@ object KavachConfig {
     /**
      * आपके backend server का URL।
      */
-    const val BASE_URL = "https://kavach-api-prod.yourforce.in/api/v1/"
+    const val BASE_URL = "https://api.pmsraebareli.online/"
 
     /**
      * Debug/Development के लिए local server URL।
@@ -73,7 +79,7 @@ object KavachConfig {
      *
      * ✏️ EDIT THIS:
      */
-    const val PINNED_DOMAIN = "kavach-api-prod.yourforce.in"
+    const val PINNED_DOMAIN = "api.pmsraebareli.online"
 
 
     // ══════════════════════════════════════════════════════════════

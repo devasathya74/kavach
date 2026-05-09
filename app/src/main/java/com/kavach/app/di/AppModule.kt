@@ -8,6 +8,7 @@ import com.kavach.app.data.local.dao.*
 import com.kavach.app.data.local.db.KavachDatabase
 import com.kavach.app.data.remote.api.AuthRefreshApiService
 import com.kavach.app.data.remote.api.KavachApiService
+import com.kavach.app.data.remote.api.KavachApiV2
 import com.kavach.app.data.remote.api.TokenAuthenticator
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -77,23 +78,20 @@ object AppModule {
         sessionDataStore   : SessionDataStore,
         tokenAuthenticator : TokenAuthenticator
     ): OkHttpClient {
-        // Risk 7 FIX: Hardened certificate pinning
-        //   - Primary pin: current certificate
-        //   - Backup pin: next certificate (for rotation without downtime)
-        //   - Applied to both authed AND plain clients (below)
-        //
-        // Generate pins: openssl s_client -connect your-domain.com:443 | openssl x509 -pubkey -noout |
-        //               openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | base64
-        val certificatePinner = okhttp3.CertificatePinner.Builder()
-            .add(
-                com.kavach.app.KavachConfig.PINNED_DOMAIN,
-                com.kavach.app.KavachConfig.SSL_PIN_PRIMARY   // Current certificate SHA-256
-            )
-            .add(
-                com.kavach.app.KavachConfig.PINNED_DOMAIN,
-                com.kavach.app.KavachConfig.SSL_PIN_BACKUP    // Backup pin for rotation
-            )
-            .build()
+        // Risk 7 FIX: Hardened certificate pinning (with Pilot Bypass for placeholder)
+        val certificatePinner = okhttp3.CertificatePinner.Builder().apply {
+            if (!com.kavach.app.KavachConfig.PILOT_MODE) {
+                val primary = com.kavach.app.KavachConfig.SSL_PIN_PRIMARY
+                val backup  = com.kavach.app.KavachConfig.SSL_PIN_BACKUP
+                
+                if (!primary.contains("REPLACE_WITH_YOUR_PRIMARY_CERT_HASH")) {
+                    add(com.kavach.app.KavachConfig.PINNED_DOMAIN, primary)
+                }
+                if (!backup.contains("REPLACE_WITH_YOUR_BACKUP_CERT_HASH")) {
+                    add(com.kavach.app.KavachConfig.PINNED_DOMAIN, backup)
+                }
+            }
+        }.build()
 
         // Risk 7 FIX: Restrict to TLS 1.2+ and strong cipher suites only
         // Prevents downgrade attacks where attacker forces TLS 1.0/1.1 connection
@@ -117,23 +115,30 @@ object AppModule {
             
             // Fail-Secure Logic:
             // 1. Define exact auth bypass paths (ONLY absolute minimum)
-            val isAuthRoute = urlPath == "/api/v1/login/" || 
-                             urlPath == "/api/v1/verify-otp/" || 
+            val isAuthRoute = urlPath == "/api/v1/login/" ||
+                             urlPath == "/api/v1/verify-otp/" ||
                              urlPath == "/api/v1/otp/"
-            
-            val isProfileSync = urlPath == "/api/v1/profile/"
 
-            // 2. Fetch session states
-            val deviceSecret = runBlocking { sessionDataStore.deviceSecret.first() }
-            val isVerified   = runBlocking { sessionDataStore.isVerifiedInThisSession.first() }
+            // OTA / startup endpoints — AllowAny on backend, must also bypass here
+            val isStartupRoute = urlPath == "/api/v1/app-version/" ||
+                                 urlPath == "/api/v1/app-update/log/" ||
+                                 urlPath.startsWith("/api/v1/health")
 
-            // 3. Evaluation
-            if (isAuthRoute) {
+            val isProfileSync = urlPath == "/api/v1/profile/" || urlPath == "/api/v2/profile/"
+            val isV2Path      = urlPath.startsWith("/api/v2/")
+
+            // 3. Early exit — no session reads needed for these routes
+            if (isAuthRoute || isStartupRoute) {
                 return@Interceptor chain.proceed(request)
             }
 
+            // 2. Fetch session states (only for routes that need auth)
+            val deviceSecret = runBlocking { sessionDataStore.deviceSecret.first() }
+            val isVerified   = runBlocking { sessionDataStore.isVerifiedInThisSession.first() }
+
             // CRITICAL: Block all non-essential traffic if not verified in THIS session
             // This prevents "Yesterday's Truth" from making API calls.
+            // isStartupRoute already returned early above — this guard is for remaining routes.
             if (!isVerified && !isProfileSync) {
                 return@Interceptor okhttp3.Response.Builder()
                     .request(request)
@@ -174,6 +179,15 @@ object AppModule {
                 .addHeader("X-Kavach-Signature", signature)
                 // FIX 7: Build type header — production backend rejects debug builds
                 .addHeader("X-Build-Type", com.kavach.app.BuildConfig.BUILD_TYPE)
+                .addHeader("X-App-Version", com.kavach.app.BuildConfig.VERSION_NAME)
+                .addHeader("X-Device-Manufacturer", android.os.Build.MANUFACTURER)
+                .addHeader("X-Device-Model", android.os.Build.MODEL)
+                .addHeader("X-Android-Version", android.os.Build.VERSION.SDK_INT.toString())
+                
+            // ADDED: Explicit Secret Header for diagnostic tracking
+            deviceSecret?.takeIf { it.isNotBlank() }?.let {
+                requestBuilder.addHeader("X-Device-Secret", it)
+            }
 
             // Integrity headers — backend uses to enforce trust window
             val integrityLevel = runBlocking { sessionDataStore.integrityLevel.first() }
@@ -203,8 +217,9 @@ object AppModule {
                     )
                 }
             }
-            .connectTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
             .build()
     }
 
@@ -221,11 +236,20 @@ object AppModule {
     fun providePlainOkHttpClient(
         @Named("signature") sigInterceptor: Interceptor
     ): OkHttpClient {
-        // Reuse the same pinning config as the authed client
-        val refreshPinner = okhttp3.CertificatePinner.Builder()
-            .add(com.kavach.app.KavachConfig.PINNED_DOMAIN, com.kavach.app.KavachConfig.SSL_PIN_PRIMARY)
-            .add(com.kavach.app.KavachConfig.PINNED_DOMAIN, com.kavach.app.KavachConfig.SSL_PIN_BACKUP)
-            .build()
+        // Reuse the same pinning config as the authed client (with Pilot Bypass)
+        val refreshPinner = okhttp3.CertificatePinner.Builder().apply {
+            if (!com.kavach.app.KavachConfig.PILOT_MODE) {
+                val primary = com.kavach.app.KavachConfig.SSL_PIN_PRIMARY
+                val backup  = com.kavach.app.KavachConfig.SSL_PIN_BACKUP
+                
+                if (!primary.contains("REPLACE_WITH_YOUR_PRIMARY_CERT_HASH")) {
+                    add(com.kavach.app.KavachConfig.PINNED_DOMAIN, primary)
+                }
+                if (!backup.contains("REPLACE_WITH_YOUR_BACKUP_CERT_HASH")) {
+                    add(com.kavach.app.KavachConfig.PINNED_DOMAIN, backup)
+                }
+            }
+        }.build()
 
         val refreshTlsSpec = okhttp3.ConnectionSpec.Builder(okhttp3.ConnectionSpec.MODERN_TLS)
             .tlsVersions(okhttp3.TlsVersion.TLS_1_3, okhttp3.TlsVersion.TLS_1_2)
@@ -236,7 +260,8 @@ object AppModule {
             .certificatePinner(refreshPinner)
             .connectionSpecs(listOf(refreshTlsSpec))
             .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
             .build()
     }
 
@@ -264,6 +289,11 @@ object AppModule {
             .addHeader("X-Nonce", nonce)
             .addHeader("X-Device-Id", com.kavach.app.utils.DeviceIdUtil.getDeviceId(context))
             .addHeader("X-Kavach-Signature", signature)
+            .addHeader("X-Build-Type", com.kavach.app.BuildConfig.BUILD_TYPE)
+            .addHeader("X-App-Version", com.kavach.app.BuildConfig.VERSION_NAME)
+            .addHeader("X-Device-Manufacturer", android.os.Build.MANUFACTURER)
+            .addHeader("X-Device-Model", android.os.Build.MODEL)
+            .addHeader("X-Android-Version", android.os.Build.VERSION.SDK_INT.toString())
 
         chain.proceed(requestBuilder.build())
     }
@@ -283,6 +313,11 @@ object AppModule {
     @Singleton
     fun provideApiService(retrofit: Retrofit): KavachApiService =
         retrofit.create(KavachApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideApiV2Service(retrofit: Retrofit): KavachApiV2 =
+        retrofit.create(KavachApiV2::class.java)
 
     // ── Retrofit (plain — for token refresh) ─────────────
 
@@ -308,7 +343,7 @@ object AppModule {
             context,
             KavachDatabase::class.java,
             "kavach.db"
-        ).fallbackToDestructiveMigration().build()
+        ).build()
 
     @Provides fun provideTrainingDao(db: KavachDatabase): TrainingDao             = db.trainingDao()
     @Provides fun provideQuizDao(db: KavachDatabase): QuizDao                     = db.quizDao()
@@ -316,4 +351,5 @@ object AppModule {
     @Provides fun providePendingAckDao(db: KavachDatabase): PendingAckDao         = db.pendingAckDao()
     @Provides fun provideBehaviorEventDao(db: KavachDatabase): BehaviorEventDao   = db.behaviorEventDao()
     @Provides fun provideNavigationDao(db: KavachDatabase): NavigationDao         = db.navigationDao()
+    @Provides fun provideOfficerDao(db: KavachDatabase): OfficerDao               = db.officerDao()
 }

@@ -3,8 +3,8 @@ package com.kavach.app.utils
 import com.kavach.app.data.local.dao.BehaviorEventDao
 import com.kavach.app.data.local.entity.BehaviorEventEntity
 import com.kavach.app.data.remote.api.KavachApiService
-import com.kavach.app.data.remote.dto.BehaviorBatchRequest
-import com.kavach.app.data.remote.dto.BehaviorEventDto
+import com.kavach.app.data.remote.dto.system.BehaviorBatchRequest
+import com.kavach.app.data.remote.dto.system.BehaviorEventDto
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -127,9 +127,9 @@ class BehaviorTracker @Inject constructor(
      * Upload buffered events to server in one batch.
      * Called by WorkManager — safe to call frequently, server deduplicates.
      */
-    suspend fun syncToServer(): Resource<Unit> = safeCall {
+    suspend fun syncToServer(): ApiResult<Unit> = safeApiCall {
         val events = behaviorEventDao.getAll()
-        if (events.isEmpty()) return@safeCall Resource.Success(Unit)
+        if (events.isEmpty()) return@safeApiCall ApiResult.Success(Unit)
 
         val dtos = events.map { entity ->
             BehaviorEventDto(
@@ -149,9 +149,9 @@ class BehaviorTracker @Inject constructor(
         val resp = api.sendBehaviorEvents(BehaviorBatchRequest(events = dtos))
         if (resp.isSuccessful) {
             behaviorEventDao.deleteByIds(events.map { it.id })
-            Resource.Success(Unit)
+            ApiResult.Success(Unit)
         } else {
-            Resource.Error("Behavior sync failed: ${resp.code()}")
+            ApiResult.Error("Behavior sync failed: ${resp.code()}")
         }
     }
 }

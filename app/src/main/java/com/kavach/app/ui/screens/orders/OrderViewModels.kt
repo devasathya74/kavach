@@ -3,9 +3,9 @@ package com.kavach.app.ui.screens.orders
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kavach.app.data.remote.repository.OrderRepository
+import com.kavach.app.data.repository.OrderRepository
 import com.kavach.app.domain.model.Order
-import com.kavach.app.utils.Resource
+import com.kavach.app.utils.ApiResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -64,12 +64,12 @@ class OrderDetailViewModel @Inject constructor(
         val pno = sessionDataStore.pno.firstOrNull() ?: "UNKNOWN"
         _uiState.value = OrderDetailUiState(isLoading = true, viewerPno = pno)
         when (val result = repository.getOrderById(orderId)) {
-            is Resource.Success -> _uiState.value = OrderDetailUiState(
+            is ApiResult.Success -> _uiState.value = OrderDetailUiState(
                 order = result.data, isLoading = false,
                 acknowledged = result.data.isAcknowledged,
                 viewerPno = pno
             )
-            is Resource.Error   -> _uiState.value = OrderDetailUiState(isLoading = false, error = result.message)
+            is ApiResult.Error   -> _uiState.value = OrderDetailUiState(isLoading = false, error = result.message)
             else -> {}
         }
     }
@@ -77,10 +77,10 @@ class OrderDetailViewModel @Inject constructor(
     fun acknowledgeOrder(readDuration: Long) = viewModelScope.launch {
         _uiState.value = _uiState.value.copy(isAcknowledging = true)
         when (repository.acknowledgeOrder(orderId, readDuration)) {
-            is Resource.Success -> _uiState.value = _uiState.value.copy(
+            is ApiResult.Success -> _uiState.value = _uiState.value.copy(
                 isAcknowledging = false, acknowledged = true
             )
-            is Resource.Error   -> _uiState.value = _uiState.value.copy(
+            is ApiResult.Error   -> _uiState.value = _uiState.value.copy(
                 isAcknowledging = false, error = "Acknowledgment failed"
             )
             else -> {}

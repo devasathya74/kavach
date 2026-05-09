@@ -35,7 +35,9 @@ data class OrderEntity(
     val issuedBy       : String,
     val createdAt      : Long,
     val isMandatory    : Boolean,
-    val isAcknowledged : Boolean
+    val isAcknowledged : Boolean,
+    val priority       : String = "NORMAL",
+    val deadline       : String? = null
 )
 
 @Entity(tableName = "pending_ack_queue")

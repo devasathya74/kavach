@@ -1,102 +1,118 @@
 package com.kavach.app.data.remote.api
 
-import com.kavach.app.data.remote.dto.*
+import com.kavach.app.data.remote.dto.orders.*
+import com.kavach.app.data.remote.dto.auth.*
+import com.kavach.app.data.remote.dto.common.*
+import com.kavach.app.data.remote.dto.incident.*
+import com.kavach.app.data.remote.dto.system.*
+import com.kavach.app.data.remote.dto.training.*
+import com.kavach.app.data.remote.dto.personnel.*
+import com.kavach.app.data.remote.dto.broadcast.*
 import retrofit2.Response
 import retrofit2.http.*
 
 interface KavachApiService {
 
-    @POST("login/")
+    @POST("api/v1/login/")
     suspend fun login(@Body body: LoginRequest): Response<ApiResponse<Unit>>
 
-    @POST("login/")
+    @POST("api/v1/login/")
     suspend fun adminLogin(@Body body: AdminLoginRequest): Response<AuthResponse>
 
-    @POST("verify-otp/")
+    @POST("api/v1/verify-otp/")
     suspend fun verifyOtp(@Body body: OtpRequest): Response<AuthResponse>
 
-    @GET("profile/")
+    @GET("api/v1/profile/")
     suspend fun getProfile(): Response<ApiResponse<UserDto>>
 
-    @GET("trainings/")
+    @GET("api/v1/trainings/")
     suspend fun getTrainings(): Response<ApiResponse<List<TrainingDto>>>
 
-    @GET("trainings/{id}/")
+    @GET("api/v1/trainings/{id}/")
     suspend fun getTrainingById(@Path("id") id: Int): Response<ApiResponse<TrainingDto>>
 
-    @POST("training/start/")
+    @POST("api/v1/training/start/")
     suspend fun startTraining(@Body body: Map<String, Int>): Response<ApiResponse<Unit>>
 
-    @POST("training/complete/")
+    @POST("api/v1/training/complete/")
     suspend fun completeTraining(@Body body: Map<String, Int>): Response<ApiResponse<Unit>>
 
-    @GET("quiz/{trainingId}/")
+    @GET("api/v1/quiz/{trainingId}/")
     suspend fun getQuizQuestions(@Path("trainingId") trainingId: Int): Response<ApiResponse<List<QuizQuestionDto>>>
 
-    @POST("quiz/submit/")
+    @POST("api/v1/quiz/submit/")
     suspend fun submitQuiz(@Body body: QuizSubmitRequest): Response<ApiResponse<QuizResultDto>>
 
-    @GET("orders/")
+    @GET("api/v1/orders/")
     suspend fun getOrders(): Response<ApiResponse<List<OrderDto>>>
 
-    @GET("orders/{id}/")
+    @GET("api/v1/orders/{id}/")
     suspend fun getOrderById(@Path("id") id: String): Response<ApiResponse<OrderDto>>
 
-    @POST("orders/acknowledge/")
+    @POST("api/v1/orders/acknowledge/")
     suspend fun acknowledgeOrder(@Body body: AcknowledgeRequest): Response<ApiResponse<Unit>>
 
-    @POST("behavior/events/")
+    @POST("api/v1/behavior/events/")
     suspend fun sendBehaviorEvents(@Body body: BehaviorBatchRequest): Response<ApiResponse<Unit>>
 
-    @POST("behavior/score/")
+    @POST("api/v1/behavior/score/")
     suspend fun getUserScore(): Response<ApiResponse<UserScoreDto>>
 
-    @POST("training/heartbeat/")
+    @POST("api/v1/training/heartbeat/")
     suspend fun sendHeartbeat(@Body body: HeartbeatRequest): Response<ApiResponse<Unit>>
 
-    @POST("consent/")
+    @POST("api/v1/consent/")
     suspend fun recordConsent(@Body body: ConsentRequest): Response<ApiResponse<Unit>>
 
-    @POST("device/change-request/")
+    @GET("api/v1/health")
+    suspend fun checkApiHealth(): Response<Map<String, String>>
+
+    @GET("api/v1/health/db")
+    suspend fun checkDbHealth(): Response<Map<String, String>>
+
+    @GET("api/v1/health/cache")
+    suspend fun checkCacheHealth(): Response<Map<String, String>>
+
+    @POST("api/v1/device/change-request/")
     suspend fun requestDeviceChange(@Body body: DeviceChangeRequest): Response<ApiResponse<DeviceChangeResponse>>
 
-    @GET("device/change-request/status/")
+    @GET("api/v1/device/change-request/status/")
     suspend fun getDeviceChangeStatus(): Response<ApiResponse<DeviceChangeResponse>>
 
-    @POST("quiz/submit/v2/")
+    @POST("api/v1/quiz/submit/v2/")
     suspend fun submitQuizV2(@Body body: QuizSubmitRequestV2): Response<ApiResponse<QuizResultDto>>
 
-    @GET("admin/users/")
+    @GET("api/v1/admin/users/")
     suspend fun getAdminUsers(): Response<ApiResponse<List<AdminOfficerDto>>>
 
-    @POST("admin/user/action/")
+    @POST("api/v1/admin/user/action/")
     suspend fun performAdminAction(@Body body: AdminUserActionDto): Response<ApiResponse<Unit>>
 
-    @GET("admin/suspicious/")
+    @GET("api/v1/admin/suspicious/")
     suspend fun getSuspiciousUsers(): Response<ApiResponse<List<SuspiciousSessionDto>>>
 
-    @GET("app-version/")
-    suspend fun checkAppVersion(): Response<UpdateInfoDto>
+    @GET("api/v1/app-version/")
+    suspend fun checkAppVersion(@Query("version_code") versionCode: Int): Response<UpdateInfoDto>
 
-    @POST("app-update/log/")
+    @POST("api/v1/app-update/log/")
     suspend fun logUpdateEvent(@Body body: Map<String, @JvmSuppressWildcards Any>): Response<ApiResponse<Unit>>
 
-    @POST("auth/register-fcm/")
+    @POST("api/v1/auth/register-fcm/")
     suspend fun registerFcmToken(@Body body: Map<String, String>): Response<ApiResponse<Unit>>
 
-    @POST("auth/notification-ack/")
+    @POST("api/v1/auth/notification-ack/")
     suspend fun sendNotificationAck(@Body body: Map<String, String>): Response<ApiResponse<Unit>>
     
-    @GET("admin/live-feed/")
+    @GET("api/v1/admin/live-feed/")
     suspend fun getLiveFeed(): Response<ApiResponse<List<LiveFeedEventDto>>>
 
-    @GET("admin/analytics/")
+    @GET("api/v1/admin/analytics/")
     suspend fun getAnalytics(): Response<ApiResponse<SystemAnalyticsDto>>
 
-    @GET("admin/config/")
+    @GET("api/v1/admin/config/")
     suspend fun getRemoteConfig(): Response<ApiResponse<Map<String, Any>>>
 
-    @POST("admin/config/")
+    @POST("api/v1/admin/config/")
     suspend fun updateRemoteConfig(@Body body: Map<String, @JvmSuppressWildcards Any>): Response<ApiResponse<Unit>>
 
 
@@ -107,7 +123,7 @@ interface KavachApiService {
      * Backend generates: sha256(userId + deviceId + uuid + timestamp)
      * This nonce is single-use — backend marks it consumed after use.
      */
-    @POST("auth/integrity/nonce/")
+    @POST("api/v1/auth/integrity/nonce/")
     suspend fun getIntegrityNonce(): Response<ApiResponse<IntegrityNonceResponse>>
 
     /**
@@ -115,6 +131,6 @@ interface KavachApiService {
      * Client NEVER decodes this token.
      * Backend calls: https://playintegrity.googleapis.com/v1/{package}:decodeIntegrityToken
      */
-    @POST("auth/integrity/verify/")
+    @POST("api/v1/auth/integrity/verify/")
     suspend fun verifyIntegrityToken(@Body body: IntegrityVerifyRequest): Response<ApiResponse<IntegrityVerdict>>
 }

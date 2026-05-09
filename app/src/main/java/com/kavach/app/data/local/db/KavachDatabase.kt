@@ -12,8 +12,8 @@ import com.kavach.app.data.local.entity.*
  *  v1 — Initial schema (Training, Quiz, Orders, PendingAck)
  *  v2 — PendingAckEntity gains idempotencyKey; BehaviorEventEntity added
  *
- * Note: fallbackToDestructiveMigration() is acceptable for MVP.
- * Replace with proper Migration objects before production release.
+ * Note: Manual migrations are MANDATORY for production stability.
+ * Destruction of local data (fallbackToDestructiveMigration) is strictly PROHIBITED.
  */
 @Database(
     entities = [
@@ -22,9 +22,16 @@ import com.kavach.app.data.local.entity.*
         OrderEntity::class,
         PendingAckEntity::class,
         BehaviorEventEntity::class,
-        PendingNavigationEntity::class
+        PendingNavigationEntity::class,
+        OfficerCacheEntity::class,
+        OfficerProfileCacheEntity::class,
+        OfficerDeviceCacheEntity::class,
+        ProcessedEventEntity::class,
+        NotificationAckEntity::class,
+        IncidentDraftEntity::class,
+        EvidenceUploadEntity::class
     ],
-    version = 3,
+    version = 8,
     exportSchema = false
 )
 abstract class KavachDatabase : RoomDatabase() {
@@ -34,4 +41,6 @@ abstract class KavachDatabase : RoomDatabase() {
     abstract fun pendingAckDao()   : PendingAckDao
     abstract fun behaviorEventDao(): BehaviorEventDao
     abstract fun navigationDao()   : NavigationDao
+    abstract fun officerDao()      : OfficerDao
+    abstract fun incidentDao()     : IncidentDao
 }

@@ -44,6 +44,8 @@ class SessionDataStore @Inject constructor(
         private val KEY_CONSENT_ACCEPTED  = androidx.datastore.preferences.core.booleanPreferencesKey("consent_accepted")
         private val KEY_CONSENT_TIMESTAMP = longPreferencesKey("consent_timestamp_ms")
         private val KEY_PENDING_FORCE_UPDATE = androidx.datastore.preferences.core.booleanPreferencesKey("pending_force_update")
+        private val KEY_SCHEMA_VERSION = androidx.datastore.preferences.core.intPreferencesKey("db_schema_version")
+        private val KEY_PERMISSIONS_HANDLED = androidx.datastore.preferences.core.booleanPreferencesKey("permissions_handled")
     }
 
     // Transient State (In-memory only, reset on every app launch)
@@ -71,6 +73,7 @@ class SessionDataStore @Inject constructor(
     val consentAccepted  : Flow<Boolean>  = context.dataStore.data.map { it[KEY_CONSENT_ACCEPTED] ?: false }
     val consentTimestamp : Flow<Long?>    = context.dataStore.data.map { it[KEY_CONSENT_TIMESTAMP] }
     val pendingForceUpdate: Flow<Boolean> = context.dataStore.data.map { it[KEY_PENDING_FORCE_UPDATE] ?: false }
+    val schemaVersion    : Flow<Int>      = context.dataStore.data.map { it[KEY_SCHEMA_VERSION] ?: 1 }
 
     /**
      * Last known integrity level from Play Integrity API.
@@ -157,7 +160,31 @@ class SessionDataStore @Inject constructor(
         context.dataStore.edit { it[KEY_PENDING_FORCE_UPDATE] = pending }
     }
 
+    suspend fun saveSchemaVersion(version: Int) {
+        context.dataStore.edit { it[KEY_SCHEMA_VERSION] = version }
+    }
+
+    val permissionsHandled: Flow<Boolean> = context.dataStore.data.map { it[KEY_PERMISSIONS_HANDLED] ?: false }
+
+    suspend fun savePermissionsHandled() {
+        context.dataStore.edit { it[KEY_PERMISSIONS_HANDLED] = true }
+    }
+
     suspend fun clearSession() {
-        context.dataStore.edit { it.clear() }
+        context.dataStore.edit { prefs ->
+            prefs.remove(KEY_TOKEN)
+            prefs.remove(KEY_REFRESH_TOKEN)
+            prefs.remove(KEY_TOKEN_EXPIRY)
+            prefs.remove(KEY_PNO)
+            prefs.remove(KEY_USER_NAME)
+            prefs.remove(KEY_RANK)
+            prefs.remove(KEY_UNIT)
+            prefs.remove(KEY_ROLE)
+            prefs.remove(KEY_INTEGRITY_LEVEL)
+            prefs.remove(KEY_LAST_ATTESTED_AT)
+            // Note: We deliberately KEEP KEY_CONSENT_ACCEPTED and KEY_DEVICE_ID
+            // to maintain legal compliance and device-binding integrity.
+        }
+        markAsUnverified()
     }
 }

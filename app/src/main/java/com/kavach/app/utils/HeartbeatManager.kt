@@ -1,7 +1,7 @@
 package com.kavach.app.utils
 
 import com.kavach.app.data.remote.api.KavachApiService
-import com.kavach.app.data.remote.dto.HeartbeatRequest
+import com.kavach.app.data.remote.dto.training.HeartbeatRequest
 import kotlinx.coroutines.*
 import javax.inject.Inject
 import javax.inject.Singleton

@@ -8,6 +8,7 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import timber.log.Timber
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.kavach.app.MainActivity
@@ -24,7 +25,7 @@ import com.kavach.app.R
 class KavachMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        Log.d("KavachFCM", "From: ${remoteMessage.from}")
+        Timber.d("Inbound message received")
 
         // 1. Check data payload for deep-linking
         val targetScreen = remoteMessage.data["screen"] // e.g. "orders", "live"
@@ -75,7 +76,7 @@ class KavachMessagingService : FirebaseMessagingService() {
     }
 
     override fun onNewToken(token: String) {
-        Log.d("KavachFCM", "New Token: $token")
+        Timber.d("FCM registration updated")
         // In production, send this to backend to bind with user PNO
     }
 }

@@ -3,7 +3,7 @@ package com.kavach.app.utils
 import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.*
-import com.kavach.app.data.remote.repository.OrderRepository
+import com.kavach.app.data.repository.OrderRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import java.util.concurrent.TimeUnit
@@ -21,9 +21,10 @@ class SyncAckWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         return when (orderRepository.syncPendingAcknowledgments()) {
-            is Resource.Success -> Result.success()
-            is Resource.Error   -> Result.retry()
-            else -> Result.retry()
+            is ApiResult.Success -> Result.success()
+            is ApiResult.Error   -> Result.retry()
+            is ApiResult.Offline -> Result.retry()
+            else -> Result.failure()
         }
     }
 

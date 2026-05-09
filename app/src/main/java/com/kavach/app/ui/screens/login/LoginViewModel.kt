@@ -2,8 +2,8 @@ package com.kavach.app.ui.screens.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kavach.app.data.remote.repository.AuthRepository
-import com.kavach.app.utils.Resource
+import com.kavach.app.data.repository.AuthRepository
+import com.kavach.app.utils.ApiResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -51,8 +51,9 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             _loginState.value = LoginUiState(isLoading = true)
             when (val result = authRepository.requestOtp(pno)) {
-                is Resource.Success -> _loginState.value = LoginUiState(otpSent = true)
-                is Resource.Error   -> _loginState.value = LoginUiState(error = result.message)
+                is ApiResult.Success      -> _loginState.value = LoginUiState(otpSent = true)
+                is ApiResult.Error        -> _loginState.value = LoginUiState(error = result.message)
+                is ApiResult.Unauthorized -> _loginState.value = LoginUiState(error = result.message)
                 else -> {}
             }
         }
@@ -66,8 +67,9 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             _otpState.value = OtpUiState(isLoading = true)
             when (val result = authRepository.verifyOtp(pno, otp)) {
-                is Resource.Success -> _otpState.value = OtpUiState(verified = true)
-                is Resource.Error   -> _otpState.value = OtpUiState(error = result.message)
+                is ApiResult.Success      -> _otpState.value = OtpUiState(verified = true)
+                is ApiResult.Error        -> _otpState.value = OtpUiState(error = result.message)
+                is ApiResult.Unauthorized -> _otpState.value = OtpUiState(error = result.message)
                 else -> {}
             }
         }
@@ -89,8 +91,9 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             _adminLoginState.value = AdminLoginUiState(isLoading = true)
             when (val result = authRepository.adminPasswordLogin(pno, password)) {
-                is Resource.Success -> _adminLoginState.value = AdminLoginUiState(loggedIn = true)
-                is Resource.Error   -> _adminLoginState.value = AdminLoginUiState(error = result.message)
+                is ApiResult.Success      -> _adminLoginState.value = AdminLoginUiState(loggedIn = true)
+                is ApiResult.Error        -> _adminLoginState.value = AdminLoginUiState(error = result.message)
+                is ApiResult.Unauthorized -> _adminLoginState.value = AdminLoginUiState(error = result.message)
                 else -> {}
             }
         }

@@ -10,9 +10,14 @@ import java.security.MessageDigest
 
 object SecurityUtils {
 
-    // ✏️ PILOT CONFIG: Your official release key SHA-256 hash
-    // Generate via: keytool -list -v -keystore your_key.jks
-    private const val EXPECTED_SIGNATURE_HASH = "REPLACE_WITH_RELEASE_KEY_HASH"
+    // ✏️ PILOT CONFIG: Official release key SHA-256 fingerprints.
+    // Supports key rotation - any hash in this list is trusted.
+    // Extraction: keytool -list -v -keystore release.jks | grep SHA256 (lowercase, no colons)
+    val TRUSTED_CERT_HASHES = listOf(
+        "6afba54956bf69cac4aefe9c89e65211adc0c335d625fc1a219e3248c8284ab7", // Release
+        "f28e695b885fd251be5848671048519b366c037424c22b1531b68c9cd54e17d6"  // Debug
+    )
+    const val EXPECTED_SIGNATURE_HASH = "6afba54956bf69cac4aefe9c89e65211adc0c335d625fc1a219e3248c8284ab7"
 
     /**
      * Comprehensive Root Detection
@@ -83,14 +88,13 @@ object SecurityUtils {
             for (signature in signatures ?: emptyArray()) {
                 val md = MessageDigest.getInstance("SHA-256")
                 md.update(signature.toByteArray())
-                val currentHash = Base64.encodeToString(md.digest(), Base64.DEFAULT).trim()
+                val digest = md.digest()
+                val currentHash = digest.joinToString("") { "%02x".format(it) }
                 
-                // In production, compare with EXPECTED_SIGNATURE_HASH
-                // For pilot/dev, we log it so you can get the hash for first time
+                // In production, compare with TRUSTED_CERT_HASHES
                 android.util.Log.d("SecurityUtils", "Current Signature Hash: $currentHash")
                 
-                if (EXPECTED_SIGNATURE_HASH == "REPLACE_WITH_RELEASE_KEY_HASH") return true // Bypass for initial setup
-                if (currentHash == EXPECTED_SIGNATURE_HASH) return true
+                if (TRUSTED_CERT_HASHES.any { it.equals(currentHash, ignoreCase = true) }) return true
             }
         } catch (e: Exception) {
             e.printStackTrace()

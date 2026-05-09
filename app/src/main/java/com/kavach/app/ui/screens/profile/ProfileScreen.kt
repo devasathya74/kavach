@@ -19,9 +19,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kavach.app.data.local.SessionDataStore
-import com.kavach.app.data.remote.repository.AuthRepository
+import com.kavach.app.data.repository.AuthRepository
 import com.kavach.app.ui.theme.*
-import com.kavach.app.utils.Resource
+import com.kavach.app.utils.ApiResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import androidx.lifecycle.ViewModel
@@ -75,17 +75,14 @@ class ProfileViewModel @Inject constructor(
     init { fetchProfile() }
 
     fun fetchProfile() = viewModelScope.launch {
-        runCatching {
-            authRepository.getProfile()
-        }.onSuccess { resource ->
-            if (resource is Resource.Success) {
-                val data = resource.data
-                _extra.value = Triple(
-                    data.disciplineScore,
-                    data.level,
-                    data.role
-                )
-            }
+        val result = authRepository.getProfile()
+        if (result is ApiResult.Success) {
+            val data = result.data
+            _extra.value = Triple(
+                data.disciplineScore,
+                data.level,
+                data.role
+            )
         }
     }
 

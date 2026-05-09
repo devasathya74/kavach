@@ -24,15 +24,15 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         // ✏️ EDIT: Production BASE_URL — must match KavachConfig.BASE_URL
-        // Format: "https://YOUR_SERVER_DOMAIN.com/api/"
-        buildConfigField("String", "BASE_URL", "\"https://YOUR_SERVER_DOMAIN.com/api/\"")
+        // Using V2 endpoint for hardened operational features
+        buildConfigField("String", "BASE_URL", "\"https://api.pmsraebareli.online/\"")
     }
 
     signingConfigs {
         create("release") {
-            storeFile = file("kavach-release.jks")
+            storeFile = file("kavach-release.keystore")
             storePassword = "kavach123"
-            keyAlias = "kavach-alias"
+            keyAlias = "kavach"
             keyPassword = "kavach123"
         }
     }
@@ -40,12 +40,13 @@ android {
     buildTypes {
         debug {
             isDebuggable = true
-            buildConfigField("String", "BASE_URL", "\"http://192.168.1.6:8000/api/v1/\"")
+            buildConfigField("String", "BASE_URL", "\"https://api.pmsraebareli.online/\"")
         }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
             signingConfig = signingConfigs.getByName("release")
+            buildConfigField("String", "BASE_URL", "\"https://api.pmsraebareli.online/\"")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -133,6 +134,12 @@ dependencies {
 
     // Play Integrity API — Device Attestation
     implementation("com.google.android.play:integrity:1.4.0")
+
+    // Encrypted SharedPrefs
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
+
+    // Logging
+    implementation("com.jakewharton.timber:timber:5.0.1")
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)

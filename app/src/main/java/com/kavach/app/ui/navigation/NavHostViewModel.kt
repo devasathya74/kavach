@@ -3,7 +3,7 @@ package com.kavach.app.ui.navigation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kavach.app.data.local.SessionDataStore
-import com.kavach.app.data.remote.repository.AuthRepository
+import com.kavach.app.data.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,8 +14,11 @@ import javax.inject.Inject
 @HiltViewModel
 class NavHostViewModel @Inject constructor(
     val sessionDataStore : SessionDataStore,
-    private val authRepo   : AuthRepository
+    private val authRepo   : AuthRepository,
+    networkMonitor         : com.kavach.app.util.NetworkMonitor
 ) : ViewModel() {
+
+    val connectionStatus = networkMonitor.status
 
     private val _isRecovering = MutableStateFlow(false)
     val isRecovering = _isRecovering.asStateFlow()

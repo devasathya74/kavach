@@ -3,6 +3,7 @@ package com.kavach.app.utils
 import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.*
+import com.kavach.app.data.repository.OrderRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import java.util.concurrent.TimeUnit
@@ -20,7 +21,7 @@ class KavachSyncWorker @AssistedInject constructor(
     @Assisted context                      : Context,
     @Assisted workerParams                 : WorkerParameters,
     private val behaviorTracker            : BehaviorTracker,
-    private val orderRepository            : com.kavach.app.data.remote.repository.OrderRepository
+    private val orderRepository            : OrderRepository
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
@@ -28,13 +29,13 @@ class KavachSyncWorker @AssistedInject constructor(
 
         // ── 1. Sync order acknowledgments ──────────────────
         when (orderRepository.syncPendingAcknowledgments()) {
-            is Resource.Error -> overallSuccess = false
+            is ApiResult.Error -> overallSuccess = false
             else              -> Unit
         }
 
         // ── 2. Sync behavior events ────────────────────────
         when (behaviorTracker.syncToServer()) {
-            is Resource.Error -> overallSuccess = false
+            is ApiResult.Error -> overallSuccess = false
             else              -> Unit
         }
 

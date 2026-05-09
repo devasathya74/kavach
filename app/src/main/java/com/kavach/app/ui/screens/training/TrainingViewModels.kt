@@ -4,12 +4,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kavach.app.data.local.SessionDataStore
-import com.kavach.app.data.remote.repository.TrainingRepository
+import com.kavach.app.data.repository.TrainingRepository
 import com.kavach.app.domain.model.QuizQuestion
 import com.kavach.app.domain.model.QuizResult
 import com.kavach.app.domain.model.Training
 import com.kavach.app.utils.BehaviorTracker
-import com.kavach.app.utils.Resource
+import com.kavach.app.utils.ApiResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -134,7 +134,7 @@ class QuizViewModel @Inject constructor(
     private fun loadQuestions() = viewModelScope.launch {
         _uiState.value = QuizUiState(isLoading = true)
         when (val result = repository.getQuizQuestions(trainingId)) {
-            is Resource.Success -> {
+            is ApiResult.Success -> {
                 val shuffled = result.data.shuffled()
                 val openedAt = shuffled.associate { it.id to System.currentTimeMillis() }
                 _uiState.value = QuizUiState(
@@ -143,7 +143,7 @@ class QuizViewModel @Inject constructor(
                     isLoading        = false
                 )
             }
-            is Resource.Error -> _uiState.value = QuizUiState(isLoading = false, error = result.message)
+            is ApiResult.Error -> _uiState.value = QuizUiState(isLoading = false, error = result.message)
             else -> {}
         }
     }
@@ -190,7 +190,7 @@ class QuizViewModel @Inject constructor(
         }
         _uiState.value = state.copy(isSubmitting = true, error = null)
         when (val result = repository.submitQuiz(trainingId, state.answers)) {
-            is Resource.Success -> {
+            is ApiResult.Success -> {
                 // Log quiz attempt to behavior system
                 behaviorTracker.logQuizAttempt(trainingId, result.data.score, result.data.passed)
                 _uiState.value = state.copy(
@@ -199,7 +199,7 @@ class QuizViewModel @Inject constructor(
                     attemptsLeft = state.attemptsLeft - 1
                 )
             }
-            is Resource.Error -> _uiState.value = state.copy(
+            is ApiResult.Error -> _uiState.value = state.copy(
                 isSubmitting = false,
                 error        = result.message,
                 attemptsLeft = state.attemptsLeft - 1

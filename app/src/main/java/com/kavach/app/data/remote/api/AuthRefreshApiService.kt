@@ -1,7 +1,7 @@
 package com.kavach.app.data.remote.api
 
-import com.kavach.app.data.remote.dto.RefreshTokenRequest
-import com.kavach.app.data.remote.dto.RefreshTokenResponse
+import com.kavach.app.data.remote.dto.auth.RefreshTokenRequest
+import com.kavach.app.data.remote.dto.auth.RefreshTokenResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
