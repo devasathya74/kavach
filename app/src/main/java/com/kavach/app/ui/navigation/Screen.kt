@@ -23,13 +23,13 @@ sealed class Screen(val route: String) {
     // Training
     object TrainingList : Screen("training_list")
     object VideoPlayer  : Screen("video_player/{trainingId}") {
-        fun createRoute(id: Int) = "video_player/$id"
+        fun createRoute(id: String) = "video_player/$id"
     }
     object Quiz         : Screen("quiz/{trainingId}") {
-        fun createRoute(id: Int) = "quiz/$id"
+        fun createRoute(id: String) = "quiz/$id"
     }
     object QuizResult   : Screen("quiz_result/{trainingId}/{score}") {
-        fun createRoute(id: Int, score: Int) = "quiz_result/$id/$score"
+        fun createRoute(id: String, score: Int) = "quiz_result/$id/$score"
     }
 
     // Orders

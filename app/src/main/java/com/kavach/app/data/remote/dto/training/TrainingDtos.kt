@@ -5,8 +5,8 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class TrainingDto(
-    @Json(name = "id")           val id: Int,
-    @Json(name = "title")        val title: String,
+    @Json(name = "id")           val id: String = "",
+    @Json(name = "title")        val title: String = "",
     @Json(name = "description")  val description: String? = null,
     @Json(name = "video_path")   val videoPath: String? = null,
     @Json(name = "duration_sec") val durationSec: Int = 0,
@@ -16,7 +16,7 @@ data class TrainingDto(
 
 @JsonClass(generateAdapter = true)
 data class HeartbeatRequest(
-    @Json(name = "training_id")  val trainingId: Int,
+    @Json(name = "training_id")  val trainingId: String,
     @Json(name = "position_ms")  val positionMs: Long = 0,
     @Json(name = "elapsed_sec")  val elapsedSec: Int = 0,
     @Json(name = "session_id")   val sessionId: String? = null,
@@ -25,21 +25,21 @@ data class HeartbeatRequest(
 
 @JsonClass(generateAdapter = true)
 data class QuizQuestionDto(
-    @Json(name = "id")           val id: Int,
+    @Json(name = "id")           val id: String,
     @Json(name = "question")     val question: String,
     @Json(name = "options")      val options: List<String>,
-    @Json(name = "training_id")  val trainingId: Int
+    @Json(name = "training_id")  val trainingId: String
 )
 
 @JsonClass(generateAdapter = true)
 data class QuizSubmitRequest(
-    @Json(name = "training_id") val trainingId: Int,
+    @Json(name = "training_id") val trainingId: String,
     @Json(name = "answers")     val answers: Map<String, String>
 )
 
 @JsonClass(generateAdapter = true)
 data class QuizSubmitRequestV2(
-    @Json(name = "training_id") val trainingId: Int,
+    @Json(name = "training_id") val trainingId: String,
     @Json(name = "answers")     val answers: Map<String, String>,
     @Json(name = "time_taken")  val timeTaken: Int = 0
 )
@@ -68,8 +68,8 @@ data class SuspiciousSessionDto(
  */
 @JsonClass(generateAdapter = true)
 data class TrainingModuleDto(
-    @Json(name = "id")           val id: String,
-    @Json(name = "title")        val title: String,
+    @Json(name = "id")           val id: String = "",
+    @Json(name = "title")        val title: String = "",
     @Json(name = "description")  val description: String = "",
     @Json(name = "video_url")    val videoUrl: String? = null,
     @Json(name = "duration_sec") val durationSec: Int = 0,

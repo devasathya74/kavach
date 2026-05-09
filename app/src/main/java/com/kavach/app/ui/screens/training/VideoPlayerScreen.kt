@@ -44,7 +44,7 @@ import kotlinx.coroutines.delay
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 fun VideoPlayerScreen(
-    trainingId      : Int,
+    trainingId      : String,
     onVideoComplete : () -> Unit,
     viewModel       : VideoPlayerViewModel = hiltViewModel()
 ) {

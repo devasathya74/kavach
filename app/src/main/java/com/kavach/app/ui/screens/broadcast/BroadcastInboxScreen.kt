@@ -121,7 +121,7 @@ fun BroadcastCard(
                     )
                 }
                 Text(
-                    text = broadcast.createdAt,
+                    text = broadcast.createdAt ?: "Unknown",
                     color = Color.White.copy(alpha = 0.5f),
                     style = MaterialTheme.typography.labelSmall
                 )
@@ -139,8 +139,8 @@ fun BroadcastCard(
             Spacer(modifier = Modifier.height(4.dp))
             
             Text(
-                text = broadcast.content,
-                color = Color.White.copy(alpha = 0.8f),
+                    text = broadcast.content ?: broadcast.message ?: "",
+                    color = Color.White.copy(alpha = 0.8f),
                 style = MaterialTheme.typography.bodyMedium
             )
 

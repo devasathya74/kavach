@@ -4,7 +4,7 @@ package com.kavach.app.domain.model
  * Domain model — Training video session.
  */
 data class Training(
-    val id          : Int,
+    val id          : String,
     val title       : String,
     val description : String,
     val videoUrl    : String,
@@ -19,8 +19,8 @@ enum class TrainingStatus { PENDING, IN_PROGRESS, COMPLETED, FAILED }
  * Domain model — Single quiz question.
  */
 data class QuizQuestion(
-    val id            : Int,
-    val trainingId    : Int,
+    val id            : String,
+    val trainingId    : String,
     val question      : String,
     val optionA       : String,
     val optionB       : String,

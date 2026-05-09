@@ -42,7 +42,7 @@ class DeviceStatusViewModel @Inject constructor(
             val result = integrityRepository.attest()
             when (result) {
                 is AttestationResult.Passed -> {
-                    sessionStore.saveIntegrityLevel(result.verdict.integrityLevel)
+                    sessionStore.saveIntegrityLevel(result.verdict.integrityLevel ?: "BASIC")
                     _uiState.value = _uiState.value.copy(lastCheck = System.currentTimeMillis())
                 }
                 is AttestationResult.Restricted -> {

@@ -70,6 +70,7 @@ fun KavachNavHost(
     val permissionsHandled by sessionDataStore.permissionsHandled.collectAsState(initial = false)
     val role               by sessionDataStore.role.collectAsState(initial = null)
     val token              by sessionDataStore.token.collectAsState(initial = null)
+    val deviceSecret       by sessionDataStore.deviceSecret.collectAsState(initial = null)
 
     var sessionReady by remember { androidx.compose.runtime.mutableStateOf(false) }
 
@@ -83,15 +84,7 @@ fun KavachNavHost(
     val recoveryError           by viewModel.error.collectAsState()
     val connectionStatus        by viewModel.connectionStatus.collectAsState(initial = ConnectionStatus.AVAILABLE)
 
-    if (!sessionReady) {
-        androidx.compose.foundation.layout.Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            androidx.compose.material3.CircularProgressIndicator(color = com.kavach.app.ui.theme.GoldenYellow)
-        }
-        return
-    }
+
 
     // Lifecycle Authority Guard: Sync on Every Resume
     DisposableEffect(lifecycleOwner) {
@@ -128,16 +121,31 @@ fun KavachNavHost(
         }
     }
 
-    val deviceSecret       by sessionDataStore.deviceSecret.collectAsState(initial = null)
+    // Deterministic Startup Logic: Wait for DataStore to emit non-null values
+    // This prevents flickering and accidental login redirection during initial load
+    val isStartupLoaded = token != null && role != null && consentAccepted != null && permissionsHandled != null && deviceSecret != null
 
-    val startDestination = when {
-        !consentAccepted -> Screen.Consent.route
-        !permissionsHandled -> Screen.PermissionGate.route
-        token.isNullOrBlank() || deviceSecret.isNullOrBlank() -> Screen.Login.route
-        role == "COMMANDING_OFFICER" -> Screen.AdminDashboard.route
-        role == "PILOT" -> Screen.PilotDashboard.route
-        role == "USER" -> Screen.Dashboard.route
-        else -> Screen.Login.route
+    if (!isStartupLoaded) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            androidx.compose.material3.CircularProgressIndicator(color = com.kavach.app.ui.theme.GoldenYellow)
+        }
+        return
+    }
+
+    val startDestination = remember(token, role, consentAccepted, permissionsHandled, deviceSecret) {
+        when {
+            consentAccepted == false -> Screen.Consent.route
+            permissionsHandled == false -> Screen.PermissionGate.route
+            token.isNullOrBlank() || deviceSecret.isNullOrBlank() -> Screen.Login.route
+            role == "COMMANDING_OFFICER" -> Screen.AdminDashboard.route
+            role == "PILOT" -> Screen.PilotDashboard.route
+            role == "USER" -> Screen.Dashboard.route
+            else -> Screen.Login.route
+        }
+    }
+
+    LaunchedEffect(token, role, consentAccepted, permissionsHandled) {
+        android.util.Log.d("KAVACH_NAV", "STARTUP_DET: TOKEN=${token?.take(4)}... ROLE=$role CONSENT=$consentAccepted PERMS=$permissionsHandled")
     }
     
     // ── Global Session Monitor ─────────────────────────────
@@ -151,15 +159,7 @@ fun KavachNavHost(
         }
     }
 
-    if (!sessionReady) {
-        androidx.compose.foundation.layout.Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            androidx.compose.material3.CircularProgressIndicator(color = com.kavach.app.ui.theme.GoldenYellow)
-        }
-        return
-    }
+
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column {
@@ -402,9 +402,9 @@ fun KavachNavHost(
 
             composable(
                 route = Screen.VideoPlayer.route,
-                arguments = listOf(navArgument("trainingId") { type = NavType.IntType })
+                arguments = listOf(navArgument("trainingId") { type = NavType.StringType })
             ) { backStackEntry ->
-                val trainingId = backStackEntry.arguments?.getInt("trainingId") ?: return@composable
+                val trainingId = backStackEntry.arguments?.getString("trainingId") ?: return@composable
                 VideoPlayerScreen(
                     trainingId      = trainingId,
                     onVideoComplete = { navController.navigate(Screen.Quiz.createRoute(trainingId)) }
@@ -413,9 +413,9 @@ fun KavachNavHost(
 
             composable(
                 route = Screen.Quiz.route,
-                arguments = listOf(navArgument("trainingId") { type = NavType.IntType })
+                arguments = listOf(navArgument("trainingId") { type = NavType.StringType })
             ) { backStackEntry ->
-                val trainingId = backStackEntry.arguments?.getInt("trainingId") ?: return@composable
+                val trainingId = backStackEntry.arguments?.getString("trainingId") ?: return@composable
                 QuizScreen(
                     trainingId = trainingId,
                     onSubmit   = { score ->
@@ -429,10 +429,11 @@ fun KavachNavHost(
             composable(
                 route = Screen.QuizResult.route,
                 arguments = listOf(
-                    navArgument("trainingId") { type = NavType.IntType },
+                    navArgument("trainingId") { type = NavType.StringType },
                     navArgument("score")      { type = NavType.IntType }
                 )
-            ) {
+            ) { backStackEntry ->
+                val trainingId = backStackEntry.arguments?.getString("trainingId") ?: return@composable
                 QuizResultScreen(
                     onContinue = {
                         navController.navigate(Screen.Dashboard.route) {

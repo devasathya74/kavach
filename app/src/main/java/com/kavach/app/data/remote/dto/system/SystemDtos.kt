@@ -69,7 +69,7 @@ data class SystemAnalyticsDto(
 @JsonClass(generateAdapter = true)
 data class BehaviorEventDto(
     @Json(name = "event_type")   val eventType: String,
-    @Json(name = "training_id")  val trainingId: Int? = null,
+    @Json(name = "training_id")  val trainingId: String? = null,
     @Json(name = "timestamp_ms") val timestampMs: Long = System.currentTimeMillis(),
     @Json(name = "metadata")     val metadata: Map<String, String>? = null
 )

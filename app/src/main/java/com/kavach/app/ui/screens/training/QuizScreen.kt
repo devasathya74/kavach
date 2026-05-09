@@ -34,7 +34,7 @@ import com.kavach.app.ui.theme.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuizScreen(
-    trainingId : Int,
+    trainingId : String,
     onSubmit   : (Int) -> Unit,
     viewModel  : QuizViewModel = hiltViewModel()
 ) {

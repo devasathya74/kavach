@@ -48,38 +48,9 @@ class MainActivity : ComponentActivity() {
     @Inject lateinit var apiService: KavachApiService
     @Inject lateinit var navigationDao: com.kavach.app.data.local.dao.NavigationDao
 
-    private var showSettingsDialog by mutableStateOf(false)
-    private var showPermissionExplanation by mutableStateOf(false)
 
-    private val permissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            val granted = permissions[Manifest.permission.POST_NOTIFICATIONS] ?: false
-            if (!granted) {
-                if (!shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
-                    showSettingsDialog = true
-                }
-            }
-        }
 
-    private fun requestPermissionsIfNeeded() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            val permission = Manifest.permission.POST_NOTIFICATIONS
-            when {
-                ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED -> {
-                    // Already granted
-                }
-                shouldShowRequestPermissionRationale(permission) -> {
-                    // Show explanation first
-                    showPermissionExplanation = true
-                }
-                else -> {
-                    // First time or permanently denied (Rationale will be false if permanently denied)
-                    // If we haven't asked yet, show explanation
-                    showPermissionExplanation = true
-                }
-            }
-        }
-    }
+
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
@@ -92,7 +63,6 @@ class MainActivity : ComponentActivity() {
         window.setTitle("")
         super.onCreate(savedInstanceState)
         handleIncomingIntent(intent)
-        requestPermissionsIfNeeded()
         
         window.setFlags(
             WindowManager.LayoutParams.FLAG_SECURE,
@@ -102,38 +72,6 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             KavachTheme {
-                if (showSettingsDialog) {
-                    AlertDialog(
-                        onDismissRequest = { showSettingsDialog = false },
-                        title = { Text("Permission Required") },
-                        text = { Text("Notifications are required for important alerts. Please enable them in settings.") },
-                        confirmButton = {
-                            TextButton(onClick = {
-                                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                                intent.data = Uri.fromParts("package", packageName, null)
-                                startActivity(intent)
-                                showSettingsDialog = false
-                            }) { Text("Settings") }
-                        }
-                    )
-                }
-
-                if (showPermissionExplanation) {
-                    AlertDialog(
-                        onDismissRequest = { showPermissionExplanation = false },
-                        title = { Text("महत्वपूर्ण सूचना (Notification)") },
-                        text = { Text("KAVACH को आपातकालीन अलर्ट भेजने के लिए नोटिफिकेशन की अनुमति आवश्यक है।\n\nNotifications are required for real-time emergency alerts.") },
-                        confirmButton = {
-                            TextButton(onClick = {
-                                showPermissionExplanation = false
-                                permissionLauncher.launch(arrayOf(Manifest.permission.POST_NOTIFICATIONS))
-                            }) { Text("अनुमति दें (Allow)") }
-                        },
-                        dismissButton = {
-                            TextButton(onClick = { showPermissionExplanation = false }) { Text("अभी नहीं") }
-                        }
-                    )
-                }
 
                 val navController = rememberNavController()
                 val scope = rememberCoroutineScope()
@@ -285,7 +223,7 @@ class MainActivity : ComponentActivity() {
                         },
                         text    = { 
                             androidx.compose.foundation.layout.Column {
-                                Text(info.releaseNotes)
+                                Text(info.releaseNotes ?: "")
                                 if (info.isRollback) {
                                     Text("\nसिस्टम को पिछली सुरक्षित स्थिति में वापस लाया जा रहा है।", 
                                         color = androidx.compose.material3.MaterialTheme.colorScheme.primary)

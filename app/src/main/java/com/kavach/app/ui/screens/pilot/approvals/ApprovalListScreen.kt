@@ -60,7 +60,7 @@ fun ApprovalListScreen(
                         ApprovalCard(
                             change = change,
                             isProcessing = state.processingId == change.id,
-                            isSelfRequest = change.targetPno == state.currentPno || change.actorName.contains(state.currentPno), // Simple check based on name/pno
+                            isSelfRequest = change.targetPno == state.currentPno || change.actorName?.contains(state.currentPno) == true, // Simple check based on name/pno
                             onApprove = { viewModel.approveChange(change.id) },
                             onReject = { viewModel.rejectChange(change.id) }
                         )
@@ -117,7 +117,7 @@ fun ApprovalCard(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(change.oldValue?.get("val")?.toString() ?: "N/A", color = Color(0xFFF44336), fontWeight = FontWeight.Bold)
                         Text("  →  ", color = Color.Gray)
-                        Text(change.newValue["val"].toString(), color = Color(0xFF4CAF50), fontWeight = FontWeight.Bold)
+                        Text(change.newValue?.get("val")?.toString() ?: "N/A", color = Color(0xFF4CAF50), fontWeight = FontWeight.Bold)
                     }
                 }
             }

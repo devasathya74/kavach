@@ -16,7 +16,7 @@ data class ApprovalListState(
     val currentPno: String = "",
     val isLoading: Boolean = false,
     val error: String? = null,
-    val processingId: Int? = null
+    val processingId: String? = null
 )
 
 @HiltViewModel
@@ -48,7 +48,7 @@ class ApprovalListViewModel @Inject constructor(
         }
     }
 
-    fun approveChange(id: Int) {
+    fun approveChange(id: String) {
         viewModelScope.launch {
             _state.update { it.copy(processingId = id) }
             repository.approveChange(id).onSuccess {
@@ -64,7 +64,7 @@ class ApprovalListViewModel @Inject constructor(
         }
     }
 
-    fun rejectChange(id: Int) {
+    fun rejectChange(id: String) {
         viewModelScope.launch {
             _state.update { it.copy(processingId = id) }
             repository.rejectChange(id).onSuccess {

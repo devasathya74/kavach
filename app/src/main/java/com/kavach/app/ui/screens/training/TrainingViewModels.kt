@@ -57,7 +57,7 @@ class VideoPlayerViewModel @Inject constructor(
     savedStateHandle            : SavedStateHandle
 ) : ViewModel() {
 
-    private val trainingId = savedStateHandle.get<Int>("trainingId") ?: 0
+    private val trainingId = savedStateHandle.get<String>("trainingId") ?: ""
 
     private val _uiState = MutableStateFlow(VideoPlayerUiState())
     val uiState: StateFlow<VideoPlayerUiState> = _uiState.asStateFlow()
@@ -107,9 +107,9 @@ private const val MIN_ANSWER_TIME_SECONDS = 5L   // user must spend ≥5s per qu
 
 data class QuizUiState(
     val questions      : List<QuizQuestion> = emptyList(),
-    val answers        : Map<Int, String>   = emptyMap(),
-    val answerTimestamps: Map<Int, Long>    = emptyMap(),  // questionId → time when answered
-    val questionOpenedAt: Map<Int, Long>    = emptyMap(),  // questionId → time when shown
+    val answers        : Map<String, String>   = emptyMap(),
+    val answerTimestamps: Map<String, Long>    = emptyMap(),  // questionId → time when answered
+    val questionOpenedAt: Map<String, Long>    = emptyMap(),  // questionId → time when shown
     val isLoading      : Boolean = true,
     val isSubmitting   : Boolean = false,
     val attemptsLeft   : Int     = QUIZ_MAX_ATTEMPTS,
@@ -124,7 +124,7 @@ class QuizViewModel @Inject constructor(
     savedStateHandle            : SavedStateHandle
 ) : ViewModel() {
 
-    private val trainingId = savedStateHandle.get<Int>("trainingId") ?: 0
+    private val trainingId = savedStateHandle.get<String>("trainingId") ?: ""
 
     private val _uiState = MutableStateFlow(QuizUiState())
     val uiState: StateFlow<QuizUiState> = _uiState.asStateFlow()
@@ -148,7 +148,7 @@ class QuizViewModel @Inject constructor(
         }
     }
 
-    fun selectAnswer(questionId: Int, option: String) {
+    fun selectAnswer(questionId: String, option: String) {
         val state     = _uiState.value
         val openedAt  = state.questionOpenedAt[questionId] ?: System.currentTimeMillis()
         val elapsedMs = System.currentTimeMillis() - openedAt
@@ -169,7 +169,7 @@ class QuizViewModel @Inject constructor(
         )
     }
 
-    fun onQuestionVisible(questionId: Int) {
+    fun onQuestionVisible(questionId: String) {
         val state = _uiState.value
         if (!state.questionOpenedAt.containsKey(questionId)) {
             _uiState.value = state.copy(

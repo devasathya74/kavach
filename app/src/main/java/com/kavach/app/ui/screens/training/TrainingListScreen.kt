@@ -29,7 +29,7 @@ import com.kavach.app.ui.theme.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrainingListScreen(
-    onTrainingClick : (Int) -> Unit,
+    onTrainingClick : (String) -> Unit,
     onBack          : () -> Unit,
     viewModel       : TrainingListViewModel = hiltViewModel()
 ) {

@@ -5,11 +5,11 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class OfficerDto(
-    @Json(name = "id")                  val id: String,   // UUID string from v2 API
-    @Json(name = "pno")                 val pno: String,
-    @Json(name = "role")                val role: String,
+    @Json(name = "id")                  val id: String = "",   // UUID string from v2 API
+    @Json(name = "pno")                 val pno: String = "",
+    @Json(name = "role")                val role: String = "USER",
     @Json(name = "unit")                val unit: UnitDto?,
-    @Json(name = "is_active")           val isActive: Boolean,
+    @Json(name = "is_active")           val isActive: Boolean = true,
     @Json(name = "profile")             val profile: OfficerProfileDto?,
     @Json(name = "devices")             val devices: List<DeviceDto> = emptyList(),
     @Json(name = "discipline_score")    val disciplineScore: Double? = null,
@@ -40,30 +40,30 @@ data class DeviceDto(
 
 @JsonClass(generateAdapter = true)
 data class RankDto(
-    @Json(name = "id")    val id: Int,
-    @Json(name = "code")  val code: String,
-    @Json(name = "name")  val name: String,
-    @Json(name = "level") val level: Int
+    @Json(name = "id")    val id: String = "",
+    @Json(name = "code")  val code: String = "",
+    @Json(name = "name")  val name: String = "",
+    @Json(name = "level") val level: Int = 0
 )
 
 @JsonClass(generateAdapter = true)
 data class UnitDto(
-    @Json(name = "id")   val id: Int,
-    @Json(name = "code") val code: String,
-    @Json(name = "name") val name: String,
+    @Json(name = "id")   val id: String = "",
+    @Json(name = "code") val code: String = "",
+    @Json(name = "name") val name: String = "",
     @Json(name = "type") val type: String? = null
 )
 
 @JsonClass(generateAdapter = true)
 data class CompanyDto(
-    @Json(name = "id")   val id: Int,
-    @Json(name = "code") val code: String,
-    @Json(name = "name") val name: String
+    @Json(name = "id")   val id: String = "",
+    @Json(name = "code") val code: String = "",
+    @Json(name = "name") val name: String = ""
 )
 
 @JsonClass(generateAdapter = true)
 data class PlatoonDto(
-    @Json(name = "id")     val id: Int,
-    @Json(name = "number") val number: Int,
-    @Json(name = "name")   val name: String
+    @Json(name = "id")     val id: String = "",
+    @Json(name = "number") val number: Int = 0,
+    @Json(name = "name")   val name: String = ""
 )

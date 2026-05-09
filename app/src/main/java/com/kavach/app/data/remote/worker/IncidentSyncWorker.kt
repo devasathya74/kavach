@@ -62,11 +62,16 @@ class IncidentSyncWorker @AssistedInject constructor(
 
                     if (uploadResult is ApiResult.Success) {
                         val uploadedUrl = uploadResult.data.fileUrl
-                        db.incidentDao().updateEvidence(item.copy(
-                            serverUrl = uploadedUrl,
-                            status = "COMPLETED"
-                        ))
-                        serverUrls["primary_image"] = uploadedUrl
+                        if (uploadedUrl != null) {
+                            db.incidentDao().updateEvidence(item.copy(
+                                serverUrl = uploadedUrl,
+                                status = "COMPLETED"
+                            ))
+                            serverUrls["primary_image"] = uploadedUrl
+                        } else {
+                            mediaUploadSuccess = false
+                            break
+                        }
                     } else {
                         Timber.e("IncidentSyncWorker: Media upload failed for ${draft.localId}")
                         mediaUploadSuccess = false

@@ -50,7 +50,7 @@ class AuthRepository @Inject constructor(
     /** Step 1: Request OTP — sends deviceId for pre-check */
     suspend fun requestOtp(pno: String): ApiResult<Unit> = safeApiCall {
         val deviceId = DeviceIdUtil.getDeviceId(context)
-        val resp     = api.login(LoginRequest(pno = pno, deviceId = deviceId))
+        val resp     = api.login(LoginRequest(pno = pno, password = "", deviceId = deviceId))
         when {
             resp.isSuccessful -> {
                 Timber.d("OTP requested successfully for PNO: $pno")
@@ -85,14 +85,16 @@ class AuthRepository @Inject constructor(
                 sessionStore.saveSession(
                     token        = body.token,
                     refreshToken = body.refreshToken ?: "",
-                    expiresIn    = body.expiresIn    ?: 3600,
+                    expiresIn    = body.expiresIn    ?: 3600L,
                     pno          = body.user.pno,
-                    name         = body.user.name,
-                    rank         = body.user.rank,
-                    unit         = body.user.unit,
+                    name         = body.user.profile?.name ?: "",
+                    rank         = body.user.profile?.rank?.name ?: "",
+                    unit         = body.user.unit?.name ?: "",
                     deviceId     = deviceId,
-                    deviceSecret = body.user.deviceSecret,
-                    role         = body.user.role
+                    deviceSecret = body.deviceSecret ?: "",
+                    role         = body.user.role,
+                    androidId    = DeviceIdUtil.getAndroidId(context),
+                    deviceName   = DeviceIdUtil.getDeviceName()
                 )
 
                 // Admin also gets attested — no exceptions for privilege
@@ -115,7 +117,7 @@ class AuthRepository @Inject constructor(
                     }
                     is AttestationResult.Passed -> {
                         Timber.d("Admin attestation passed: $pno")
-                        sessionStore.saveIntegrityLevel(attestation.verdict.integrityLevel)
+                        sessionStore.saveIntegrityLevel(attestation.verdict.integrityLevel ?: "BASIC")
                     }
                     is AttestationResult.Degraded -> {
                         Timber.w("Admin attestation degraded: $pno")
@@ -158,18 +160,21 @@ class AuthRepository @Inject constructor(
         when {
             resp.isSuccessful && body?.token != null && body.user != null -> {
                 Timber.d("OTP verified successfully for PNO: $pno")
+                android.util.Log.i("KAVACH_AUTH", "VERIFY_SUCCESS: PNO=$pno, ROLE=${body.user.role}, SECRET=${body.deviceSecret?.take(4)}...")
                 // Save session first (needed for auth headers in nonce request)
                 sessionStore.saveSession(
                     token        = body.token,
                     refreshToken = body.refreshToken ?: "",
-                    expiresIn    = body.expiresIn    ?: 3600,
+                    expiresIn    = body.expiresIn    ?: 3600L,
                     pno          = body.user.pno,
-                    name         = body.user.name,
-                    rank         = body.user.rank,
-                    unit         = body.user.unit,
+                    name         = body.user.profile?.name ?: "",
+                    rank         = body.user.profile?.rank?.name ?: "",
+                    unit         = body.user.unit?.name ?: "",
                     deviceId     = deviceId,
-                    deviceSecret = body.user.deviceSecret,
-                    role         = body.user.role
+                    deviceSecret = body.deviceSecret ?: "",
+                    role         = body.user.role,
+                    androidId    = DeviceIdUtil.getAndroidId(context),
+                    deviceName   = DeviceIdUtil.getDeviceName()
                 )
 
                 // Run Play Integrity attestation
@@ -193,7 +198,7 @@ class AuthRepository @Inject constructor(
                     }
                     is AttestationResult.Passed -> {
                         Timber.d("User attestation passed: $pno")
-                        sessionStore.saveIntegrityLevel(attestation.verdict.integrityLevel)
+                        sessionStore.saveIntegrityLevel(attestation.verdict.integrityLevel ?: "BASIC")
                     }
                     is AttestationResult.Degraded -> {
                         Timber.w("User attestation degraded: $pno")
@@ -230,6 +235,7 @@ class AuthRepository @Inject constructor(
         val registeredDeviceId = sessionStore.deviceId.firstOrNull() ?: return true
         val currentDeviceId    = DeviceIdUtil.getDeviceId(context)
         val valid              = currentDeviceId == registeredDeviceId
+        android.util.Log.d("KAVACH_BIND", "STARTUP_CHECK: VALID=$valid, REGISTERED=${registeredDeviceId.take(8)}, CURRENT=${currentDeviceId.take(8)}")
         if (!valid) behaviorTracker.log(BehaviorTracker.Events.DEVICE_MISMATCH)
         return valid
     }
@@ -253,14 +259,14 @@ class AuthRepository @Inject constructor(
                 sessionStore.saveSession(
                     token = sessionStore.token.first() ?: "",
                     refreshToken = sessionStore.refreshToken.first() ?: "",
-                    expiresIn = 3600, 
-                    pno = user.pno,
-                    name = user.name,
-                    rank = user.rank,
-                    unit = user.unit,
-                    deviceId = user.deviceId,
-                    deviceSecret = user.deviceSecret,
-                    role = user.role
+                    expiresIn    = 3600L, 
+                    pno          = user.pno,
+                    name         = user.profile?.name ?: "",
+                    rank         = user.profile?.rank?.name ?: "",
+                    unit         = user.unit?.name ?: "",
+                    deviceId     = sessionStore.deviceId.first() ?: "",
+                    deviceSecret = sessionStore.deviceSecret.first() ?: "",
+                    role         = user.role
                 )
                 ApiResult.Success(Unit)
             } else {

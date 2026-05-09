@@ -4,6 +4,7 @@ import com.kavach.app.data.remote.dto.common.ApiResponse
 import com.kavach.app.data.remote.dto.common.PaginatedResponse
 import com.kavach.app.data.remote.dto.system.DraftChangeDto
 import com.kavach.app.data.remote.dto.personnel.OfficerDto
+import com.kavach.app.data.remote.dto.training.TrainingModuleDto
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import okhttp3.MultipartBody
@@ -98,7 +99,7 @@ interface KavachApiV2 {
     suspend fun getLatestUpdate(): com.kavach.app.data.remote.dto.v2.OtaUpdateDto
 
     @GET("api/v2/auth/v2/training/")
-    suspend fun getTrainingModules(): List<com.kavach.app.data.remote.dto.v2.TrainingModuleDto>
+    suspend fun getTrainingModules(): List<TrainingModuleDto>
 
     @POST("api/v2/auth/v2/training/{id}/acknowledge/")
     suspend fun acknowledgeTraining(@Path("id") id: String): ApiResponse<Unit>
@@ -111,8 +112,8 @@ interface KavachApiV2 {
     suspend fun createDraftChange(@Body data: Map<String, Any>): ApiResponse<DraftChangeDto>
 
     @POST("api/v2/auth/v2/pending-changes/{id}/approve/")
-    suspend fun approveChange(@Path("id") id: Int): ApiResponse<Unit>
+    suspend fun approveChange(@Path("id") id: String): ApiResponse<Unit>
 
     @POST("api/v2/auth/v2/pending-changes/{id}/reject/")
-    suspend fun rejectChange(@Path("id") id: Int): ApiResponse<Unit>
+    suspend fun rejectChange(@Path("id") id: String): ApiResponse<Unit>
 }

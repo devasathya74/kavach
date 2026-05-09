@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "trainings")
 data class TrainingEntity(
-    @PrimaryKey val id          : Int,
+    @PrimaryKey val id          : String,
     val title       : String,
     val description : String,
     val videoUrl    : String,
@@ -16,8 +16,8 @@ data class TrainingEntity(
 
 @Entity(tableName = "quiz_questions")
 data class QuizQuestionEntity(
-    @PrimaryKey val id            : Int,
-    val trainingId    : Int,
+    @PrimaryKey val id            : String,
+    val trainingId    : String,
     val question      : String,
     val optionA       : String,
     val optionB       : String,
@@ -57,7 +57,7 @@ data class PendingAckEntity(
 data class BehaviorEventEntity(
     @PrimaryKey(autoGenerate = true) val id          : Int = 0,
     val eventType   : String,                // e.g. "SEEK_ATTEMPT", "APP_BACKGROUND"
-    val trainingId  : Int?,
+    val trainingId  : String?,
     val timestampMs : Long,
     val metadata    : String = "{}"          // JSON string of extra key-value pairs
 )

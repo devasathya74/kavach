@@ -5,7 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import com.kavach.app.data.remote.api.KavachApiV2
-import com.kavach.app.data.remote.dto.system.FieldDataDto
+import com.kavach.app.data.remote.dto.v2.FieldDataDto
 import com.kavach.app.utils.ApiResult
 import com.kavach.app.utils.safeApiCall
 import dagger.hilt.android.qualifiers.ApplicationContext

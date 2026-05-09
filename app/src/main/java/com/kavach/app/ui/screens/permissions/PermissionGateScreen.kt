@@ -31,36 +31,31 @@ fun PermissionGateScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    
+    var currentStep by remember { mutableIntStateOf(1) }
 
-    val permissionsToRequest = remember {
-        mutableListOf(
-            Manifest.permission.CAMERA,
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        ).apply {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                add(Manifest.permission.POST_NOTIFICATIONS)
-                add(Manifest.permission.READ_MEDIA_IMAGES)
-                add(Manifest.permission.READ_MEDIA_VIDEO)
-            } else {
-                add(Manifest.permission.READ_EXTERNAL_STORAGE)
-            }
-        }.toTypedArray()
-    }
+    // Step 1: Notifications
+    val notificationLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { currentStep = 2 }
 
-    val launcher = rememberLauncherForActivityResult(
+    // Step 2: Location
+    val locationLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
-    ) { results ->
+    ) { currentStep = 3 }
+
+    // Step 3: Camera & Mic
+    val mediaLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { currentStep = 4 }
+
+    // Step 4: Storage
+    val storageLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { 
         viewModel.checkPermissions()
         viewModel.markPermissionsAsHandled()
-        // We always allow them to continue to dashboard, 
-        // but the app state will reflect limited capability if denied.
         onContinue()
-    }
-
-    if (uiState.hasRequiredPermissions) {
-        LaunchedEffect(Unit) { onContinue() }
     }
 
     Column(
@@ -68,107 +63,118 @@ fun PermissionGateScreen(
             .fillMaxSize()
             .background(NavyBlueDark)
             .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(Modifier.height(48.dp))
         Icon(
             Icons.Default.AdminPanelSettings,
             contentDescription = null,
             tint = GoldenYellow,
             modifier = Modifier.size(80.dp)
         )
-        
         Spacer(Modifier.height(24.dp))
-        
         Text(
-            "मिशन तैयारी: अनुमति आवश्यक\n(Mission Readiness: Permissions Required)",
+            "मिशन तैयारी: चरण ${currentStep}/4\n(Mission Readiness: Step ${currentStep}/4)",
             color = Color.White,
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            lineHeight = 32.sp
-        )
-        
-        Spacer(Modifier.height(16.dp))
-        
-        Text(
-            "KAVACH को फील्ड ऑपरेशन के दौरान साक्ष्य एकत्र करने और कमांड प्राप्त करने के लिए इन अनुमतियों की आवश्यकता है।",
-            color = Color.White.copy(alpha = 0.7f),
-            style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center
         )
-        
         Spacer(Modifier.height(40.dp))
 
-        PermissionRequirementItem(Icons.Default.CameraAlt, "Camera", "For capturing incident evidence and field reporting.")
-        PermissionRequirementItem(Icons.Default.Mic, "Microphone", "For voice briefings and audio reports.")
-        PermissionRequirementItem(Icons.Default.LocationOn, "Location", "For mission geotagging and personnel safety tracking.")
-        PermissionRequirementItem(Icons.Default.NotificationsActive, "Notifications", "For instant command and control broadcasts.")
-        PermissionRequirementItem(Icons.Default.BatteryChargingFull, "Battery Optimization", "Must be disabled to ensure reliable background sync and command delivery.")
+        when (currentStep) {
+            1 -> PermissionStep(
+                icon = Icons.Default.NotificationsActive,
+                title = "सूचनाएं (Notifications)",
+                desc = "कमांड और कंट्रोल ब्रॉडकास्ट प्राप्त करने के लिए।",
+                buttonText = "अनुमति दें (Grant)",
+                onClick = {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    } else {
+                        currentStep = 2
+                    }
+                }
+            )
+            2 -> PermissionStep(
+                icon = Icons.Default.LocationOn,
+                title = "स्थान (Location)",
+                desc = "मिशन जियोटैगिंग और कर्मियों की सुरक्षा ट्रैकिंग के लिए।",
+                buttonText = "अनुमति दें (Grant)",
+                onClick = {
+                    locationLauncher.launch(arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    ))
+                }
+            )
+            3 -> PermissionStep(
+                icon = Icons.Default.CameraAlt,
+                title = "कैमरा और माइक्रोफोन",
+                desc = "साक्ष्य एकत्र करने और ब्रीफिंग रिकॉर्ड करने के लिए।",
+                buttonText = "अनुमति दें (Grant)",
+                onClick = {
+                    mediaLauncher.launch(arrayOf(
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.RECORD_AUDIO
+                    ))
+                }
+            )
+            4 -> PermissionStep(
+                icon = Icons.Default.Storage,
+                title = "स्टोरेज (Storage)",
+                desc = "दस्तावेजों और साक्ष्यों को सुरक्षित रखने के लिए।",
+                buttonText = "अंतिम अनुमति (Final Grant)",
+                onClick = {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        storageLauncher.launch(arrayOf(
+                            Manifest.permission.READ_MEDIA_IMAGES,
+                            Manifest.permission.READ_MEDIA_VIDEO,
+                            Manifest.permission.READ_MEDIA_AUDIO
+                        ))
+                    } else {
+                        storageLauncher.launch(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE))
+                    }
+                }
+            )
+        }
 
         Spacer(Modifier.weight(1f))
-        
-        val powerManager = remember { context.getSystemService(android.content.Context.POWER_SERVICE) as android.os.PowerManager }
-        val isIgnoringBatteryOptimizations = remember { 
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                powerManager.isIgnoringBatteryOptimizations(context.packageName)
-            } else true
-        }
-
-        if (!isIgnoringBatteryOptimizations) {
-            Button(
-                onClick = {
-                    val intent = android.content.Intent(android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
-                        data = android.net.Uri.parse("package:${context.packageName}")
-                    }
-                    context.startActivity(intent)
-                },
-                modifier = Modifier.fillMaxWidth().height(56.dp).padding(bottom = 8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.2f)),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text("अनुकूलन अक्षम करें (Disable Optimization)", color = Color.White)
-            }
-        }
-
-        Button(
-            onClick = { launcher.launch(permissionsToRequest) },
-            modifier = Modifier.fillMaxWidth().height(56.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = GoldenYellow),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Text("अनुमति दें (Grant Permissions)", color = NavyBlueDark, fontWeight = FontWeight.Bold)
-        }
-        
         TextButton(onClick = { 
-            viewModel.markPermissionsAsHandled()
             onContinue() 
         }) {
-            Text("बाद में करें (सीमित परिचालन क्षमता)\n[Decide Later - Limited Operational Capability]", 
-                color = Color.White.copy(alpha = 0.5f),
-                textAlign = TextAlign.Center,
-                fontSize = 12.sp
-            )
+            Text("अभी छोड़ें (Skip for now)", color = Color.White.copy(alpha = 0.5f))
         }
     }
 }
 
 @Composable
-private fun PermissionRequirementItem(icon: ImageVector, title: String, description: String) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+private fun PermissionStep(
+    icon: ImageVector,
+    title: String,
+    desc: String,
+    buttonText: String,
+    onClick: () -> Unit
+) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
-            modifier = Modifier.size(40.dp).background(Color.White.copy(alpha = 0.05f), RoundedCornerShape(8.dp)),
+            modifier = Modifier.size(100.dp).background(Color.White.copy(alpha = 0.05f), RoundedCornerShape(20.dp)),
             contentAlignment = Alignment.Center
         ) {
-            Icon(icon, contentDescription = null, tint = GoldenYellow, modifier = Modifier.size(20.dp))
+            Icon(icon, contentDescription = null, tint = GoldenYellow, modifier = Modifier.size(48.dp))
         }
-        Spacer(Modifier.width(16.dp))
-        Column {
-            Text(title, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-            Text(description, color = Color.White.copy(alpha = 0.5f), fontSize = 12.sp)
+        Spacer(Modifier.height(32.dp))
+        Text(title, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+        Spacer(Modifier.height(12.dp))
+        Text(desc, color = Color.White.copy(alpha = 0.7f), textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = 20.dp))
+        Spacer(Modifier.height(48.dp))
+        Button(
+            onClick = onClick,
+            modifier = Modifier.fillMaxWidth().height(56.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = GoldenYellow),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Text(buttonText, color = NavyBlueDark, fontWeight = FontWeight.Bold)
         }
     }
 }

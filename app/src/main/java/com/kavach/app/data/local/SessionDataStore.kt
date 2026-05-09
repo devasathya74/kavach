@@ -46,6 +46,12 @@ class SessionDataStore @Inject constructor(
         private val KEY_PENDING_FORCE_UPDATE = androidx.datastore.preferences.core.booleanPreferencesKey("pending_force_update")
         private val KEY_SCHEMA_VERSION = androidx.datastore.preferences.core.intPreferencesKey("db_schema_version")
         private val KEY_PERMISSIONS_HANDLED = androidx.datastore.preferences.core.booleanPreferencesKey("permissions_handled")
+        
+        // Extended Device Binding
+        private val KEY_ANDROID_ID       = stringPreferencesKey("android_id")
+        private val KEY_BOUND_AT         = longPreferencesKey("bound_at_ms")
+        private val KEY_LAST_LOGIN_PNO   = stringPreferencesKey("last_login_pno")
+        private val KEY_DEVICE_NAME      = stringPreferencesKey("device_name")
     }
 
     // Transient State (In-memory only, reset on every app launch)
@@ -74,6 +80,12 @@ class SessionDataStore @Inject constructor(
     val consentTimestamp : Flow<Long?>    = context.dataStore.data.map { it[KEY_CONSENT_TIMESTAMP] }
     val pendingForceUpdate: Flow<Boolean> = context.dataStore.data.map { it[KEY_PENDING_FORCE_UPDATE] ?: false }
     val schemaVersion    : Flow<Int>      = context.dataStore.data.map { it[KEY_SCHEMA_VERSION] ?: 1 }
+
+    // Extended Binding Flows
+    val androidId        : Flow<String?>  = context.dataStore.data.map { it[KEY_ANDROID_ID] }
+    val boundAt          : Flow<Long?>    = context.dataStore.data.map { it[KEY_BOUND_AT] }
+    val lastLoginPno     : Flow<String?>  = context.dataStore.data.map { it[KEY_LAST_LOGIN_PNO] }
+    val deviceName       : Flow<String?>  = context.dataStore.data.map { it[KEY_DEVICE_NAME] }
 
     /**
      * Last known integrity level from Play Integrity API.
@@ -116,8 +128,11 @@ class SessionDataStore @Inject constructor(
         unit         : String,
         deviceId     : String,
         deviceSecret : String,
-        role         : String
+        role         : String,
+        androidId    : String = "",
+        deviceName   : String = ""
     ) {
+        android.util.Log.d("KAVACH_SESSION", "SAVING SESSION: PNO=$pno, ROLE=$role, SECRET=${deviceSecret.take(4)}..., DEVICE=$deviceId")
         val expiryMs = System.currentTimeMillis() + expiresIn * 1000
         context.dataStore.edit { prefs ->
             prefs[KEY_TOKEN]         = token
@@ -130,6 +145,14 @@ class SessionDataStore @Inject constructor(
             prefs[KEY_DEVICE_ID]     = deviceId
             prefs[KEY_DEVICE_SECRET] = deviceSecret
             prefs[KEY_ROLE]          = role
+            
+            // Extended Binding
+            prefs[KEY_LAST_LOGIN_PNO] = pno
+            if (androidId.isNotBlank()) prefs[KEY_ANDROID_ID] = androidId
+            if (deviceName.isNotBlank()) prefs[KEY_DEVICE_NAME] = deviceName
+            if (prefs[KEY_BOUND_AT] == null) {
+                prefs[KEY_BOUND_AT] = System.currentTimeMillis()
+            }
         }
     }
 

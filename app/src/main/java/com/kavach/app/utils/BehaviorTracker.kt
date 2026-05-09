@@ -61,7 +61,7 @@ class BehaviorTracker @Inject constructor(
      */
     fun log(
         eventType  : String,
-        trainingId : Int?                = null,
+        trainingId : String?              = null,
         metadata   : Map<String, String> = emptyMap()
     ) {
         scope.launch {
@@ -82,7 +82,7 @@ class BehaviorTracker @Inject constructor(
 
     // ── Convenience helpers ────────────────────────────────
 
-    fun logSeekAttempt(trainingId: Int, positionMs: Long, maxAllowedMs: Long) = log(
+    fun logSeekAttempt(trainingId: String, positionMs: Long, maxAllowedMs: Long) = log(
         eventType  = Events.SEEK_ATTEMPT,
         trainingId = trainingId,
         metadata   = mapOf(
@@ -91,22 +91,22 @@ class BehaviorTracker @Inject constructor(
         )
     )
 
-    fun logAppBackground(trainingId: Int, elapsedSeconds: Long) = log(
+    fun logAppBackground(trainingId: String, elapsedSeconds: Long) = log(
         eventType  = Events.APP_BACKGROUND,
         trainingId = trainingId,
         metadata   = mapOf("elapsed_s" to elapsedSeconds.toString())
     )
 
-    fun logQuizFastAnswer(trainingId: Int, questionId: Int, elapsedMs: Long) = log(
+    fun logQuizFastAnswer(trainingId: String, questionId: String, elapsedMs: Long) = log(
         eventType  = Events.QUIZ_FAST_ANSWER,
         trainingId = trainingId,
         metadata   = mapOf(
-            "question_id" to questionId.toString(),
+            "question_id" to questionId,
             "elapsed_ms"  to elapsedMs.toString()
         )
     )
 
-    fun logQuizAttempt(trainingId: Int, score: Int, passed: Boolean) = log(
+    fun logQuizAttempt(trainingId: String, score: Int, passed: Boolean) = log(
         eventType  = Events.QUIZ_ATTEMPT,
         trainingId = trainingId,
         metadata   = mapOf(

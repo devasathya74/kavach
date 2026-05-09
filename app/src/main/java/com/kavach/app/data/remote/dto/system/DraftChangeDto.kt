@@ -5,7 +5,7 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class DraftChangeDto(
-    @Json(name = "id") val id: Int,
+    @Json(name = "id") val id: String,
     @Json(name = "model") val model: String,
     @Json(name = "field") val field: String,
     @Json(name = "old_value") val oldValue: Map<String, Any>?,

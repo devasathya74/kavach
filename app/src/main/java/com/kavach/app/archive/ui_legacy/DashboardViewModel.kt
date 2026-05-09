@@ -55,7 +55,7 @@ class DashboardViewModel @Inject constructor(
             val broadcasts = missionRepository.getBroadcasts()
             
             val incCount = if (incidents is ApiResult.Success) incidents.data.size else 0
-            val brCount = if (broadcasts is ApiResult.Success) broadcasts.data.count { !it.isAcknowledged } else 0
+            val brCount = if (broadcasts is ApiResult.Success) broadcasts.data.count { !it.acknowledged } else 0
             
             _uiState.value = _uiState.value.copy(
                 incidentCount = incCount,

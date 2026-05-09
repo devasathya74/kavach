@@ -11,20 +11,20 @@ interface TrainingDao {
     fun getAllTrainings(): Flow<List<TrainingEntity>>
 
     @Query("SELECT * FROM trainings WHERE id = :id")
-    suspend fun getTrainingById(id: Int): TrainingEntity?
+    suspend fun getTrainingById(id: String): TrainingEntity?
 
     @Upsert
     suspend fun upsertAll(trainings: List<TrainingEntity>)
 
     @Query("UPDATE trainings SET status = :status WHERE id = :id")
-    suspend fun updateStatus(id: Int, status: String)
+    suspend fun updateStatus(id: String, status: String)
 }
 
 @Dao
 interface QuizDao {
 
     @Query("SELECT * FROM quiz_questions WHERE trainingId = :trainingId")
-    suspend fun getQuestionsForTraining(trainingId: Int): List<QuizQuestionEntity>
+    suspend fun getQuestionsForTraining(trainingId: String): List<QuizQuestionEntity>
 
     @Upsert
     suspend fun upsertAll(questions: List<QuizQuestionEntity>)

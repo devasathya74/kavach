@@ -18,13 +18,21 @@ object DeviceIdUtil {
 
     @SuppressLint("HardwareIds")
     fun getDeviceId(context: Context): String {
-        val androidId = Settings.Secure.getString(
+        val androidId = getAndroidId(context)
+        val rawFingerprint = "$androidId|${Build.MODEL}|${Build.MANUFACTURER}"
+        return sha256(rawFingerprint)
+    }
+
+    @SuppressLint("HardwareIds")
+    fun getAndroidId(context: Context): String {
+        return Settings.Secure.getString(
             context.contentResolver,
             Settings.Secure.ANDROID_ID
         ) ?: "unknown"
+    }
 
-        val rawFingerprint = "$androidId|${Build.MODEL}|${Build.MANUFACTURER}"
-        return sha256(rawFingerprint)
+    fun getDeviceName(): String {
+        return "${Build.MANUFACTURER} ${Build.MODEL}"
     }
 
     private fun sha256(input: String): String {

@@ -21,5 +21,14 @@ data class AdminOfficerDto(
     @Json(name = "unit_name")        val unitName: String? = null,
     @Json(name = "last_login")       val lastLogin: String? = null,
     @Json(name = "discipline_score") val disciplineScore: Double? = null,
-    @Json(name = "service_status")   val serviceStatus: String? = null
+    @Json(name = "service_status")   val serviceStatus: String? = null,
+    
+    // Legacy Admin UI fields
+    @Json(name = "risk_level")       val riskLevel: String = "NORMAL",
+    @Json(name = "predicted_score")  val predictedScore: String = "N/A",
+    @Json(name = "trajectory")       val trajectory: String = "STABLE",
+    @Json(name = "anomaly_reasons")  val anomalyReasons: List<String> = emptyList(),
+    @Json(name = "confidence_score") val confidenceScore: String = "N/A",
+    @Json(name = "signal_weights")   val signalWeights: Map<String, Float> = emptyMap(),
+    @Json(name = "unit")             val unit: String? = null
 )

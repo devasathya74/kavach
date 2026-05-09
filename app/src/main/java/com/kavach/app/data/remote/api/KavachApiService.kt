@@ -29,16 +29,16 @@ interface KavachApiService {
     suspend fun getTrainings(): Response<ApiResponse<List<TrainingDto>>>
 
     @GET("api/v1/trainings/{id}/")
-    suspend fun getTrainingById(@Path("id") id: Int): Response<ApiResponse<TrainingDto>>
+    suspend fun getTrainingById(@Path("id") id: String): Response<ApiResponse<TrainingDto>>
 
     @POST("api/v1/training/start/")
-    suspend fun startTraining(@Body body: Map<String, Int>): Response<ApiResponse<Unit>>
+    suspend fun startTraining(@Body body: Map<String, String>): Response<ApiResponse<Unit>>
 
     @POST("api/v1/training/complete/")
-    suspend fun completeTraining(@Body body: Map<String, Int>): Response<ApiResponse<Unit>>
+    suspend fun completeTraining(@Body body: Map<String, String>): Response<ApiResponse<Unit>>
 
     @GET("api/v1/quiz/{trainingId}/")
-    suspend fun getQuizQuestions(@Path("trainingId") trainingId: Int): Response<ApiResponse<List<QuizQuestionDto>>>
+    suspend fun getQuizQuestions(@Path("trainingId") trainingId: String): Response<ApiResponse<List<QuizQuestionDto>>>
 
     @POST("api/v1/quiz/submit/")
     suspend fun submitQuiz(@Body body: QuizSubmitRequest): Response<ApiResponse<QuizResultDto>>

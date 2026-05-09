@@ -88,7 +88,7 @@ class IntegrityRepository @Inject constructor(
             val verifyResp = api.verifyIntegrityToken(
                 IntegrityVerifyRequest(
                     integrityToken = token,
-                    requestId      = nonceData.requestId,
+                    requestId      = "",
                     deviceId       = deviceId
                 )
             )
@@ -108,7 +108,7 @@ class IntegrityRepository @Inject constructor(
                     verdict.message ?: "Device blocked by integrity policy"
                 )
                 verdict.restricted -> AttestationResult.Restricted(
-                    level   = verdict.integrityLevel,
+                    level   = verdict.integrityLevel ?: "BASIC",
                     message = verdict.message
                 )
                 else -> AttestationResult.Passed(verdict)

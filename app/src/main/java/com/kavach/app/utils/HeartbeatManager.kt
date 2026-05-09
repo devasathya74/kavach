@@ -29,7 +29,7 @@ class HeartbeatManager @Inject constructor(
 ) {
     private var heartbeatJob    : Job?   = null
     private var sessionId       : String = ""
-    private var trainingId      : Int    = 0
+    private var trainingId      : String = ""
     private var lastPositionMs  : Long   = 0L
     private var stuckCount      : Int    = 0     // times position hasn't advanced
 
@@ -42,7 +42,7 @@ class HeartbeatManager @Inject constructor(
      * Start heartbeat loop when video begins playing.
      * @param sessionId Unique ID per training session (new UUID each start)
      */
-    fun start(trainingId: Int, sessionId: String, scope: CoroutineScope) {
+    fun start(trainingId: String, sessionId: String, scope: CoroutineScope) {
         stop()
         this.trainingId = trainingId
         this.sessionId  = sessionId

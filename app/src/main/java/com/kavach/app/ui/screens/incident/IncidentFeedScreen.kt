@@ -191,7 +191,7 @@ fun IncidentCard(incident: IncidentDto) {
             }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = incident.description,
+                text = incident.description ?: "",
                 color = Color.White.copy(alpha = 0.7f),
                 style = MaterialTheme.typography.bodyMedium
             )
@@ -205,7 +205,7 @@ fun IncidentCard(incident: IncidentDto) {
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = incident.createdAt,
+                    text = incident.createdAt ?: "Unknown",
                     color = Color.White.copy(alpha = 0.5f),
                     style = MaterialTheme.typography.labelSmall
                 )

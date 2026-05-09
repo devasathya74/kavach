@@ -38,9 +38,9 @@ class TrainingRepository @Inject constructor(
             val dtos = resp.body()?.data ?: emptyList()
             trainingDao.upsertAll(dtos.map {
                 TrainingEntity(
-                    id = it.id, title = it.title, description = it.description,
-                    videoUrl = it.videoUrl, duration = it.duration,
-                    isMandatory = it.isMandatory, status = it.status
+                    id = it.id, title = it.title, description = it.description ?: "",
+                    videoUrl = it.videoPath ?: "", duration = it.durationSec,
+                    isMandatory = it.isMandatory, status = "NEW"
                 )
             })
             ApiResult.Success(Unit)
@@ -50,21 +50,21 @@ class TrainingRepository @Inject constructor(
     }
 
     /** Mark training as started on server. */
-    suspend fun startTraining(trainingId: Int): ApiResult<Unit> = safeApiCall {
+    suspend fun startTraining(trainingId: String): ApiResult<Unit> = safeApiCall {
         api.startTraining(mapOf("training_id" to trainingId))
         trainingDao.updateStatus(trainingId, "IN_PROGRESS")
         ApiResult.Success(Unit)
     }
 
     /** Mark training complete on server. */
-    suspend fun completeTraining(trainingId: Int): ApiResult<Unit> = safeApiCall {
+    suspend fun completeTraining(trainingId: String): ApiResult<Unit> = safeApiCall {
         api.completeTraining(mapOf("training_id" to trainingId))
         trainingDao.updateStatus(trainingId, "COMPLETED")
         ApiResult.Success(Unit)
     }
 
     /** Fetch quiz questions for a training (cached). */
-    suspend fun getQuizQuestions(trainingId: Int): ApiResult<List<QuizQuestion>> = safeApiCall {
+    suspend fun getQuizQuestions(trainingId: String): ApiResult<List<QuizQuestion>> = safeApiCall {
         val cached = quizDao.getQuestionsForTraining(trainingId)
         if (cached.isNotEmpty()) {
             return@safeApiCall ApiResult.Success(cached.map { it.toDomain() })
@@ -75,14 +75,14 @@ class TrainingRepository @Inject constructor(
             quizDao.upsertAll(dtos.map {
                 QuizQuestionEntity(
                     id = it.id, trainingId = it.trainingId,
-                    question = it.question, optionA = it.optionA,
-                    optionB = it.optionB, optionC = it.optionC,
-                    optionD = it.optionD, correctOption = it.correctOption
+                    question = it.question, optionA = it.options.getOrNull(0) ?: "",
+                    optionB = it.options.getOrNull(1) ?: "", optionC = it.options.getOrNull(2) ?: "",
+                    optionD = it.options.getOrNull(3) ?: "", correctOption = ""
                 )
             })
             ApiResult.Success(dtos.map {
                 QuizQuestion(it.id, it.trainingId, it.question,
-                    it.optionA, it.optionB, it.optionC, it.optionD, it.correctOption)
+                    it.options.getOrNull(0) ?: "", it.options.getOrNull(1) ?: "", it.options.getOrNull(2) ?: "", it.options.getOrNull(3) ?: "", "")
             })
         } else {
             ApiResult.Error("Failed to load quiz: ${resp.code()}", code = resp.code())
@@ -90,7 +90,7 @@ class TrainingRepository @Inject constructor(
     }
 
     /** Submit quiz answers to server. */
-    suspend fun submitQuiz(trainingId: Int, answers: Map<Int, String>): ApiResult<QuizResult> = safeApiCall {
+    suspend fun submitQuiz(trainingId: String, answers: Map<String, String>): ApiResult<QuizResult> = safeApiCall {
         val resp = api.submitQuiz(QuizSubmitRequest(trainingId, answers))
         val dto  = resp.body()?.data
         if (resp.isSuccessful && dto != null) {

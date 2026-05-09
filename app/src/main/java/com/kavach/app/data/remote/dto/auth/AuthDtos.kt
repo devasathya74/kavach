@@ -25,6 +25,7 @@ data class AuthResponse(
     @Json(name = "status")         val status: String,
     @Json(name = "token")          val token: String? = null,
     @Json(name = "refresh_token")  val refreshToken: String? = null,
+    @Json(name = "expires_in")     val expiresIn: Long? = null,
     @Json(name = "user")           val user: UserDto? = null,
     @Json(name = "device_secret")  val deviceSecret: String? = null,
     @Json(name = "message")        val message: String? = null,
@@ -34,7 +35,8 @@ data class AuthResponse(
 @JsonClass(generateAdapter = true)
 data class OtpRequest(
     @Json(name = "pno")  val pno: String,
-    @Json(name = "otp")  val otp: String
+    @Json(name = "otp")  val otp: String,
+    @Json(name = "device_id") val deviceId: String? = null
 )
 
 @JsonClass(generateAdapter = true)
@@ -42,6 +44,19 @@ data class ConsentRequest(
     @Json(name = "consent_type")    val consentType: String,
     @Json(name = "accepted")        val accepted: Boolean,
     @Json(name = "device_id")       val deviceId: String? = null
+)
+
+@JsonClass(generateAdapter = true)
+data class RefreshTokenRequest(
+    @Json(name = "refresh_token") val refreshToken: String,
+    @Json(name = "device_id")     val deviceId: String? = null
+)
+
+@JsonClass(generateAdapter = true)
+data class RefreshTokenResponse(
+    @Json(name = "access_token")  val accessToken: String,
+    @Json(name = "refresh_token") val refreshToken: String? = null,
+    @Json(name = "expires_in")    val expiresIn: Long? = null
 )
 
 // ── Integrity DTOs ────────────────────────────────────────────────────────────

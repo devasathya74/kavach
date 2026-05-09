@@ -2,7 +2,7 @@ package com.kavach.app.data.repository
 
 import com.kavach.app.data.remote.api.KavachApiService
 import com.kavach.app.data.remote.dto.personnel.AdminOfficerDto
-import com.kavach.app.data.remote.dto.AdminUserActionDto
+import com.kavach.app.data.remote.dto.system.AdminUserActionDto
 import com.kavach.app.data.remote.dto.training.SuspiciousSessionDto
 import com.kavach.app.utils.ApiResult
 import com.kavach.app.utils.safeApiCall
@@ -40,7 +40,7 @@ class AdminRepository @Inject constructor(
         }
     }
 
-    suspend fun getLiveFeed(): ApiResult<List<com.kavach.app.data.remote.dto.LiveFeedEventDto>> = safeApiCall {
+    suspend fun getLiveFeed(): ApiResult<List<com.kavach.app.data.remote.dto.system.LiveFeedEventDto>> = safeApiCall {
         val resp = api.getLiveFeed()
         if (resp.isSuccessful) {
             ApiResult.Success(resp.body()?.data ?: emptyList())
@@ -49,7 +49,7 @@ class AdminRepository @Inject constructor(
         }
     }
 
-    suspend fun getAnalytics(): ApiResult<com.kavach.app.data.remote.dto.SystemAnalyticsDto> = safeApiCall {
+    suspend fun getAnalytics(): ApiResult<com.kavach.app.data.remote.dto.system.SystemAnalyticsDto> = safeApiCall {
         val resp = api.getAnalytics()
         if (resp.isSuccessful && resp.body()?.data != null) {
             ApiResult.Success(resp.body()!!.data!!)

@@ -50,7 +50,7 @@ data class OfficerProfileCacheEntity(
 
 @Entity(tableName = "officer_device_cache")
 data class OfficerDeviceCacheEntity(
-    @PrimaryKey val id: Int,
+    @PrimaryKey val id: String,
     val officerId: String,
     val deviceId: String,
     val deviceName: String,

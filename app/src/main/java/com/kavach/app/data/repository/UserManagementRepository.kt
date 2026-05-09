@@ -167,13 +167,13 @@ class UserManagementRepository @Inject constructor(
         ApiResult.Success(changes)
     }
 
-    suspend fun approveChange(id: Int): ApiResult<Unit> = safeApiCall {
+    suspend fun approveChange(id: String): ApiResult<Unit> = safeApiCall {
         val response = api.approveChange(id)
         if (response.status == "success") ApiResult.Success(Unit)
         else ApiResult.Error(response.message ?: "Approval failed", code = 403)
     }
 
-    suspend fun rejectChange(id: Int): ApiResult<Unit> = safeApiCall {
+    suspend fun rejectChange(id: String): ApiResult<Unit> = safeApiCall {
         val response = api.rejectChange(id)
         if (response.status == "success") ApiResult.Success(Unit)
         else ApiResult.Error(response.message ?: "Rejection failed")

@@ -29,7 +29,7 @@ data class DomainEventWrapper(
 sealed class DomainEvent {
     data class IncidentCreated(val incidentId: String, val severity: String) : DomainEvent()
     data class OfficerUpdated(val pno: String, val field: String) : DomainEvent()
-    data class GovernanceApplied(val changeId: Int) : DomainEvent()
+    data class GovernanceApplied(val changeId: String) : DomainEvent()
     data class PresenceChanged(val pno: String, val confidence: Int) : DomainEvent()
     data class ModeChanged(val oldMode: String, val newMode: String) : DomainEvent()
     object SystemLockdown : DomainEvent()

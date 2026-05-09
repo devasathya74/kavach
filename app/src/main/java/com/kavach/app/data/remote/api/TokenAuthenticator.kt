@@ -129,7 +129,7 @@ class TokenAuthenticator @Inject constructor(
                             }
                             is AttestationResult.Passed -> {
                                 Timber.d("Attestation PASSED after refresh: ${attestation.verdict.integrityLevel}")
-                                sessionStore.saveIntegrityLevel(attestation.verdict.integrityLevel)
+                                sessionStore.saveIntegrityLevel(attestation.verdict.integrityLevel ?: "BASIC")
                             }
                         }
 
