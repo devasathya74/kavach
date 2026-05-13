@@ -85,24 +85,20 @@ class IncidentSyncWorker @AssistedInject constructor(
                 }
 
                 // 2. Create Incident on Server
-                val payload = mutableMapOf<String, Any>(
-                    "title" to draft.title,
-                    "summary" to draft.summary,
-                    "severity" to draft.severity,
-                    "type" to draft.type,
-                    "occurred_at" to java.time.Instant.ofEpochMilli(draft.occurredAt).toString()
+                val request = com.kavach.app.data.remote.dto.v2.CreateIncidentRequest(
+                    title = draft.title,
+                    summary = draft.summary,
+                    severity = draft.severity,
+                    type = draft.type,
+                    occurredAt = java.time.Instant.ofEpochMilli(draft.occurredAt).toString()
                 )
                 
-                if (serverUrls.isNotEmpty()) {
-                    payload["evidence_manifest"] = serverUrls
-                }
-
-                val response = api.createIncident(payload)
-                if (response.status == "success") {
+                val response = api.createIncident(request)
+                if (response.isSuccessful && response.body()?.status == "success") {
                     db.incidentDao().updateSyncStatus(
                         localId = draft.localId,
                         state = DraftSyncState.SYNCED,
-                        serverId = response.data?.id
+                        serverId = response.body()?.data?.id
                     )
                     
                     // Cleanup: Delete local evidence files after success
@@ -116,7 +112,8 @@ class IncidentSyncWorker @AssistedInject constructor(
                     
                     Timber.d("IncidentSyncWorker: Successfully synced ${draft.localId}")
                 } else {
-                    Timber.e("IncidentSyncWorker: Server rejected incident ${draft.localId}: ${response.message}")
+                    val errorBody = response.errorBody()?.string()
+                    Timber.e("IncidentSyncWorker: Server rejected incident ${draft.localId}: ${response.body()?.message ?: errorBody}")
                     hasFailures = true
                 }
 

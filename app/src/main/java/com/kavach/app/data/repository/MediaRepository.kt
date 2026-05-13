@@ -31,23 +31,32 @@ class MediaRepository @Inject constructor(
         title: String,
         imageUri: Uri,
         category: String = "EVIDENCE"
-    ): ApiResult<FieldDataDto> = safeApiCall {
-        val file = compressImage(imageUri)
-        val filePart = MultipartBody.Part.createFormData(
-            "file",
-            file.name,
-            file.asRequestBody("image/jpeg".toMediaTypeOrNull())
-        )
-        val titlePart = title.toRequestBody("text/plain".toMediaTypeOrNull())
-        val categoryPart = category.toRequestBody("text/plain".toMediaTypeOrNull())
-
-        // Note: KavachApiV2 needs a multipart method. 
-        // I will add it in the next step.
-        val response = api.uploadFieldData(filePart, titlePart, categoryPart)
-        if (response.status == "success" && response.data != null) {
-            ApiResult.Success(response.data)
-        } else {
-            ApiResult.Error(response.message ?: "Upload failed")
+    ): ApiResult<FieldDataDto> {
+        return try {
+            val file = compressImage(imageUri)
+            val filePart = MultipartBody.Part.createFormData(
+                "file",
+                file.name,
+                file.asRequestBody("image/jpeg".toMediaTypeOrNull())
+            )
+            val titlePart    = title.toRequestBody("text/plain".toMediaTypeOrNull())
+            val categoryPart = category.toRequestBody("text/plain".toMediaTypeOrNull())
+            val response     = api.uploadFieldData(filePart, titlePart, categoryPart)
+            val body         = response.body()
+            if (response.isSuccessful && body?.data != null) {
+                ApiResult.Success(body.data)
+            } else {
+                ApiResult.Error(body?.message ?: "Upload failed", response.code())
+            }
+        } catch (e: retrofit2.HttpException) {
+            when (e.code()) {
+                401, 403 -> ApiResult.Unauthorized()
+                else     -> ApiResult.Error("Upload failed: HTTP ${e.code()}", e.code(), e)
+            }
+        } catch (e: java.io.IOException) {
+            ApiResult.Offline("Upload failed: no connection")
+        } catch (e: Exception) {
+            ApiResult.Error(e.localizedMessage ?: "Upload failed", throwable = e)
         }
     }
 
@@ -96,20 +105,31 @@ class MediaRepository @Inject constructor(
     suspend fun uploadAudioReport(
         title: String,
         audioFile: File
-    ): ApiResult<FieldDataDto> = safeApiCall {
-        val filePart = MultipartBody.Part.createFormData(
-            "file",
-            audioFile.name,
-            audioFile.asRequestBody("audio/mpeg".toMediaTypeOrNull())
-        )
-        val titlePart = title.toRequestBody("text/plain".toMediaTypeOrNull())
-        val categoryPart = "INTEL".toRequestBody("text/plain".toMediaTypeOrNull())
-
-        val response = api.uploadFieldData(filePart, titlePart, categoryPart)
-        if (response.status == "success" && response.data != null) {
-            ApiResult.Success(response.data)
-        } else {
-            ApiResult.Error(response.message ?: "Audio upload failed")
+    ): ApiResult<FieldDataDto> {
+        return try {
+            val filePart = MultipartBody.Part.createFormData(
+                "file",
+                audioFile.name,
+                audioFile.asRequestBody("audio/mpeg".toMediaTypeOrNull())
+            )
+            val titlePart    = title.toRequestBody("text/plain".toMediaTypeOrNull())
+            val categoryPart = "INTEL".toRequestBody("text/plain".toMediaTypeOrNull())
+            val response     = api.uploadFieldData(filePart, titlePart, categoryPart)
+            val body         = response.body()
+            if (response.isSuccessful && body?.data != null) {
+                ApiResult.Success(body.data)
+            } else {
+                ApiResult.Error(body?.message ?: "Audio upload failed", response.code())
+            }
+        } catch (e: retrofit2.HttpException) {
+            when (e.code()) {
+                401, 403 -> ApiResult.Unauthorized()
+                else     -> ApiResult.Error("Audio upload failed: HTTP ${e.code()}", e.code(), e)
+            }
+        } catch (e: java.io.IOException) {
+            ApiResult.Offline("Audio upload failed: no connection")
+        } catch (e: Exception) {
+            ApiResult.Error(e.localizedMessage ?: "Audio upload failed", throwable = e)
         }
     }
 }

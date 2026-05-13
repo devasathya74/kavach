@@ -22,6 +22,9 @@ data class OfficerDetailState(
 @HiltViewModel
 class OfficerDetailViewModel @Inject constructor(
     private val repository: UserManagementRepository,
+    private val sessionDataStore: com.kavach.app.data.local.SessionDataStore,
+    private val authEngine: com.kavach.app.core.security.AuthorizationEngine,
+    private val networkMonitor: com.kavach.app.util.NetworkMonitor,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -65,22 +68,48 @@ class OfficerDetailViewModel @Inject constructor(
 
     fun globalLogout() {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
-            repository.globalLogout(officerId).onSuccess {
-                loadDetail()
-            }.onFailure { e ->
-                _state.update { it.copy(isLoading = false, error = e.message) }
-            }
+            val role = sessionDataStore.role.first() ?: "USER"
+            val isOffline = networkMonitor.status.first() == com.kavach.app.util.ConnectionStatus.UNAVAILABLE
+            authEngine.requestAuthorization(
+                action = com.kavach.app.core.security.CriticalAction.FORCE_LOGOUT_USER,
+                actorRole = role,
+                isOffline = isOffline,
+                onResolved = { granted ->
+                    if (granted) {
+                        viewModelScope.launch {
+                            _state.update { it.copy(isLoading = true) }
+                            repository.globalLogout(officerId).onSuccess {
+                                loadDetail()
+                            }.onFailure { e ->
+                                _state.update { it.copy(isLoading = false, error = e.message) }
+                            }
+                        }
+                    }
+                }
+            )
         }
     }
 
     fun revokeDevice(deviceId: String) {
         viewModelScope.launch {
-            _state.update { it.copy(isRevoking = true) }
-            repository.revokeDevice(officerId, deviceId).onSuccess {
-                loadDetail() // Refresh
-            }
-            _state.update { it.copy(isRevoking = false) }
+            val role = sessionDataStore.role.first() ?: "USER"
+            val isOffline = networkMonitor.status.first() == com.kavach.app.util.ConnectionStatus.UNAVAILABLE
+            authEngine.requestAuthorization(
+                action = com.kavach.app.core.security.CriticalAction.REVOKE_DEVICE,
+                actorRole = role,
+                isOffline = isOffline,
+                onResolved = { granted ->
+                    if (granted) {
+                        viewModelScope.launch {
+                            _state.update { it.copy(isRevoking = true) }
+                            repository.revokeDevice(officerId, deviceId).onSuccess {
+                                loadDetail()
+                            }
+                            _state.update { it.copy(isRevoking = false) }
+                        }
+                    }
+                }
+            )
         }
     }
 }

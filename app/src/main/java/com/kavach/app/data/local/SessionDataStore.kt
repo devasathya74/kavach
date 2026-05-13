@@ -52,6 +52,10 @@ class SessionDataStore @Inject constructor(
         private val KEY_BOUND_AT         = longPreferencesKey("bound_at_ms")
         private val KEY_LAST_LOGIN_PNO   = stringPreferencesKey("last_login_pno")
         private val KEY_DEVICE_NAME      = stringPreferencesKey("device_name")
+        private val KEY_LAST_AUTH_TIME   = longPreferencesKey("last_auth_time_ms")
+        private val KEY_LAST_UNLOCK_TIME = longPreferencesKey("last_unlock_time_ms")
+        private val KEY_APP_LOCKED       = androidx.datastore.preferences.core.booleanPreferencesKey("app_locked_v2")
+        private val KEY_SESSION_BREACH_REASON = stringPreferencesKey("session_breach_reason")
     }
 
     // Transient State (In-memory only, reset on every app launch)
@@ -66,15 +70,15 @@ class SessionDataStore @Inject constructor(
         _isVerifiedInThisSession.value = false
     }
 
-    val token            : Flow<String?>  = context.dataStore.data.map { it[KEY_TOKEN] }
-    val refreshToken     : Flow<String?>  = context.dataStore.data.map { it[KEY_REFRESH_TOKEN] }
+    val token            : Flow<String>   = context.dataStore.data.map { it[KEY_TOKEN] ?: "" }
+    val refreshToken     : Flow<String>   = context.dataStore.data.map { it[KEY_REFRESH_TOKEN] ?: "" }
     val tokenExpiry      : Flow<Long?>    = context.dataStore.data.map { it[KEY_TOKEN_EXPIRY] }
-    val pno              : Flow<String?>  = context.dataStore.data.map { it[KEY_PNO] }
-    val name             : Flow<String?>  = context.dataStore.data.map { it[KEY_USER_NAME] }
-    val rank             : Flow<String?>  = context.dataStore.data.map { it[KEY_RANK] }
-    val unit             : Flow<String?>  = context.dataStore.data.map { it[KEY_UNIT] }
-    val deviceId         : Flow<String?>  = context.dataStore.data.map { it[KEY_DEVICE_ID] }
-    val deviceSecret     : Flow<String?>  = context.dataStore.data.map { it[KEY_DEVICE_SECRET] }
+    val pno              : Flow<String>   = context.dataStore.data.map { it[KEY_PNO] ?: "" }
+    val name             : Flow<String>   = context.dataStore.data.map { it[KEY_USER_NAME] ?: "" }
+    val rank             : Flow<String>   = context.dataStore.data.map { it[KEY_RANK] ?: "" }
+    val unit             : Flow<String>   = context.dataStore.data.map { it[KEY_UNIT] ?: "" }
+    val deviceId         : Flow<String>   = context.dataStore.data.map { it[KEY_DEVICE_ID] ?: "" }
+    val deviceSecret     : Flow<String>   = context.dataStore.data.map { it[KEY_DEVICE_SECRET] ?: "" }
     val role             : Flow<String>   = context.dataStore.data.map { it[KEY_ROLE] ?: "" }
     val consentAccepted  : Flow<Boolean>  = context.dataStore.data.map { it[KEY_CONSENT_ACCEPTED] ?: false }
     val consentTimestamp : Flow<Long?>    = context.dataStore.data.map { it[KEY_CONSENT_TIMESTAMP] }
@@ -86,6 +90,10 @@ class SessionDataStore @Inject constructor(
     val boundAt          : Flow<Long?>    = context.dataStore.data.map { it[KEY_BOUND_AT] }
     val lastLoginPno     : Flow<String?>  = context.dataStore.data.map { it[KEY_LAST_LOGIN_PNO] }
     val deviceName       : Flow<String?>  = context.dataStore.data.map { it[KEY_DEVICE_NAME] }
+    val lastAuthTime     : Flow<Long>     = context.dataStore.data.map { it[KEY_LAST_AUTH_TIME] ?: 0L }
+    val lastUnlockTime   : Flow<Long>     = context.dataStore.data.map { it[KEY_LAST_UNLOCK_TIME] ?: 0L }
+    val isAppLocked      : Flow<Boolean>  = context.dataStore.data.map { it[KEY_APP_LOCKED] ?: true }
+    val sessionBreachReason: Flow<String?> = context.dataStore.data.map { it[KEY_SESSION_BREACH_REASON] }
 
     /**
      * Last known integrity level from Play Integrity API.
@@ -153,6 +161,7 @@ class SessionDataStore @Inject constructor(
             if (prefs[KEY_BOUND_AT] == null) {
                 prefs[KEY_BOUND_AT] = System.currentTimeMillis()
             }
+            prefs[KEY_LAST_AUTH_TIME] = System.currentTimeMillis()
         }
     }
 
@@ -163,6 +172,7 @@ class SessionDataStore @Inject constructor(
             prefs[KEY_TOKEN]         = accessToken
             prefs[KEY_REFRESH_TOKEN] = refreshToken
             prefs[KEY_TOKEN_EXPIRY]  = expiryMs
+            prefs[KEY_LAST_AUTH_TIME] = System.currentTimeMillis()
         }
     }
 
@@ -193,6 +203,25 @@ class SessionDataStore @Inject constructor(
         context.dataStore.edit { it[KEY_PERMISSIONS_HANDLED] = true }
     }
 
+    suspend fun saveLastAuthTime(timeMs: Long) {
+        context.dataStore.edit { it[KEY_LAST_AUTH_TIME] = timeMs }
+    }
+
+    suspend fun saveUnlockTime(timeMs: Long) {
+        context.dataStore.edit { 
+            it[KEY_LAST_UNLOCK_TIME] = timeMs 
+            it[KEY_APP_LOCKED] = false
+        }
+    }
+
+    suspend fun lockApp() {
+        context.dataStore.edit { it[KEY_APP_LOCKED] = true }
+    }
+
+    suspend fun setSessionBreach(reason: String) {
+        context.dataStore.edit { it[KEY_SESSION_BREACH_REASON] = reason }
+    }
+
     suspend fun clearSession() {
         context.dataStore.edit { prefs ->
             prefs.remove(KEY_TOKEN)
@@ -209,5 +238,24 @@ class SessionDataStore @Inject constructor(
             // to maintain legal compliance and device-binding integrity.
         }
         markAsUnverified()
+    }
+
+    /** Point 3 FIX: Transactional Session Updates */
+    suspend fun updateSession(block: (androidx.datastore.preferences.core.MutablePreferences) -> Unit) {
+        context.dataStore.edit { prefs ->
+            block(prefs)
+        }
+    }
+
+    /**
+     * Helper to get the current token synchronously from the flow's first emission.
+     * Used to verify persistence before navigation.
+     */
+    suspend fun getTokenOnce(): String {
+        return try {
+            token.firstOrNull() ?: ""
+        } catch (e: Exception) {
+            ""
+        }
     }
 }

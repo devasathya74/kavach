@@ -2,30 +2,38 @@ package com.kavach.app.ui.screens.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kavach.app.data.local.SessionDataStore
 import com.kavach.app.data.repository.OrderRepository
 import com.kavach.app.data.repository.MissionRepository
 import com.kavach.app.domain.model.Order
 import com.kavach.app.utils.ApiResult
+import com.kavach.app.util.NetworkMonitor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class DashboardUiState(
-    val orders: List<Order> = emptyList(),
-    val incidentCount: Int = 0,
-    val broadcastCount: Int = 0,
+    val orders         : List<Order> = emptyList(),
+    val incidentCount  : Int  = 0,
+    val broadcastCount : Int  = 0,
+    val trainingCount  : Int  = 0,
+    val orderCount     : Int  = 0,
     val isOrdersLoading: Boolean = false,
     val isMissionLoading: Boolean = false,
-    val error: String? = null,
-    val isRefreshing: Boolean = false
+    val error          : String? = null,
+    val isRefreshing   : Boolean = false
 )
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
     private val orderRepository: OrderRepository,
-    private val missionRepository: MissionRepository
+    private val missionRepository: MissionRepository,
+    val sessionDataStore: SessionDataStore,
+    networkMonitor: NetworkMonitor
 ) : ViewModel() {
+
+    val connectionStatus = networkMonitor.status
 
     private val _uiState = MutableStateFlow(DashboardUiState())
     val uiState: StateFlow<DashboardUiState> = combine(
@@ -36,16 +44,20 @@ class DashboardViewModel @Inject constructor(
             orders = orders.filter { !it.isAcknowledged }.take(3),
             isOrdersLoading = false
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), DashboardUiState(isOrdersLoading = true, isMissionLoading = true))
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = DashboardUiState()
+    )
 
-    init {
-        refresh()
-    }
+    // Note: Automatic refresh removed from init for "Offline-First" stability.
+    // Dashboard will load from local Room cache immediately.
+    // UI can call refresh() manually or it can be triggered by a sync worker.
 
     fun refresh() = viewModelScope.launch {
         _uiState.value = _uiState.value.copy(isRefreshing = true, isMissionLoading = true)
         
-        // Parallel refresh for orders and mission data
+        // Parallel refresh from network to local cache
         launch { 
             orderRepository.refreshOrders() 
         }

@@ -28,3 +28,7 @@ db.sqlite3
 node_modules/
 .venv/
 build_error*.log
+.kotlin/
+*.zip
+app/build_*/
+

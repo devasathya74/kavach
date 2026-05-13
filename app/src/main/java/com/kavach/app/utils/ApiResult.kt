@@ -77,6 +77,7 @@ suspend fun <T> safeApiCall(
                 403 -> return ApiResult.Unauthorized("Access Denied (403)")
                 409 -> return ApiResult.Conflict()
                 429 -> { /* Too many requests, wait and retry */ }
+                503 -> return ApiResult.Error("🛠️ सर्वर में रखरखाव (Maintenance) चल रहा है। कृपया कुछ देर बाद प्रयास करें।", 503, e)
                 in 500..599 -> { /* Server error, retry */ }
                 else -> return ApiResult.Error("HTTP Error: ${e.code()}", e.code(), e)
             }

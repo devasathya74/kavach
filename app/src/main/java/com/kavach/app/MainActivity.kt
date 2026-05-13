@@ -29,6 +29,7 @@ import androidx.navigation.compose.rememberNavController
 import com.kavach.app.data.local.SessionDataStore
 import com.kavach.app.data.remote.api.KavachApiService
 import com.kavach.app.data.remote.dto.system.UpdateInfoDto
+import com.kavach.app.core.security.SecureScreenController
 import com.kavach.app.ui.navigation.KavachNavHost
 import com.kavach.app.ui.theme.KavachTheme
 import com.kavach.app.util.AutoUpdateManager
@@ -37,16 +38,21 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ProcessLifecycleOwner
+import com.kavach.app.core.security.AppLockManager
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @Inject lateinit var sessionDataStore: SessionDataStore
-    @Inject lateinit var autoUpdateManager: AutoUpdateManager
-    @Inject lateinit var apiService: KavachApiService
-    @Inject lateinit var navigationDao: com.kavach.app.data.local.dao.NavigationDao
+    @Inject lateinit var sessionDataStore        : SessionDataStore
+    @Inject lateinit var autoUpdateManager       : AutoUpdateManager
+    @Inject lateinit var apiService              : KavachApiService
+    @Inject lateinit var navigationDao           : com.kavach.app.data.local.dao.NavigationDao
+    @Inject lateinit var secureScreenController  : SecureScreenController
+    @Inject lateinit var appLockManager          : AppLockManager
 
 
 
@@ -58,20 +64,58 @@ class MainActivity : ComponentActivity() {
         handleIncomingIntent(intent)
     }
 
+    override fun onResume() {
+        super.onResume()
+        // Re-bind on every resume: FLAG_SECURE must survive backgrounding + returning
+        secureScreenController.bind(this)
+    }
+
+    override fun onDestroy() {
+        secureScreenController.unbind()
+        super.onDestroy()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         requestWindowFeature(android.view.Window.FEATURE_NO_TITLE)
         window.setTitle("")
         super.onCreate(savedInstanceState)
         handleIncomingIntent(intent)
-        
+
         window.setFlags(
             WindowManager.LayoutParams.FLAG_SECURE,
             WindowManager.LayoutParams.FLAG_SECURE
         )
+
+        // Point 8: Secure App Preview (Recent apps blur/hide)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            setRecentsScreenshotEnabled(false)
+        }
+
         performStartupSecurityChecks()
+
+        // ── App Lock Lifecycle Observer ─────────────────
+        // Point 1 FIX: Use debounce/delay to prevent lock-race on rotations/dialogs
+        ProcessLifecycleOwner.get().lifecycle.addObserver(object : DefaultLifecycleObserver {
+            private val handler = android.os.Handler(android.os.Looper.getMainLooper())
+            private var backgroundRunnable: Runnable? = null
+
+            override fun onStart(owner: LifecycleOwner) {
+                // Cancel pending background lock if foregrounded quickly (rotation/dialog)
+                backgroundRunnable?.let { handler.removeCallbacks(it) }
+                appLockManager.onAppForegrounded()
+            }
+
+            override fun onStop(owner: LifecycleOwner) {
+                // Point 1: 700ms delay to verify it's a real background transition
+                backgroundRunnable = Runnable {
+                    appLockManager.onAppBackgrounded()
+                }.also { handler.postDelayed(it, 700) }
+            }
+        })
 
         setContent {
             KavachTheme {
+
 
                 val navController = rememberNavController()
                 val scope = rememberCoroutineScope()

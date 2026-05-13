@@ -30,12 +30,12 @@ import com.kavach.app.ui.theme.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OtpVerifyScreen(
+    pno        : String,
     onVerified : () -> Unit,
     viewModel  : LoginViewModel = hiltViewModel()
 ) {
     val state  by viewModel.otpState.collectAsStateWithLifecycle()
     var otp    by remember { mutableStateOf("") }
-    val pno    = "USER_PNO"  // Resolved from saved state in ViewModel
 
     LaunchedEffect(state.verified) {
         if (state.verified) onVerified()

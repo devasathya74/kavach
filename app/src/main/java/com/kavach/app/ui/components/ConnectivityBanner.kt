@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.sp
 import com.kavach.app.util.ConnectionStatus
 
 @Composable
-fun ConnectivityBanner(status: ConnectionStatus) {
+fun ConnectivityBanner(status: ConnectionStatus, lastSyncedMs: Long? = null) {
     val isOffline = status != ConnectionStatus.AVAILABLE
     
     AnimatedVisibility(
@@ -61,6 +61,43 @@ fun ConnectivityBanner(status: ConnectionStatus) {
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold
                 )
+                
+                lastSyncedMs?.let {
+                    val ageMs = System.currentTimeMillis() - it
+                    val ageMin = ageMs / 60000
+                    
+                    val (grade, gradeColor, guidance) = when {
+                        ageMin < 5   -> Triple("LIVE",      Color(0xFF4CAF50), "डेटा लाइव है")
+                        ageMin < 30  -> Triple("RECENT",    Color(0xFF8BC34A), "डेटा हाल ही का है")
+                        ageMin < 120 -> Triple("STALE",     Color(0xFFFFA000), "कमांड प्रतिबंधित हैं")
+                        else         -> Triple("UNTRUSTED", Color(0xFFFF5252), "पुनः सिंक आवश्यक")
+                    }
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .padding(start = 12.dp)
+                                .background(gradeColor.copy(alpha = 0.2f), androidx.compose.foundation.shape.RoundedCornerShape(4.dp))
+                                .padding(horizontal = 6.dp, vertical = 2.dp)
+                        ) {
+                            Text(
+                                grade,
+                                color = gradeColor,
+                                fontSize = 8.sp,
+                                fontWeight = FontWeight.ExtraBold,
+                                letterSpacing = 0.5.sp
+                            )
+                        }
+                        
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            guidance,
+                            color = Color.White.copy(alpha = 0.7f),
+                            fontSize = 8.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
             }
         }
     }

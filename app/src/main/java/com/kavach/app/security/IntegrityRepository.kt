@@ -67,9 +67,9 @@ class IntegrityRepository @Inject constructor(
             val nonceResp = api.getIntegrityNonce()
             val nonceData = nonceResp.body()?.data
             if (!nonceResp.isSuccessful || nonceData == null) {
-                Timber.e("Integrity Error: Nonce fetch failed [${nonceResp.code()}]")
-                return AttestationResult.Failed(
-                    "Nonce fetch failed [${nonceResp.code()}] — cannot proceed"
+                Timber.w("Integrity Warning: Nonce fetch failed [${nonceResp.code()}]. Degrading.")
+                return AttestationResult.Degraded(
+                    "Nonce fetch failed [${nonceResp.code()}]"
                 )
             }
             Timber.d("Attestation: Nonce received.")
@@ -95,8 +95,8 @@ class IntegrityRepository @Inject constructor(
 
             val verdict = verifyResp.body()?.data
             if (!verifyResp.isSuccessful || verdict == null) {
-                Timber.e("Integrity Error: Backend verification failed [${verifyResp.code()}]")
-                return AttestationResult.Failed(
+                Timber.w("Integrity Warning: Backend verification failed [${verifyResp.code()}]. Degrading.")
+                return AttestationResult.Degraded(
                     "Backend verification failed [${verifyResp.code()}]"
                 )
             }

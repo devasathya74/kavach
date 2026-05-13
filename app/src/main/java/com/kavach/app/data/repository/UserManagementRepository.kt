@@ -1,10 +1,11 @@
 package com.kavach.app.data.repository
 
+import android.util.Log
 import com.kavach.app.data.local.dao.OfficerDao
 import com.kavach.app.data.remote.api.KavachApiV2
 import com.kavach.app.data.remote.dto.personnel.OfficerDto
 import com.kavach.app.data.remote.dto.system.DraftChangeDto
-import com.kavach.app.data.remote.dto.v2.OfficerDeviceDto
+import com.kavach.app.data.remote.dto.v2.*
 import com.kavach.app.utils.ApiResult
 import com.kavach.app.utils.safeApiCall
 import kotlinx.coroutines.flow.Flow
@@ -15,13 +16,6 @@ import javax.inject.Singleton
 
 /**
  * UserManagementRepository — Single Source of Truth for Personnel Management.
- *
- * Architecture:
- *   - Observe: Room DAO (offline-first, real-time Flow)
- *   - Sync: KavachApiV2 (pull from server, write to Room)
- *   - Mutations: KavachApiV2 (write to server, refresh from server)
- *
- * All data exposed via ApiResult<T> for consistent error handling.
  */
 @Singleton
 class UserManagementRepository @Inject constructor(
@@ -29,12 +23,14 @@ class UserManagementRepository @Inject constructor(
     private val officerDao: OfficerDao
 ) {
 
-    // ── Observe (Room / Offline-First) ────────────────────────────────────────
+    suspend fun getOfficers(
+        unitType: String? = null,
+        search: String? = null
+    ): ApiResult<List<OfficerDto>> = safeApiCall {
+        val response = api.getUsers(search = search, unitType = unitType)
+        ApiResult.Success(response.results)
+    }
 
-    /**
-     * Observe officer list from Room with optional filters.
-     * Returns immediately from cache; call refreshUsers() to sync from server.
-     */
     fun observeUsers(
         unitType: String? = null,
         search: String? = null
@@ -45,21 +41,15 @@ class UserManagementRepository @Inject constructor(
                     id                  = entity.id,
                     pno                 = entity.pno,
                     role                = entity.role,
-                    unit                = null,  // Loaded from cache — unit detail not stored in entity
+                    unit                = null,
                     isActive            = entity.isActive,
-                    profile             = null,  // Profile loaded separately via officerDao.getProfileByOfficerId()
+                    profile             = null,
                     devices             = emptyList(),
                     mustChangePassword  = false
                 )
             }
         }
 
-    // ── Sync (Server → Room) ──────────────────────────────────────────────────
-
-    /**
-     * Pull officers from server and persist to Room.
-     * Handles pagination — pass page=1 for initial load.
-     */
     suspend fun refreshUsers(
         page: Int = 1,
         unitType: String? = null,
@@ -77,79 +67,92 @@ class UserManagementRepository @Inject constructor(
         ApiResult.Success(Unit)
     }
 
-    // ── Network Reads ─────────────────────────────────────────────────────────
-
-    /**
-     * Fetch complete officer detail directly from network.
-     * Use for detail screen where fresh data is critical.
-     */
     suspend fun getUserDetailNetwork(officerId: String): ApiResult<OfficerDto> = safeApiCall {
         val dto = api.getUserDetail(officerId)
         ApiResult.Success(dto)
     }
 
-    /**
-     * Get list of all officers (for officer picker, etc.).
-     */
-    suspend fun getOfficers(
-        page: Int = 1
-    ): ApiResult<List<OfficerDto>> = safeApiCall {
-        val response = api.getUsers(page)
-        ApiResult.Success(response.results)
-    }
-
-    // ── Mutations (Server) ────────────────────────────────────────────────────
-
-    suspend fun createUser(data: Map<String, Any>): ApiResult<OfficerDto> = safeApiCall {
-        val response = api.createUser(data)
-        if (response.status == "success" && response.data != null) {
-            // Persist new officer to Room
-            officerDao.insertOfficer(response.data.toEntity())
-            ApiResult.Success(response.data)
+    suspend fun createUser(request: CreateUserRequest): ApiResult<OfficerDto> = safeApiCall {
+        val response = api.createUser(request)
+        if (response.isSuccessful && response.body()?.status == "success") {
+            val data = response.body()?.data
+            if (data != null) {
+                officerDao.insertOfficer(data.toEntity())
+                ApiResult.Success(data)
+            } else {
+                ApiResult.Error("Server returned success but no data")
+            }
         } else {
-            ApiResult.Error(response.message ?: "User creation failed")
+            val errorBody = response.errorBody()?.string()
+            Log.e("CREATE_USER_FAIL", "Error: $errorBody")
+            ApiResult.Error(response.body()?.message ?: errorBody ?: "User creation failed")
         }
     }
 
-    suspend fun updateUser(id: String, data: Map<String, Any>): ApiResult<OfficerDto> = safeApiCall {
-        val response = api.updateUser(id, data)
-        if (response.status == "success" && response.data != null) {
-            officerDao.insertOfficer(response.data.toEntity())
-            ApiResult.Success(response.data)
+    suspend fun updateUser(id: String, request: UpdateUserRequest): ApiResult<OfficerDto> = safeApiCall {
+        val response = api.updateUser(id, request)
+        if (response.isSuccessful && response.body()?.status == "success") {
+            val data = response.body()?.data
+            if (data != null) {
+                officerDao.insertOfficer(data.toEntity())
+                ApiResult.Success(data)
+            } else {
+                ApiResult.Error("Update successful but no data returned")
+            }
         } else {
-            ApiResult.Error(response.message ?: "Update failed")
+            val errorBody = response.errorBody()?.string()
+            Log.e("UPDATE_USER_FAIL", "Error: $errorBody")
+            ApiResult.Error(response.body()?.message ?: errorBody ?: "Update failed")
         }
     }
 
     suspend fun deleteUser(id: String): ApiResult<Unit> = safeApiCall {
-        api.deleteUser(id)
-        ApiResult.Success(Unit)
+        val response = api.deleteUser(id)
+        if (response.isSuccessful) ApiResult.Success(Unit)
+        else {
+            Log.e("DELETE_USER_FAIL", "Error: ${response.errorBody()?.string()}")
+            ApiResult.Error("Deletion failed")
+        }
     }
 
-    suspend fun resetPassword(id: String, newPassword: String): ApiResult<Unit> = safeApiCall {
-        val response = api.resetPassword(id, mapOf("new_password" to newPassword))
-        if (response.status == "success") ApiResult.Success(Unit)
-        else ApiResult.Error(response.message ?: "Password reset failed")
+    suspend fun resetPassword(id: String, request: ResetPasswordRequest): ApiResult<Unit> = safeApiCall {
+        val response = api.resetPassword(id, request)
+        if (response.isSuccessful && response.body()?.status == "success") ApiResult.Success(Unit)
+        else {
+            val errorBody = response.errorBody()?.string()
+            Log.e("RESET_PASSWORD_FAIL", "Error: $errorBody")
+            ApiResult.Error(response.body()?.message ?: errorBody ?: "Password reset failed")
+        }
     }
 
     suspend fun deactivateUser(officerId: String, reason: String): ApiResult<Unit> = safeApiCall {
-        val response = api.deactivateUser(officerId, mapOf("reason" to reason))
-        if (response.status == "success") ApiResult.Success(Unit)
-        else ApiResult.Error(response.message ?: "Deactivation failed")
+        val response = api.deactivateUser(officerId, GenericIdRequest(reason = reason))
+        if (response.isSuccessful && response.body()?.status == "success") ApiResult.Success(Unit)
+        else {
+            val errorBody = response.errorBody()?.string()
+            Log.e("DEACTIVATE_USER_FAIL", "Error: $errorBody")
+            ApiResult.Error(response.body()?.message ?: errorBody ?: "Deactivation failed")
+        }
+    }
+
+    suspend fun revokeDevice(officerId: String, deviceId: String): ApiResult<Unit> = safeApiCall {
+        val response = api.revokeDevice(officerId, GenericIdRequest(deviceId = deviceId))
+        if (response.isSuccessful && response.body()?.status == "success") ApiResult.Success(Unit)
+        else {
+            val errorBody = response.errorBody()?.string()
+            Log.e("REVOKE_DEVICE_FAIL", "Error: $errorBody")
+            ApiResult.Error(response.body()?.message ?: errorBody ?: "Device revoke failed")
+        }
     }
 
     suspend fun globalLogout(officerId: String): ApiResult<Unit> = safeApiCall {
         val response = api.globalLogout(officerId)
-        if (response.status == "success") ApiResult.Success(Unit)
-        else ApiResult.Error(response.message ?: "Global logout failed")
-    }
-
-    // ── Device Management ─────────────────────────────────────────────────────
-
-    suspend fun revokeDevice(officerId: String, deviceId: String): ApiResult<Unit> = safeApiCall {
-        val response = api.revokeDevice(officerId, mapOf("device_id" to deviceId))
-        if (response.status == "success") ApiResult.Success(Unit)
-        else ApiResult.Error(response.message ?: "Device revoke failed")
+        if (response.isSuccessful && response.body()?.status == "success") ApiResult.Success(Unit)
+        else {
+            val errorBody = response.errorBody()?.string()
+            Log.e("GLOBAL_LOGOUT_FAIL", "Error: $errorBody")
+            ApiResult.Error(response.body()?.message ?: errorBody ?: "Global logout failed")
+        }
     }
 
     suspend fun getDevices(
@@ -160,8 +163,6 @@ class UserManagementRepository @Inject constructor(
         ApiResult.Success(response.results)
     }
 
-    // ── Governance / Approval Pipeline ───────────────────────────────────────
-
     suspend fun getPendingChanges(): ApiResult<List<DraftChangeDto>> = safeApiCall {
         val changes = api.getPendingChanges()
         ApiResult.Success(changes)
@@ -169,18 +170,24 @@ class UserManagementRepository @Inject constructor(
 
     suspend fun approveChange(id: String): ApiResult<Unit> = safeApiCall {
         val response = api.approveChange(id)
-        if (response.status == "success") ApiResult.Success(Unit)
-        else ApiResult.Error(response.message ?: "Approval failed", code = 403)
+        if (response.isSuccessful && response.body()?.status == "success") ApiResult.Success(Unit)
+        else {
+            val errorBody = response.errorBody()?.string()
+            Log.e("APPROVE_CHANGE_FAIL", "Error: $errorBody")
+            ApiResult.Error(response.body()?.message ?: errorBody ?: "Approval failed", code = 403)
+        }
     }
 
     suspend fun rejectChange(id: String): ApiResult<Unit> = safeApiCall {
         val response = api.rejectChange(id)
-        if (response.status == "success") ApiResult.Success(Unit)
-        else ApiResult.Error(response.message ?: "Rejection failed")
+        if (response.isSuccessful && response.body()?.status == "success") ApiResult.Success(Unit)
+        else {
+            val errorBody = response.errorBody()?.string()
+            Log.e("REJECT_CHANGE_FAIL", "Error: $errorBody")
+            ApiResult.Error(response.body()?.message ?: errorBody ?: "Rejection failed")
+        }
     }
 }
-
-// ── Entity Mappers ────────────────────────────────────────────────────────────
 
 private fun OfficerDto.toEntity() = com.kavach.app.data.local.entity.OfficerCacheEntity(
     id       = id,

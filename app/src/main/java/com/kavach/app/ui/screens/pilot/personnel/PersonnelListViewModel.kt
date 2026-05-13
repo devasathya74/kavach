@@ -2,6 +2,9 @@ package com.kavach.app.ui.screens.pilot.personnel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kavach.app.data.remote.dto.v2.CreateUserRequest
+import com.kavach.app.data.remote.dto.v2.UpdateUserRequest
+import com.kavach.app.data.remote.dto.v2.ResetPasswordRequest
 import com.kavach.app.data.repository.UserManagementRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -40,12 +43,11 @@ class PersonnelListViewModel @Inject constructor(
     private var searchJob: Job? = null
 
     init {
-        // Step 1: Observe Database (Single Source of Truth)
         observeUsers()
-        // Step 2: Trigger Sync
         syncUsers(isRefresh = true)
     }
 
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
     private fun observeUsers() {
         _state.map { it.query }.distinctUntilChanged().flatMapLatest { q ->
             repository.observeUsers(q.unitType, q.query.ifBlank { null })
@@ -77,7 +79,7 @@ class PersonnelListViewModel @Inject constructor(
         _state.update { it.copy(query = it.query.copy(query = query)) }
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
-            delay(500) // Debounce
+            delay(500)
             syncUsers(isRefresh = true)
         }
     }
@@ -101,10 +103,10 @@ class PersonnelListViewModel @Inject constructor(
         syncUsers(isRefresh = true)
     }
 
-    fun createUser(data: Map<String, Any>) {
+    fun createUser(request: CreateUserRequest) {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
-            repository.createUser(data)
+            _state.update { it.copy(isLoading = true, error = null) }
+            repository.createUser(request)
                 .onSuccess {
                     syncUsers(isRefresh = true)
                 }
@@ -114,10 +116,10 @@ class PersonnelListViewModel @Inject constructor(
         }
     }
 
-    fun updateUser(id: String, data: Map<String, Any>) {
+    fun updateUser(id: String, request: UpdateUserRequest) {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
-            repository.updateUser(id, data)
+            _state.update { it.copy(isLoading = true, error = null) }
+            repository.updateUser(id, request)
                 .onSuccess {
                     syncUsers(isRefresh = true)
                 }
@@ -129,7 +131,7 @@ class PersonnelListViewModel @Inject constructor(
 
     fun deleteUser(id: String) {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
+            _state.update { it.copy(isLoading = true, error = null) }
             repository.deleteUser(id)
                 .onSuccess {
                     syncUsers(isRefresh = true)
@@ -142,8 +144,8 @@ class PersonnelListViewModel @Inject constructor(
 
     fun resetPassword(id: String, password: String) {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
-            repository.resetPassword(id, password)
+            _state.update { it.copy(isLoading = true, error = null) }
+            repository.resetPassword(id, ResetPasswordRequest(password))
                 .onSuccess {
                     _state.update { it.copy(isLoading = false) }
                 }

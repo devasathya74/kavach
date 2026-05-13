@@ -35,4 +35,18 @@ object OperationalStrings {
             else                  -> severity
         }
     }
+
+    /**
+     * Map HTTP codes to clear field actions.
+     */
+    fun mapHttpError(code: Int): String {
+        return when (code) {
+            401 -> "सत्र समाप्त (Session Expired)"
+            403 -> "डिवाइस मेल नहीं खाता (Device Mismatch)"
+            404 -> "अज्ञात अनुरोध (Resource Not Found)"
+            503 -> "🛠️ सर्वर में रखरखाव (Maintenance) चल रहा है"
+            in 500..599 -> "सर्वर त्रुटि (Server Under Load)"
+            else -> "नेटवर्क त्रुटि (Network Error: $code)"
+        }
+    }
 }

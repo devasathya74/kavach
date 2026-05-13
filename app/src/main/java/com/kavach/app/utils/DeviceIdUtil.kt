@@ -19,7 +19,8 @@ object DeviceIdUtil {
     @SuppressLint("HardwareIds")
     fun getDeviceId(context: Context): String {
         val androidId = getAndroidId(context)
-        val rawFingerprint = "$androidId|${Build.MODEL}|${Build.MANUFACTURER}"
+        // Hardened Fingerprint: Combine multiple hardware and software markers
+        val rawFingerprint = "$androidId|${Build.MODEL}|${Build.MANUFACTURER}|${Build.PRODUCT}|${Build.HARDWARE}|${Build.VERSION.SDK_INT}"
         return sha256(rawFingerprint)
     }
 

@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
+import com.kavach.app.data.local.SessionDataStore
 import javax.inject.Inject
 
 data class LoginUiState(
@@ -31,7 +33,8 @@ data class AdminLoginUiState(
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val sessionDataStore: SessionDataStore
 ) : ViewModel() {
 
     private val _loginState = MutableStateFlow(LoginUiState())
@@ -67,7 +70,19 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             _otpState.value = OtpUiState(isLoading = true)
             when (val result = authRepository.verifyOtp(pno, otp)) {
-                is ApiResult.Success      -> _otpState.value = OtpUiState(verified = true)
+                is ApiResult.Success -> {
+                    // Critical Fix: Wait for DataStore Flow to propagate
+                    // and verify persistence before signaling UI to navigate.
+                    delay(150)
+                    val savedToken = sessionDataStore.getTokenOnce()
+                    if (savedToken.isNotBlank()) {
+                        android.util.Log.d("AUTH_FLOW", "OTP verified & token persisted. Navigating.")
+                        _otpState.value = OtpUiState(verified = true)
+                    } else {
+                        android.util.Log.e("AUTH_FLOW", "OTP Success but token not found in DataStore!")
+                        _otpState.value = OtpUiState(error = "सत्र सुरक्षित नहीं हो सका। कृपया पुनः प्रयास करें।")
+                    }
+                }
                 is ApiResult.Error        -> _otpState.value = OtpUiState(error = result.message)
                 is ApiResult.Unauthorized -> _otpState.value = OtpUiState(error = result.message)
                 else -> {}
@@ -91,7 +106,16 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             _adminLoginState.value = AdminLoginUiState(isLoading = true)
             when (val result = authRepository.adminPasswordLogin(pno, password)) {
-                is ApiResult.Success      -> _adminLoginState.value = AdminLoginUiState(loggedIn = true)
+                is ApiResult.Success -> {
+                    delay(150)
+                    val savedToken = sessionDataStore.getTokenOnce()
+                    if (savedToken.isNotBlank()) {
+                        android.util.Log.d("AUTH_FLOW", "Admin login success & token persisted.")
+                        _adminLoginState.value = AdminLoginUiState(loggedIn = true)
+                    } else {
+                        _adminLoginState.value = AdminLoginUiState(error = "सत्र सुरक्षित नहीं हो सका।")
+                    }
+                }
                 is ApiResult.Error        -> _adminLoginState.value = AdminLoginUiState(error = result.message)
                 is ApiResult.Unauthorized -> _adminLoginState.value = AdminLoginUiState(error = result.message)
                 else -> {}

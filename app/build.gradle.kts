@@ -79,6 +79,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation("androidx.lifecycle:lifecycle-process:2.8.0")
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
@@ -134,6 +135,9 @@ dependencies {
 
     // Play Integrity API — Device Attestation
     implementation("com.google.android.play:integrity:1.4.0")
+
+    // Biometric Auth
+    implementation("androidx.biometric:biometric:1.1.0")
 
     // Encrypted SharedPrefs
     implementation("androidx.security:security-crypto:1.1.0-alpha06")

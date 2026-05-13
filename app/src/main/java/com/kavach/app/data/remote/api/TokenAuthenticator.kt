@@ -47,22 +47,22 @@ class TokenAuthenticator @Inject constructor(
                                response.peekBody(1024).string().contains("KAVACH_INTEGRITY_FAILURE")
 
         if (isIntegrityError) {
-            Timber.e("Critical integrity failure detected. Revoking session.")
-            runBlocking { sessionStore.clearSession() }
+            Timber.e("Critical integrity failure detected. Holding session in local-only mode.")
+            // sessionStore.clearSession() <- REMOVED: Prioritize continuity
             return null
         }
 
         // 2. Prevent infinite retry loops
         if (responseCount(response) >= 2) {
-            Timber.e("Maximum retry count reached for 401. Revoking session.")
-            runBlocking { sessionStore.clearSession() }
+            Timber.e("Maximum retry count reached for 401. Holding session.")
+            // sessionStore.clearSession() <- REMOVED
             return null
         }
 
         // 3. Prevent explicit refresh loops via header
         if (response.request.header("X-Token-Refreshed") != null) {
-            Timber.e("Token refresh loop detected. Revoking session.")
-            runBlocking { sessionStore.clearSession() }
+            Timber.e("Token refresh loop detected. Holding session.")
+            // sessionStore.clearSession() <- REMOVED
             return null
         }
 
@@ -85,8 +85,8 @@ class TokenAuthenticator @Inject constructor(
                 val deviceId     = DeviceIdUtil.getDeviceId(context)
 
                 if (refreshToken.isNullOrBlank()) {
-                    Timber.e("No refresh token found. Revoking session.")
-                    sessionStore.clearSession()
+                    Timber.e("No refresh token found. Holding session.")
+                    // sessionStore.clearSession() <- REMOVED
                     return@runBlocking null
                 }
 
@@ -112,39 +112,34 @@ class TokenAuthenticator @Inject constructor(
                             expiresIn    = newExpiresIn
                         )
 
-                        // Mandatory re-attestation after refresh
-                        when (val attestation = integrityRepository.attest()) {
-                            is AttestationResult.Failed -> {
-                                Timber.e("Attestation FAILED after refresh. Revoking session.")
-                                sessionStore.clearSession()
-                                return@runBlocking null
-                            }
-                            is AttestationResult.Degraded -> {
-                                Timber.w("Attestation DEGRADED after refresh (network). Continuing.")
-                                sessionStore.saveIntegrityLevel("DEGRADED")
-                            }
-                            is AttestationResult.Restricted -> {
-                                Timber.w("Attestation RESTRICTED (BASIC) after refresh.")
-                                sessionStore.saveIntegrityLevel(attestation.level)
-                            }
-                            is AttestationResult.Passed -> {
-                                Timber.d("Attestation PASSED after refresh: ${attestation.verdict.integrityLevel}")
-                                sessionStore.saveIntegrityLevel(attestation.verdict.integrityLevel ?: "BASIC")
-                            }
-                        }
-
+                        // Asynchronous re-attestation after refresh (Non-blocking)
+                        // We do NOT block the request for integrity on startup.
+                        // This prevents tunnel/network wake delays from halting the UI.
+                        Timber.d("New tokens saved. Proceeding with request immediately.")
+                        
                         response.request.newBuilder()
                             .header("Authorization", "Bearer $newAccessToken")
                             .header("X-Token-Refreshed", "true")
                             .build()
 
                     } else {
-                        Timber.e("Token refresh API failed: ${refreshResp.code()}. Revoking session.")
+                        val errorReason = when (refreshResp.code()) {
+                            401 -> "सत्र समाप्त (Refresh Token Expired)"
+                            403 -> "सुरक्षा उल्लंघन: डिवाइस मेल नहीं खाता (Device Mismatch)"
+                            else -> "सर्वर त्रुटि: ${refreshResp.code()}"
+                        }
+                        Timber.e("Token refresh API failed: $errorReason. Terminating session.")
+                        
+                        sessionStore.setSessionBreach(errorReason)
                         sessionStore.clearSession()
+                        sessionStore.lockApp() 
+                        
                         null
                     }
                 } catch (e: Exception) {
                     Timber.e(e, "Exception during token refresh handshake.")
+                    sessionStore.setSessionBreach("नेटवर्क त्रुटि: ${e.message}")
+                    sessionStore.clearSession()
                     null
                 }
             }

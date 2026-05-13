@@ -61,6 +61,10 @@ class AuthRepository @Inject constructor(
                 behaviorTracker.logDeviceMismatch(pno)
                 ApiResult.Unauthorized("⛔ यह PNO किसी दूसरे डिवाइस पर पंजीकृत है। Admin से संपर्क करें।")
             }
+            resp.code() == 503 -> {
+                Timber.e("Server maintenance (503) during OTP request")
+                ApiResult.Error("🛠️ सर्वर में रखरखाव (Maintenance) चल रहा है। कृपया कुछ देर बाद प्रयास करें।", 503)
+            }
             else -> {
                 Timber.e("Login request failed for PNO: $pno, code: ${resp.code()}")
                 ApiResult.Error("Login failed: ${resp.code()}", code = resp.code())
@@ -135,6 +139,10 @@ class AuthRepository @Inject constructor(
             resp.code() == 404 -> {
                 Timber.e("Admin PNO not found: $pno")
                 ApiResult.Error("❌ Admin PNO नहीं मिला。", code = 404)
+            }
+            resp.code() == 503 -> {
+                Timber.e("Server maintenance (503) during admin login")
+                ApiResult.Error("🛠️ सर्वर में रखरखाव (Maintenance) चल रहा है। कृपया कुछ देर बाद प्रयास करें।", 503)
             }
             else -> {
                 Timber.e("Admin login failed for PNO: $pno, code: ${resp.code()}")
@@ -220,6 +228,10 @@ class AuthRepository @Inject constructor(
                     ApiResult.Unauthorized("OTP सत्यापन विफल (403)")
                 }
             }
+            resp.code() == 503 -> {
+                Timber.e("Server maintenance (503) during OTP verify")
+                ApiResult.Error("🛠️ सर्वर में रखरखाव (Maintenance) चल रहा है। कृपया कुछ देर बाद प्रयास करें।", 503)
+            }
             else -> {
                 Timber.e("OTP verification failed for PNO: $pno, code: ${resp.code()}")
                 ApiResult.Error("OTP verification failed: ${resp.code()}", code = resp.code())
@@ -253,27 +265,35 @@ class AuthRepository @Inject constructor(
 
     suspend fun syncProfile(): ApiResult<Unit> = safeApiCall {
         val response = api.getProfile()
-        if (response.isSuccessful && response.body() != null) {
-            val user = response.body()?.data
-            if (user != null) {
-                sessionStore.saveSession(
-                    token = sessionStore.token.first() ?: "",
-                    refreshToken = sessionStore.refreshToken.first() ?: "",
-                    expiresIn    = 3600L, 
-                    pno          = user.pno,
-                    name         = user.profile?.name ?: "",
-                    rank         = user.profile?.rank?.name ?: "",
-                    unit         = user.unit?.name ?: "",
-                    deviceId     = sessionStore.deviceId.first() ?: "",
-                    deviceSecret = sessionStore.deviceSecret.first() ?: "",
-                    role         = user.role
-                )
-                ApiResult.Success(Unit)
-            } else {
-                ApiResult.Error("Profile data is null")
+        when {
+            response.isSuccessful -> {
+                val user = response.body()?.data
+                if (user != null) {
+                    sessionStore.saveSession(
+                        token = sessionStore.token.first(),
+                        refreshToken = sessionStore.refreshToken.first(),
+                        expiresIn    = 3600L, 
+                        pno          = user.pno,
+                        name         = user.profile?.name ?: "",
+                        rank         = user.profile?.rank?.name ?: "",
+                        unit         = user.unit?.name ?: "",
+                        deviceId     = sessionStore.deviceId.first(),
+                        deviceSecret = sessionStore.deviceSecret.first(),
+                        role         = user.role
+                    )
+                    ApiResult.Success(Unit)
+                } else {
+                    ApiResult.Error("Profile data is null")
+                }
             }
-        } else {
-            ApiResult.Error("Profile sync failed: ${response.code()}", code = response.code())
+            response.code() == 401 || response.code() == 403 -> {
+                Timber.e("Unauthorized during profile sync: ${response.code()}")
+                ApiResult.Unauthorized("सत्र समाप्त कर दिया गया (Session Expired/Revoked)")
+            }
+            else -> {
+                Timber.e("Profile sync failed: ${response.code()}")
+                ApiResult.Error("Profile sync failed: ${response.code()}", code = response.code())
+            }
         }
     }
 

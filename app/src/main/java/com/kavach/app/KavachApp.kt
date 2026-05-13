@@ -3,16 +3,20 @@ package com.kavach.app
 import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import com.kavach.app.utils.KavachSyncWorker
+import com.kavach.app.core.perf.PerformanceMonitor
+import com.kavach.app.core.sound.SoundManager
 import com.kavach.app.data.remote.worker.PersonnelSyncWorker
-import timber.log.Timber
+import com.kavach.app.utils.KavachSyncWorker
 import dagger.hilt.android.HiltAndroidApp
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltAndroidApp
 class KavachApp : Application(), Configuration.Provider {
 
-    @Inject lateinit var workerFactory: HiltWorkerFactory
+    @Inject lateinit var workerFactory      : HiltWorkerFactory
+    @Inject lateinit var soundManager       : SoundManager
+    @Inject lateinit var performanceMonitor : PerformanceMonitor
 
     override fun onCreate() {
         super.onCreate()
@@ -21,14 +25,29 @@ class KavachApp : Application(), Configuration.Provider {
             Timber.plant(Timber.DebugTree())
         }
 
-        // Schedule unified background sync (acks + behavior events)
+        // ── Operational Runtime Startup ─────────────────────────
+        // SoundManager: must initialize before any EventBus events fire.
+        // Uses @ApplicationContext injected at construction — no argument needed.
+        soundManager.initialize()
+
+        // PerformanceMonitor: start before first frame to capture boot behavior.
+        // Runs an independent Choreographer loop — does NOT use EventBus.
+        if (BuildConfig.DEBUG) {
+            performanceMonitor.start()
+        }
+
+        // ── Background Workers ──────────────────────────────────
         KavachSyncWorker.schedule(this)
-        
-        // Schedule personnel cache warming
         PersonnelSyncWorker.schedule(this)
     }
 
-    // ── WorkManager + Hilt integration ────────────────────
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        // Forward memory pressure to ResourceAdaptationEngine
+        // (injected lazily in di/ — access via EntryPoints if needed)
+    }
+
+    // ── WorkManager + Hilt integration ─────────────────────────
 
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder()
@@ -36,3 +55,4 @@ class KavachApp : Application(), Configuration.Provider {
             .setMinimumLoggingLevel(android.util.Log.INFO)
             .build()
 }
+

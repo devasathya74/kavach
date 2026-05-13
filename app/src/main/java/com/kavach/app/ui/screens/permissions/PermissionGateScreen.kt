@@ -143,7 +143,7 @@ fun PermissionGateScreen(
         TextButton(onClick = { 
             onContinue() 
         }) {
-            Text("अभी छोड़ें (Skip for now)", color = Color.White.copy(alpha = 0.5f))
+            Text("बाद में करें (Skip for now)", color = Color.White.copy(alpha = 0.5f))
         }
     }
 }
