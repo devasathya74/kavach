@@ -62,3 +62,14 @@ data class OfficerDeviceCacheEntity(
     val lastSyncedAt: Long = System.currentTimeMillis(),
     val syncState: SyncState = SyncState.SYNCED
 )
+
+data class OfficerWithProfile(
+    @androidx.room.Embedded
+    val officer: OfficerCacheEntity,
+    
+    @androidx.room.Relation(
+        parentColumn = "id",
+        entityColumn = "officerId"
+    )
+    val profile: OfficerProfileCacheEntity?
+)

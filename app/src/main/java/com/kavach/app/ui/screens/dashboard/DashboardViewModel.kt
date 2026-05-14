@@ -11,6 +11,7 @@ import com.kavach.app.util.NetworkMonitor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import com.kavach.app.data.remote.websocket.WebSocketManager
 import javax.inject.Inject
 
 data class DashboardUiState(
@@ -30,10 +31,16 @@ class DashboardViewModel @Inject constructor(
     private val orderRepository: OrderRepository,
     private val missionRepository: MissionRepository,
     val sessionDataStore: SessionDataStore,
+    private val wsManager: WebSocketManager,
     networkMonitor: NetworkMonitor
 ) : ViewModel() {
 
     val connectionStatus = networkMonitor.status
+
+    val wsState: StateFlow<WebSocketManager.ConnectionState> = wsManager.events
+        .filterIsInstance<com.kavach.app.data.remote.websocket.WsEvent.StateChanged>()
+        .map { it.state }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), WebSocketManager.ConnectionState.DISCONNECTED)
 
     private val _uiState = MutableStateFlow(DashboardUiState())
     val uiState: StateFlow<DashboardUiState> = combine(

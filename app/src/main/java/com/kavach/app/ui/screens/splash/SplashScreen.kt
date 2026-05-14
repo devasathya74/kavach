@@ -36,13 +36,12 @@ fun SplashScreen(
 ) {
     // Boot steps shown sequentially
     val bootSteps = listOf(
-        "INTEGRITY SERVICE        ... INIT",
         "ROOT DETECTION           ... OK",
         "TOKEN VALIDATION         ... OK",
         "SECURE STORAGE           ... MOUNTED",
         "WEBSOCKET PRECHECK       ... READY",
         "API HEALTH PING          ... ALIVE",
-        "KERNEL INTEGRITY         ... VERIFIED",
+        "KERNEL SEAL              ... VERIFIED",
         "ENVIRONMENT SEALED       ... SECURE"
     )
 

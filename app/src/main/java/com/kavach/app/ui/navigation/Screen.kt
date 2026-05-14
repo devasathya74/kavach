@@ -3,7 +3,7 @@ package com.kavach.app.ui.navigation
 sealed class Screen(val route: String) {
     // Boot
     object Splash          : Screen("splash")
-    object IntegrityScan   : Screen("integrity_scan")
+
 
     // Onboarding
     object ConnectivityTest : Screen("connectivity_test")
@@ -12,9 +12,11 @@ sealed class Screen(val route: String) {
 
     // Auth
     object Login    : Screen("login")
-    object OtpVerify: Screen("otp_verify/{pno}") {
-        fun createRoute(pno: String) = "otp_verify/$pno"
-    }
+    object SecurityEnrollment : Screen("security_enrollment")
+    object SecureAccess       : Screen("secure_access")
+    // object OtpVerify: Screen("otp_verify/{pno}") {
+    //     fun createRoute(pno: String) = "otp_verify/$pno"
+    // }
 
     // ── Dashboards (role-separated) ──────────────────────────────
     object Dashboard      : Screen("dashboard")        // USER / NORMAL_USER
@@ -51,6 +53,9 @@ sealed class Screen(val route: String) {
     object UserManagement  : Screen("route_users")
     object UserDetail      : Screen("route_users/{userId}") {
         fun createRoute(userId: String) = "route_users/$userId"
+    }
+    object UserRegistration : Screen("route_register_user?userId={userId}") {
+        fun createRoute(userId: String? = null) = if (userId != null) "route_register_user?userId=$userId" else "route_register_user"
     }
     object PendingApprovals : Screen("route_approvals")
     object OtaUpdate        : Screen("route_ota")

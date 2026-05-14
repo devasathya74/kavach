@@ -28,6 +28,7 @@ import com.kavach.app.ui.navigation.Screen
 import com.kavach.app.data.local.SessionDataStore
 import com.kavach.app.ui.theme.*
 import com.kavach.app.util.ConnectionStatus
+import com.kavach.app.ui.screens.dashboard.DashboardAuthority
 
 /**
  * Stabilized Unified Dashboard for Pilot Phase.
@@ -44,13 +45,15 @@ fun UnifiedDashboardScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val sessionStore = viewModel.sessionDataStore
     
-    // ── 1. Local Profile Data (Authoritative) ────────────────────
+    // 1. Local Profile Data (Authoritative)
     val name by sessionStore.name.collectAsState(initial = "Officer")
     val rank by sessionStore.rank.collectAsState(initial = "Loading...")
     val unit by sessionStore.unit.collectAsState(initial = "Unit Not Assigned")
     val connectionStatus by viewModel.connectionStatus.collectAsState(initial = ConnectionStatus.AVAILABLE)
+    val wsState by viewModel.wsState.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
+    val authority = remember(role) { DashboardAuthority(role) }
 
     Scaffold(
         containerColor = NavyBlueDark,
@@ -89,6 +92,22 @@ fun UnifiedDashboardScreen(
                     }
                 },
                 actions = {
+                    // WebSocket Status Indicator
+                    val wsColor = when(wsState) {
+                        com.kavach.app.data.remote.websocket.WebSocketManager.ConnectionState.CONNECTED -> SuccessGreen
+                        com.kavach.app.data.remote.websocket.WebSocketManager.ConnectionState.CONNECTING, 
+                        com.kavach.app.data.remote.websocket.WebSocketManager.ConnectionState.RECONNECT_WAIT -> GoldenYellow
+                        else -> DangerRed
+                    }
+                    
+                    Box(
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                            .size(8.dp)
+                            .clip(CircleShape)
+                            .background(wsColor)
+                    )
+
                     // Connection Chip (Passive)
                     val isOnline = connectionStatus == ConnectionStatus.AVAILABLE
                     Surface(
@@ -116,7 +135,11 @@ fun UnifiedDashboardScreen(
                         }
                     }
                     IconButton(onClick = { onNavigate(Screen.Profile.route) }) {
-                        Icon(Icons.Filled.AccountCircle, contentDescription = "Profile", tint = GoldenYellow)
+                        Icon(
+                            imageVector = Icons.Filled.AccountCircle,
+                            contentDescription = "Profile",
+                            tint = GoldenYellow
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = NavyBlueDark)
@@ -132,11 +155,11 @@ fun UnifiedDashboardScreen(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // ── 2. Header / Welcome ──────────────────────────────────
+            // 2. Header / Welcome
             item(span = { GridItemSpan(2) }) {
                 Column(modifier = Modifier.padding(bottom = 8.dp)) {
                     Text(
-                        text = "नमस्ते, $rank $name",
+                        text = "à¤¨à¤®à¤¸à¥à¤¤à¥‡, $rank $name",
                         style = MaterialTheme.typography.headlineSmall,
                         color = Color.White,
                         fontWeight = FontWeight.Bold
@@ -149,7 +172,7 @@ fun UnifiedDashboardScreen(
                 }
             }
 
-            // ── 3. Status Strip (Cached/Offline-Safe) ───────────────
+            // 3. Status Strip (Cached/Offline-Safe)
             item(span = { GridItemSpan(2) }) {
                 Row(
                     modifier = Modifier
@@ -158,30 +181,76 @@ fun UnifiedDashboardScreen(
                         .padding(12.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    StatusIndicator("कुल कर्मी", uiState.incidentCount.toString(), GoldenYellow) // Using incidentCount as dummy for now
-                    StatusIndicator("सक्रिय", "12", SuccessGreen)
-                    StatusIndicator("लंबित", uiState.broadcastCount.toString(), DangerRed)
+                    StatusIndicator("à¤•à¥à¤² à¤•à¤°à¥à¤®à¥€", uiState.incidentCount.toString(), GoldenYellow) // Using incidentCount as dummy for now
+                    StatusIndicator("à¤¸à¤•à¥à¤°à¤¿à¤¯", "12", SuccessGreen)
+                    StatusIndicator("à¤²à¤‚à¤¬à¤¿à¤¤", uiState.broadcastCount.toString(), DangerRed)
                 }
             }
 
-            // ── 4. Main Actions ─────────────────────────────────────
+            // 4. Main Actions
             item(span = { GridItemSpan(2) }) {
                 Text(
-                    text = "मुख्य कार्य",
+                    text = "à¤®à¥à¤–à¥à¤¯ à¤•à¤¾à¤°à¥à¤¯",
                     style = MaterialTheme.typography.titleMedium,
                     color = Color.White.copy(alpha = 0.7f),
                     modifier = Modifier.padding(top = 8.dp)
                 )
             }
 
-            // 1. PERSONNEL MANAGEMENT (ACTIVE)
-            item {
-                ActionCard(
-                    title = "Personnel\nManagement",
-                    icon = Icons.Filled.Group,
-                    color = Color(0xFFA855F7),
-                    onClick = { onNavigate(Screen.UserManagement.route) }
-                )
+            // 1. PERSONNEL MANAGEMENT (RESTRICTED)
+            if (authority.canSeePersonnelManagement()) {
+                item(span = { GridItemSpan(2) }) {
+                    Text(
+                        text = "Personnel Management",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.White.copy(alpha = 0.7f),
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                }
+                item {
+                    ActionCard(
+                        title = "Personnel\nList",
+                        icon = Icons.Filled.Group,
+                        color = Color(0xFFA855F7),
+                        onClick = { onNavigate(Screen.UserManagement.route) }
+                    )
+                }
+                item {
+                    ActionCard(
+                        title = "Approval\nQueue",
+                        icon = Icons.Filled.VerifiedUser,
+                        color = Color(0xFF10B981),
+                        onClick = { onNavigate(Screen.PendingApprovals.route) }
+                    )
+                }
+            }
+
+            // 2. COMMAND CENTER (ADMIN ONLY)
+            if (authority.canSeeCommandCenter()) {
+                item(span = { GridItemSpan(2) }) {
+                    Text(
+                        text = "Command Center",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = GoldenYellow.copy(alpha = 0.7f),
+                        modifier = Modifier.padding(top = 12.dp)
+                    )
+                }
+                item {
+                    ActionCard(
+                        title = "Broadcast\nCenter",
+                        icon = Icons.Filled.Campaign,
+                        color = GoldenYellow,
+                        onClick = { Toast.makeText(context, "Admin Broadcast Mode", Toast.LENGTH_SHORT).show() }
+                    )
+                }
+                item {
+                    ActionCard(
+                        title = "System\nLogs",
+                        icon = Icons.Filled.Terminal,
+                        color = Color.White,
+                        onClick = { Toast.makeText(context, "Audit Logs Accessible", Toast.LENGTH_SHORT).show() }
+                    )
+                }
             }
             
             // 2. DUTY MANAGEMENT (COMING SOON)
@@ -239,11 +308,11 @@ fun UnifiedDashboardScreen(
                 )
             }
 
-            // ── 5. System Footer ───────────────────────────────────
+            // 5. System Footer
             item(span = { GridItemSpan(2) }) {
                 Spacer(Modifier.height(24.dp))
                 Text(
-                    text = "KAVACH सुरक्षा प्रणाली • 2026",
+                    text = "KAVACH à¤¸à¥à¤°à¤•à¥à¤·à¤¾ à¤ªà¥à¤°à¤£à¤¾à¤²à¥€ â€¢ 2026",
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.White.copy(alpha = 0.3f),
                     modifier = Modifier.fillMaxWidth(),
@@ -306,7 +375,7 @@ private fun ActionCard(
                     )
                     if (!enabled) {
                         Text(
-                            text = "जल्द आ रहा है",
+                            text = "à¤œà¤²à¥à¤¦ à¤† à¤°à¤¹à¤¾ à¤¹à¥ˆ",
                             style = MaterialTheme.typography.labelSmall,
                             color = GoldenYellow,
                             fontWeight = FontWeight.Bold
@@ -325,3 +394,5 @@ private fun ActionCard(
         }
     }
 }
+
+

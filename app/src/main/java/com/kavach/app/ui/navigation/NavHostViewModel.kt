@@ -22,14 +22,14 @@ enum class CapabilityLevel {
 }
 
 sealed class AuthState {
-    object Loading           : AuthState()
-    object Unauthenticated   : AuthState()
-    object NeedsConsent      : AuthState()
-    object NeedsPermissions  : AuthState()
-    object NeedsIntegrity    : AuthState()
-    object Restricted        : AuthState()
-    object AppLocked         : AuthState()
-    object StartupTimeout    : AuthState()
+    object Loading               : AuthState()
+    object Unauthenticated       : AuthState()
+    object NeedsConsent          : AuthState()
+    object NeedsPermissions      : AuthState()
+    object NeedsSecurityEnrollment: AuthState() // PIN + Biometric setup
+    object Restricted            : AuthState()
+    object AppLocked             : AuthState() // The "Secure Access Screen"
+    object StartupTimeout        : AuthState()
     data class Authenticated(
         val token: String,
         val role: String,
@@ -42,9 +42,11 @@ sealed class AuthState {
 /** ViewModel that handles session monitoring and recovery for KavachNavHost. */
 @HiltViewModel
 class NavHostViewModel @Inject constructor(
-    val sessionDataStore : SessionDataStore,
+    val sessionDataStore   : SessionDataStore,
     private val authRepo   : AuthRepository,
     val appLockManager     : com.kavach.app.core.security.AppLockManager,
+    val biometricAuthManager: com.kavach.app.core.security.BiometricAuthManager,
+    val authorizationEngine: com.kavach.app.core.security.AuthorizationEngine,
     networkMonitor         : com.kavach.app.util.NetworkMonitor
 ) : ViewModel() {
 
@@ -58,6 +60,14 @@ class NavHostViewModel @Inject constructor(
 
     private val _startupTimeline = MutableStateFlow<List<Pair<String, Boolean>>>(emptyList())
     val startupTimeline = _startupTimeline.asStateFlow()
+
+    private val _isRecovering = MutableStateFlow(false)
+    val isRecovering = _isRecovering.asStateFlow()
+
+    private val _isLimitedMode = MutableStateFlow(false)
+    val isLimitedMode = _isLimitedMode.asStateFlow()
+
+    private val _isStartupTimedOut = MutableStateFlow(false)
 
     private fun updateTimeline(stage: String, success: Boolean) {
         _startupTimeline.update { it + (stage to success) }
@@ -79,14 +89,6 @@ class NavHostViewModel @Inject constructor(
         }
     }
 
-    private val _isRecovering = MutableStateFlow(false)
-    val isRecovering = _isRecovering.asStateFlow()
-
-    private val _isLimitedMode = MutableStateFlow(false)
-    val isLimitedMode = _isLimitedMode.asStateFlow()
-
-    private val _isStartupTimedOut = MutableStateFlow(false)
-
     /**
      * Centralized AuthState Flow.
      * Combines token, role, and integrity status to determine the exact app state.
@@ -95,30 +97,29 @@ class NavHostViewModel @Inject constructor(
         sessionDataStore.token,
         sessionDataStore.role,
         sessionDataStore.pno,
-        sessionDataStore.isVerifiedInThisSession,
         sessionDataStore.consentAccepted,
         sessionDataStore.permissionsHandled,
         appLockManager.lockState,
         _isStartupTimedOut,
-        sessionDataStore.integrityLevel,
         connectionStatus,
-        sessionDataStore.lastAuthTime
+        sessionDataStore.lastAuthTime,
+        sessionDataStore.isPinSet,
+        sessionDataStore.isBiometricEnabled
     ) { args: Array<Any?> ->
         val token       = args[0] as? String
         val role        = args[1] as? String
         val pno         = args[2] as? String
-        val isVerified  = args[3] as? Boolean ?: false
-        val consent     = args[4] as? Boolean ?: false
-        val permissions = args[5] as? Boolean ?: false
-        val lockState   = args[6] as? com.kavach.app.core.security.AppLockState
-        val timedOut    = args[7] as? Boolean ?: false
-        val integrity   = args[8] as? String ?: ""
-        val network     = args[9] as? com.kavach.app.util.ConnectionStatus
-        val lastAuth    = args[10] as? Long ?: 0L
+        val consent     = args[3] as? Boolean ?: false
+        val permissions = args[4] as? Boolean ?: false
+        val lockState   = args[5] as? com.kavach.app.core.security.AppLockState
+        val timedOut    = args[6] as? Boolean ?: false
+        val network     = args[7] as? com.kavach.app.util.ConnectionStatus
+        val lastAuth    = args[8] as? Long ?: 0L
+        val isPinSet    = args[9] as? Boolean ?: false
+        val isBioEnabled = args[10] as? Boolean ?: false
 
         // Update Timeline Stages
         if (token != null && _startupTimeline.value.none { it.first == "TOKEN" }) updateTimeline("TOKEN", true)
-        if (!integrity.isNullOrBlank() && _startupTimeline.value.none { it.first == "INTEGRITY" }) updateTimeline("INTEGRITY", true)
         if (lockState == com.kavach.app.core.security.AppLockState.Unlocked && _startupTimeline.value.none { it.first == "LOCK" }) updateTimeline("LOCK", true)
 
         // Point 1 FIX: Cancel startup job if we are no longer loading
@@ -128,7 +129,7 @@ class NavHostViewModel @Inject constructor(
 
         when {
             // ── Point 5 FIX: Offline Resiliency takes precedence over Timeout ──
-            network == com.kavach.app.util.ConnectionStatus.UNAVAILABLE && !token.isNullOrBlank() && integrity.isNotEmpty() -> 
+            network == com.kavach.app.util.ConnectionStatus.UNAVAILABLE && !token.isNullOrBlank() -> 
                 AuthState.Authenticated(token, role ?: "", pno ?: "", isOffline = true)
 
             // Loading state only until token is loaded (even if empty)
@@ -137,23 +138,25 @@ class NavHostViewModel @Inject constructor(
             // 0. Startup Timeout (Fail-Safe)
             timedOut && token == null -> AuthState.StartupTimeout
 
-            // 0. App Lock Check (Priority: check if locally locked first if we have a session)
-            !token.isNullOrEmpty() && lockState != com.kavach.app.core.security.AppLockState.Unlocked -> AuthState.AppLocked
+            // 1. Permission Check (Mandatory first step)
+            permissions == false -> AuthState.NeedsPermissions
 
-            // 1. Consent Check (default to false if null)
+            // 2. Consent Check (default to false if null)
             consent == false -> AuthState.NeedsConsent
             
-            // 2. Permission Check (default to false if null)
-            permissions == false -> AuthState.NeedsPermissions
-            
             // 3. Auth Check
-            token.isEmpty() -> AuthState.Unauthenticated
+            token.isNullOrEmpty() -> AuthState.Unauthenticated
             
-            // 4. Integrity Check (Persisted integrity allows offline entry handled above)
-            !isVerified && network == com.kavach.app.util.ConnectionStatus.AVAILABLE -> AuthState.NeedsIntegrity
-            
+            // 4. Security Enrollment Check (First time PIN setup)
+            !isPinSet -> AuthState.NeedsSecurityEnrollment
+
+            // 5. App Lock Check (Returning user lock screen)
+            // Only trigger if PIN is already set and manager says we are locked
+            lockState != com.kavach.app.core.security.AppLockState.Unlocked -> AuthState.AppLocked
+
+
             // Point 2 FIX: Progressive Degradation logic
-            network == com.kavach.app.util.ConnectionStatus.UNAVAILABLE && !token.isNullOrBlank() && integrity.isNotEmpty() -> {
+            network == com.kavach.app.util.ConnectionStatus.UNAVAILABLE && !token.isNullOrBlank() -> {
                 val ageMs = System.currentTimeMillis() - lastAuth
                 val ageHr = ageMs / (1000 * 60 * 60)
                 
@@ -166,7 +169,7 @@ class NavHostViewModel @Inject constructor(
             }
 
             // 6. Fully Authenticated (Online)
-            else -> AuthState.Authenticated(token, role ?: "", pno ?: "", isOffline = false, capability = CapabilityLevel.FULL)
+            else -> AuthState.Authenticated(token!!, role ?: "", pno ?: "", isOffline = false, capability = CapabilityLevel.FULL)
         }.also { state ->
             // Point 1 FIX: Production-Safe Sanity Assertions
             if (state is AuthState.AppLocked && token == null) {
@@ -197,7 +200,6 @@ class NavHostViewModel @Inject constructor(
 
             when (val result = authRepo.syncProfile()) {
                 is com.kavach.app.utils.ApiResult.Success -> {
-                    sessionDataStore.markAsVerified()
                     _isLimitedMode.value = false
                     true
                 }
@@ -258,13 +260,14 @@ class NavHostViewModel @Inject constructor(
 
     fun logout() {
         viewModelScope.launch {
-            _sessionBreachReason.value = null
-            sessionDataStore.markAsUnverified()
+            sessionDataStore.clearSessionBreach()
             sessionDataStore.clearSession()
         }
     }
 
     fun clearBreach() {
-        _sessionBreachReason.value = null
+        viewModelScope.launch {
+            sessionDataStore.clearSessionBreach()
+        }
     }
 }

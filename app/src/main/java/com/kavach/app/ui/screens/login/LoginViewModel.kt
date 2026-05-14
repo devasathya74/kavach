@@ -16,19 +16,7 @@ import javax.inject.Inject
 data class LoginUiState(
     val isLoading : Boolean = false,
     val error     : String? = null,
-    val otpSent   : Boolean = false
-)
-
-data class OtpUiState(
-    val isLoading : Boolean = false,
-    val error     : String? = null,
-    val verified  : Boolean = false
-)
-
-data class AdminLoginUiState(
-    val isLoading    : Boolean = false,
-    val error        : String? = null,
-    val loggedIn     : Boolean = false    // true → navigate to AdminDashboard
+    val loggedIn  : Boolean = false
 )
 
 @HiltViewModel
@@ -40,85 +28,34 @@ class LoginViewModel @Inject constructor(
     private val _loginState = MutableStateFlow(LoginUiState())
     val loginState: StateFlow<LoginUiState> = _loginState.asStateFlow()
 
-    private val _otpState = MutableStateFlow(OtpUiState())
-    val otpState: StateFlow<OtpUiState> = _otpState.asStateFlow()
-
-    private val _adminLoginState = MutableStateFlow(AdminLoginUiState())
-    val adminLoginState: StateFlow<AdminLoginUiState> = _adminLoginState.asStateFlow()
-
-    fun requestOtp(pno: String) {
+    fun login(pno: String, password: String) {
         if (pno.isBlank()) {
             _loginState.value = LoginUiState(error = "PNO दर्ज करें")
             return
         }
+        if (password.isBlank()) {
+            _loginState.value = LoginUiState(error = "पासवर्ड दर्ज करें")
+            return
+        }
+        
         viewModelScope.launch {
             _loginState.value = LoginUiState(isLoading = true)
-            when (val result = authRepository.requestOtp(pno)) {
-                is ApiResult.Success      -> _loginState.value = LoginUiState(otpSent = true)
+            when (val result = authRepository.loginWithPassword(pno, password)) {
+                is ApiResult.Success -> {
+                    delay(150)
+                    val savedToken = sessionDataStore.getTokenOnce()
+                    if (savedToken.isNotBlank()) {
+                        android.util.Log.d("AUTH_FLOW", "Login success & token persisted.")
+                        _loginState.value = LoginUiState(loggedIn = true)
+                    } else {
+                        _loginState.value = LoginUiState(error = "सत्र सुरक्षित नहीं हो सका।")
+                    }
+                }
                 is ApiResult.Error        -> _loginState.value = LoginUiState(error = result.message)
                 is ApiResult.Unauthorized -> _loginState.value = LoginUiState(error = result.message)
-                else -> {}
-            }
-        }
-    }
-
-    fun verifyOtp(pno: String, otp: String) {
-        if (otp.length < 4) {
-            _otpState.value = OtpUiState(error = "सही OTP दर्ज करें")
-            return
-        }
-        viewModelScope.launch {
-            _otpState.value = OtpUiState(isLoading = true)
-            when (val result = authRepository.verifyOtp(pno, otp)) {
-                is ApiResult.Success -> {
-                    // Critical Fix: Wait for DataStore Flow to propagate
-                    // and verify persistence before signaling UI to navigate.
-                    delay(150)
-                    val savedToken = sessionDataStore.getTokenOnce()
-                    if (savedToken.isNotBlank()) {
-                        android.util.Log.d("AUTH_FLOW", "OTP verified & token persisted. Navigating.")
-                        _otpState.value = OtpUiState(verified = true)
-                    } else {
-                        android.util.Log.e("AUTH_FLOW", "OTP Success but token not found in DataStore!")
-                        _otpState.value = OtpUiState(error = "सत्र सुरक्षित नहीं हो सका। कृपया पुनः प्रयास करें।")
-                    }
+                else -> {
+                    _loginState.value = LoginUiState(error = "अनपेक्षित त्रुटि")
                 }
-                is ApiResult.Error        -> _otpState.value = OtpUiState(error = result.message)
-                is ApiResult.Unauthorized -> _otpState.value = OtpUiState(error = result.message)
-                else -> {}
-            }
-        }
-    }
-
-    /**
-     * Admin Password Login — PNO + Password से direct login।
-     * OTP की ज़रूरत नहीं।
-     */
-    fun adminLogin(pno: String, password: String) {
-        if (pno.isBlank()) {
-            _adminLoginState.value = AdminLoginUiState(error = "PNO दर्ज करें")
-            return
-        }
-        if (password.isBlank()) {
-            _adminLoginState.value = AdminLoginUiState(error = "पासवर्ड दर्ज करें")
-            return
-        }
-        viewModelScope.launch {
-            _adminLoginState.value = AdminLoginUiState(isLoading = true)
-            when (val result = authRepository.adminPasswordLogin(pno, password)) {
-                is ApiResult.Success -> {
-                    delay(150)
-                    val savedToken = sessionDataStore.getTokenOnce()
-                    if (savedToken.isNotBlank()) {
-                        android.util.Log.d("AUTH_FLOW", "Admin login success & token persisted.")
-                        _adminLoginState.value = AdminLoginUiState(loggedIn = true)
-                    } else {
-                        _adminLoginState.value = AdminLoginUiState(error = "सत्र सुरक्षित नहीं हो सका।")
-                    }
-                }
-                is ApiResult.Error        -> _adminLoginState.value = AdminLoginUiState(error = result.message)
-                is ApiResult.Unauthorized -> _adminLoginState.value = AdminLoginUiState(error = result.message)
-                else -> {}
             }
         }
     }

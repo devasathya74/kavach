@@ -115,22 +115,4 @@ interface KavachApiService {
     @POST("api/v1/admin/config/")
     suspend fun updateRemoteConfig(@Body body: Map<String, @JvmSuppressWildcards Any>): Response<ApiResponse<Unit>>
 
-
-    // ── Play Integrity API ─────────────────────────────────
-
-    /**
-     * Step 1: Fetch a server-bound nonce before requesting integrity token.
-     * Backend generates: sha256(userId + deviceId + uuid + timestamp)
-     * This nonce is single-use — backend marks it consumed after use.
-     */
-    @POST("api/v1/auth/integrity/nonce/")
-    suspend fun getIntegrityNonce(): Response<ApiResponse<IntegrityNonceResponse>>
-
-    /**
-     * Step 2: Send opaque integrity token to backend for Google-side verification.
-     * Client NEVER decodes this token.
-     * Backend calls: https://playintegrity.googleapis.com/v1/{package}:decodeIntegrityToken
-     */
-    @POST("api/v1/auth/integrity/verify/")
-    suspend fun verifyIntegrityToken(@Body body: IntegrityVerifyRequest): Response<ApiResponse<IntegrityVerdict>>
 }

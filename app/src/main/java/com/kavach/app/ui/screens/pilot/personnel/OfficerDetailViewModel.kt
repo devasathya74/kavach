@@ -16,7 +16,10 @@ data class OfficerDetailState(
     val officer: OfficerDto? = null,
     val isLoading: Boolean = false,
     val error: String? = null,
-    val isRevoking: Boolean = false
+    val isRevoking: Boolean = false,
+    val isSuccess: Boolean = false,
+    val canEdit: Boolean = false,
+    val canManageAuthority: Boolean = false
 )
 
 @HiltViewModel
@@ -45,7 +48,27 @@ class OfficerDetailViewModel @Inject constructor(
             try {
                 val result = repository.getUserDetailNetwork(officerId)
                 result.onSuccess { officer ->
-                    _state.update { it.copy(officer = officer, isLoading = false, error = null) }
+                    val myRole = com.kavach.app.core.auth.SystemRole.fromString(sessionDataStore.role.first())
+                    val myRankLevel = sessionDataStore.rankLevel.first()
+                    val targetRankLevel = officer.profile?.rank?.level ?: 0
+                    val targetRole = com.kavach.app.core.auth.SystemRole.fromString(officer.role)
+                    
+                    val canEdit = when {
+                        myRole == com.kavach.app.core.auth.SystemRole.ADMIN -> true // ADMIN bypass
+                        myRole == com.kavach.app.core.auth.SystemRole.PILOT -> {
+                            if (targetRole == com.kavach.app.core.auth.SystemRole.PILOT) myRankLevel > targetRankLevel
+                            else targetRole == com.kavach.app.core.auth.SystemRole.USER // Pilot manages User
+                        }
+                        else -> false
+                    }
+                    
+                    _state.update { it.copy(
+                        officer = officer, 
+                        isLoading = false, 
+                        error = null,
+                        canEdit = canEdit,
+                        canManageAuthority = canEdit
+                    ) }
                 }.onFailure { e ->
                     _state.update { it.copy(isLoading = false, error = e.message) }
                 }
@@ -55,14 +78,17 @@ class OfficerDetailViewModel @Inject constructor(
         }
     }
 
-    fun deactivateUser(reason: String) {
+    fun deactivateUser() {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
-            repository.deactivateUser(officerId, reason).onSuccess {
-                loadDetail()
-            }.onFailure { e ->
-                _state.update { it.copy(isLoading = false, error = e.message) }
-            }
+            _state.update { it.copy(isLoading = true, error = null) }
+            repository.deleteUser(officerId) // This is now a soft delete (is_active=false)
+                .onSuccess {
+                    _state.update { it.copy(isLoading = false, isSuccess = true) }
+                    loadDetail()
+                }
+                .onFailure { e ->
+                    _state.update { it.copy(isLoading = false, error = e.message) }
+                }
         }
     }
 

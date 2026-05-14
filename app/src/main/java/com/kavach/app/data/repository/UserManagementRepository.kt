@@ -3,10 +3,12 @@ package com.kavach.app.data.repository
 import android.util.Log
 import com.kavach.app.data.local.dao.OfficerDao
 import com.kavach.app.data.remote.api.KavachApiV2
-import com.kavach.app.data.remote.dto.personnel.OfficerDto
+import com.kavach.app.data.remote.dto.personnel.*
 import com.kavach.app.data.remote.dto.system.DraftChangeDto
 import com.kavach.app.data.remote.dto.v2.*
 import com.kavach.app.utils.ApiResult
+import com.kavach.app.utils.onSuccess
+import com.kavach.app.utils.onFailure
 import com.kavach.app.utils.safeApiCall
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -35,17 +37,30 @@ class UserManagementRepository @Inject constructor(
         unitType: String? = null,
         search: String? = null
     ): Flow<List<OfficerDto>> =
-        officerDao.getFilteredOfficers(unitType, search).map { entities ->
-            entities.map { entity ->
+        officerDao.getFilteredOfficers(unitType, search).map { wrappers ->
+            wrappers.map { wrapper ->
+                val entity = wrapper.officer
+                val profileEntity = wrapper.profile
+                
                 OfficerDto(
-                    id                  = entity.id,
-                    pno                 = entity.pno,
-                    role                = entity.role,
-                    unit                = null,
-                    isActive            = entity.isActive,
-                    profile             = null,
-                    devices             = emptyList(),
-                    mustChangePassword  = false
+                    id       = entity.id,
+                    pno      = entity.pno,
+                    role     = entity.role,
+                    unit     = UnitDto(code = entity.unitCode, name = entity.unitName),
+                    isActive = entity.isActive,
+                    profile  = profileEntity?.let { p ->
+                        OfficerProfileDto(
+                            name = p.name,
+                            rank = RankDto(code = p.rankCode, name = p.rankName),
+                            unit = UnitDto(code = entity.unitCode, name = entity.unitName),
+                            company = p.companyName?.let { cName -> CompanyDto(name = cName) },
+                            platoon = p.platoonNumber?.let { pNum -> PlatoonDto(number = pNum) },
+                            serviceStatus = p.serviceStatus,
+                            image = p.imageUrl
+                        )
+                    },
+                    devices            = emptyList(),
+                    mustChangePassword = false
                 )
             }
         }
@@ -56,7 +71,7 @@ class UserManagementRepository @Inject constructor(
         company: String? = null,
         platoon: Int? = null,
         search: String? = null
-    ): ApiResult<Unit> = safeApiCall {
+    ): ApiResult<Boolean> = safeApiCall {
         val response = api.getUsers(page, unitType, company, platoon, search)
         response.results.forEach { dto ->
             officerDao.insertOfficer(dto.toEntity())
@@ -64,12 +79,22 @@ class UserManagementRepository @Inject constructor(
                 officerDao.insertProfile(dto.toProfileEntity())
             }
         }
-        ApiResult.Success(Unit)
+        ApiResult.Success(response.next != null)
     }
 
     suspend fun getUserDetailNetwork(officerId: String): ApiResult<OfficerDto> = safeApiCall {
         val dto = api.getUserDetail(officerId)
+        // Update full cache on detail fetch
+        syncDtoToCache(dto)
         ApiResult.Success(dto)
+    }
+
+    private suspend fun syncDtoToCache(dto: OfficerDto) {
+        officerDao.syncOfficer(
+            dto.toEntity(),
+            dto.toProfileEntity(),
+            dto.toDeviceEntities()
+        )
     }
 
     suspend fun createUser(request: CreateUserRequest): ApiResult<OfficerDto> = safeApiCall {
@@ -77,7 +102,7 @@ class UserManagementRepository @Inject constructor(
         if (response.isSuccessful && response.body()?.status == "success") {
             val data = response.body()?.data
             if (data != null) {
-                officerDao.insertOfficer(data.toEntity())
+                syncDtoToCache(data)
                 ApiResult.Success(data)
             } else {
                 ApiResult.Error("Server returned success but no data")
@@ -94,7 +119,7 @@ class UserManagementRepository @Inject constructor(
         if (response.isSuccessful && response.body()?.status == "success") {
             val data = response.body()?.data
             if (data != null) {
-                officerDao.insertOfficer(data.toEntity())
+                syncDtoToCache(data)
                 ApiResult.Success(data)
             } else {
                 ApiResult.Error("Update successful but no data returned")
@@ -107,12 +132,19 @@ class UserManagementRepository @Inject constructor(
     }
 
     suspend fun deleteUser(id: String): ApiResult<Unit> = safeApiCall {
-        val response = api.deleteUser(id)
-        if (response.isSuccessful) ApiResult.Success(Unit)
-        else {
-            Log.e("DELETE_USER_FAIL", "Error: ${response.errorBody()?.string()}")
-            ApiResult.Error("Deletion failed")
+        val response = api.updateUser(id, UpdateUserRequest(isActive = false))
+        if (response.isSuccessful) {
+            // Update local status to avoid re-fetch wait
+            repositoryScope_updateLocalStatus(id, false)
+            ApiResult.Success(Unit)
+        } else {
+            ApiResult.Error("Deactivation failed")
         }
+    }
+
+    private suspend fun repositoryScope_updateLocalStatus(id: String, active: Boolean) {
+        val result = api.getUserDetail(id)
+        officerDao.insertOfficer(result.toEntity().copy(isActive = active))
     }
 
     suspend fun resetPassword(id: String, request: ResetPasswordRequest): ApiResult<Unit> = safeApiCall {
@@ -210,3 +242,16 @@ private fun OfficerDto.toProfileEntity() = com.kavach.app.data.local.entity.Offi
     serviceStatus = profile?.serviceStatus ?: if (isActive) "Active" else "Inactive",
     imageUrl      = profile?.image
 )
+
+private fun OfficerDto.toDeviceEntities() = devices.map { dto ->
+    com.kavach.app.data.local.entity.OfficerDeviceCacheEntity(
+        id = "${id}_${dto.deviceId}",
+        officerId = id,
+        deviceId = dto.deviceId,
+        deviceName = dto.deviceModel ?: "Unknown Device",
+        status = dto.status,
+        trustScore = 100f,
+        integrityLevel = "SECURE",
+        lastActive = dto.lastActive
+    )
+}

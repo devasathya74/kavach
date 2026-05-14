@@ -1,12 +1,17 @@
 package com.kavach.app.ui.screens.permissions
 
 import android.Manifest
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
+import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -15,14 +20,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kavach.app.ui.theme.*
-import androidx.compose.ui.platform.LocalContext
+import timber.log.Timber
 
 @Composable
 fun PermissionGateScreen(
@@ -31,150 +40,205 @@ fun PermissionGateScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    
-    var currentStep by remember { mutableIntStateOf(1) }
+    val lifecycleOwner = LocalLifecycleOwner.current
 
-    // Step 1: Notifications
-    val notificationLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { currentStep = 2 }
+    // Re-check permissions when user returns to app (e.g., from Settings)
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.checkPermissions()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
-    // Step 2: Location
-    val locationLauncher = rememberLauncherForActivityResult(
+    // Effect: If all permissions are granted, auto-continue
+    LaunchedEffect(uiState.hasRequiredPermissions) {
+        if (uiState.hasRequiredPermissions) {
+            Timber.d("All permissions granted. Transitioning to next screen.")
+            viewModel.markPermissionsAsHandled()
+            onContinue()
+        }
+    }
+
+    val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
-    ) { currentStep = 3 }
+    ) { result ->
+        val allGranted = result.values.all { it }
+        if (allGranted) {
+            viewModel.markPermissionsAsHandled()
+            onContinue()
+        } else {
+            // Some denied. checkPermissions will update UI state
+            viewModel.checkPermissions()
+        }
+    }
 
-    // Step 3: Camera & Mic
-    val mediaLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { currentStep = 4 }
-
-    // Step 4: Storage
-    val storageLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { 
-        viewModel.checkPermissions()
-        viewModel.markPermissionsAsHandled()
-        onContinue()
+    val mandatoryPermissions = remember {
+        mutableListOf(
+            Manifest.permission.CAMERA,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ).apply {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                add(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }.toTypedArray()
     }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(NavyBlueDark)
-            .padding(24.dp),
+            .padding(24.dp)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(Modifier.height(48.dp))
-        Icon(
-            Icons.Default.AdminPanelSettings,
-            contentDescription = null,
-            tint = GoldenYellow,
-            modifier = Modifier.size(80.dp)
-        )
+        
+        Box(
+            modifier = Modifier
+                .size(80.dp)
+                .background(GoldenYellow.copy(alpha = 0.1f), RoundedCornerShape(20.dp)),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                Icons.Default.Security,
+                contentDescription = null,
+                tint = GoldenYellow,
+                modifier = Modifier.size(48.dp)
+            )
+        }
+
         Spacer(Modifier.height(24.dp))
+        
         Text(
-            "मिशन तैयारी: चरण ${currentStep}/4\n(Mission Readiness: Step ${currentStep}/4)",
+            "मिशन अनुमति गेट\n(Mission Permission Gate)",
             color = Color.White,
             style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.ExtraBold,
             textAlign = TextAlign.Center
         )
+        
+        Spacer(Modifier.height(12.dp))
+        
+        Text(
+            "सुरक्षित संचालन के लिए निम्नलिखित अनुमतियां अनिवार्य हैं।\n(The following permissions are mandatory for secure operations.)",
+            color = OnSurfaceMid,
+            fontSize = 14.sp,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+
         Spacer(Modifier.height(40.dp))
 
-        when (currentStep) {
-            1 -> PermissionStep(
-                icon = Icons.Default.NotificationsActive,
-                title = "सूचनाएं (Notifications)",
-                desc = "कमांड और कंट्रोल ब्रॉडकास्ट प्राप्त करने के लिए।",
-                buttonText = "अनुमति दें (Grant)",
-                onClick = {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                    } else {
-                        currentStep = 2
-                    }
-                }
-            )
-            2 -> PermissionStep(
-                icon = Icons.Default.LocationOn,
-                title = "स्थान (Location)",
-                desc = "मिशन जियोटैगिंग और कर्मियों की सुरक्षा ट्रैकिंग के लिए।",
-                buttonText = "अनुमति दें (Grant)",
-                onClick = {
-                    locationLauncher.launch(arrayOf(
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    ))
-                }
-            )
-            3 -> PermissionStep(
-                icon = Icons.Default.CameraAlt,
-                title = "कैमरा और माइक्रोफोन",
-                desc = "साक्ष्य एकत्र करने और ब्रीफिंग रिकॉर्ड करने के लिए।",
-                buttonText = "अनुमति दें (Grant)",
-                onClick = {
-                    mediaLauncher.launch(arrayOf(
-                        Manifest.permission.CAMERA,
-                        Manifest.permission.RECORD_AUDIO
-                    ))
-                }
-            )
-            4 -> PermissionStep(
-                icon = Icons.Default.Storage,
-                title = "स्टोरेज (Storage)",
-                desc = "दस्तावेजों और साक्ष्यों को सुरक्षित रखने के लिए।",
-                buttonText = "अंतिम अनुमति (Final Grant)",
-                onClick = {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        storageLauncher.launch(arrayOf(
-                            Manifest.permission.READ_MEDIA_IMAGES,
-                            Manifest.permission.READ_MEDIA_VIDEO,
-                            Manifest.permission.READ_MEDIA_AUDIO
-                        ))
-                    } else {
-                        storageLauncher.launch(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE))
-                    }
-                }
-            )
-        }
+        // Permission List
+        PermissionItem(
+            icon = Icons.Default.NotificationsActive,
+            title = "सूचनाएं (Notifications)",
+            desc = "कमांड अलर्ट और रीयल-टाइम अपडेट के लिए।"
+        )
+        
+        PermissionItem(
+            icon = Icons.Default.LocationOn,
+            title = "लोकेशन (Location)",
+            desc = "कर्मियों की सुरक्षा और जियो-फेन्सिंग के लिए।"
+        )
+        
+        PermissionItem(
+            icon = Icons.Default.CameraAlt,
+            title = "कैमरा और माइक्रोफोन",
+            desc = "साक्ष्य एकत्र करने और सुरक्षित संचार के लिए।"
+        )
 
         Spacer(Modifier.weight(1f))
-        TextButton(onClick = { 
-            onContinue() 
-        }) {
-            Text("बाद में करें (Skip for now)", color = Color.White.copy(alpha = 0.5f))
+        Spacer(Modifier.height(40.dp))
+
+        if (uiState.isPermanentlyDenied) {
+            // Show Open Settings button
+            Card(
+                colors = CardDefaults.cardColors(containerColor = Color.Red.copy(alpha = 0.1f)),
+                border = androidx.compose.foundation.BorderStroke(1.dp, Color.Red.copy(alpha = 0.3f)),
+                modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)
+            ) {
+                Row(
+                    modifier = Modifier.padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(Icons.Default.Error, contentDescription = null, tint = Color.Red)
+                    Spacer(Modifier.width(12.dp))
+                    Text(
+                        "कुछ अनुमतियां स्थायी रूप से अस्वीकार कर दी गई हैं। कृपया सेटिंग्स में जाकर उन्हें सक्षम करें।",
+                        color = Color.White,
+                        fontSize = 12.sp,
+                        lineHeight = 16.sp
+                    )
+                }
+            }
+
+            Button(
+                onClick = {
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                        data = Uri.fromParts("package", context.packageName, null)
+                    }
+                    context.startActivity(intent)
+                },
+                modifier = Modifier.fillMaxWidth().height(56.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text("सेटिंग्स खोलें (Open Settings)", color = NavyBlueDark, fontWeight = FontWeight.Bold)
+            }
+        } else {
+            Button(
+                onClick = { launcher.launch(mandatoryPermissions) },
+                modifier = Modifier.fillMaxWidth().height(56.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = GoldenYellow),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text("अनुमति दें (Grant All Permissions)", color = NavyBlueDark, fontWeight = FontWeight.Bold)
+            }
         }
+        
+        Spacer(Modifier.height(24.dp))
+        
+        Text(
+            "सुरक्षा प्रोटोकॉल: अनुमतियों के बिना आगे बढ़ना वर्जित है।",
+            color = OnSurfaceMid.copy(alpha = 0.5f),
+            fontSize = 10.sp,
+            textAlign = TextAlign.Center
+        )
+        
+        Spacer(Modifier.height(24.dp))
     }
 }
 
 @Composable
-private fun PermissionStep(
+private fun PermissionItem(
     icon: ImageVector,
     title: String,
-    desc: String,
-    buttonText: String,
-    onClick: () -> Unit
+    desc: String
 ) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(
-            modifier = Modifier.size(100.dp).background(Color.White.copy(alpha = 0.05f), RoundedCornerShape(20.dp)),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(icon, contentDescription = null, tint = GoldenYellow, modifier = Modifier.size(48.dp))
-        }
-        Spacer(Modifier.height(32.dp))
-        Text(title, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 20.sp)
-        Spacer(Modifier.height(12.dp))
-        Text(desc, color = Color.White.copy(alpha = 0.7f), textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = 20.dp))
-        Spacer(Modifier.height(48.dp))
-        Button(
-            onClick = onClick,
-            modifier = Modifier.fillMaxWidth().height(56.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = GoldenYellow),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Text(buttonText, color = NavyBlueDark, fontWeight = FontWeight.Bold)
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            icon,
+            contentDescription = null,
+            tint = GoldenYellow,
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(Modifier.width(16.dp))
+        Column {
+            Text(title, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            Text(desc, color = OnSurfaceMid, fontSize = 12.sp)
         }
     }
 }

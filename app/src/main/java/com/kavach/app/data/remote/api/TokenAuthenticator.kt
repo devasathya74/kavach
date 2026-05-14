@@ -3,8 +3,6 @@ package com.kavach.app.data.remote.api
 import android.content.Context
 import com.kavach.app.data.local.SessionDataStore
 import com.kavach.app.data.remote.dto.auth.RefreshTokenRequest
-import com.kavach.app.security.AttestationResult
-import com.kavach.app.security.IntegrityRepository
 import com.kavach.app.utils.DeviceIdUtil
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.firstOrNull
@@ -32,25 +30,17 @@ import javax.inject.Singleton
 class TokenAuthenticator @Inject constructor(
     private val sessionStore                  : SessionDataStore,
     private val authRefreshService            : AuthRefreshApiService,
-    private val integrityRepositoryLazy       : dagger.Lazy<IntegrityRepository>,
     @ApplicationContext private val context   : Context
 ) : Authenticator {
 
     private val mutex = Mutex()
 
-    private val integrityRepository: IntegrityRepository
-        get() = integrityRepositoryLazy.get()
+
 
     override fun authenticate(route: Route?, response: Response): Request? {
-        // 1. Detect Critical Integrity Failure
-        val isIntegrityError = response.message == "KAVACH_INTEGRITY_MISSING_SECRET" ||
-                               response.peekBody(1024).string().contains("KAVACH_INTEGRITY_FAILURE")
 
-        if (isIntegrityError) {
-            Timber.e("Critical integrity failure detected. Holding session in local-only mode.")
-            // sessionStore.clearSession() <- REMOVED: Prioritize continuity
-            return null
-        }
+
+
 
         // 2. Prevent infinite retry loops
         if (responseCount(response) >= 2) {
@@ -112,9 +102,6 @@ class TokenAuthenticator @Inject constructor(
                             expiresIn    = newExpiresIn
                         )
 
-                        // Asynchronous re-attestation after refresh (Non-blocking)
-                        // We do NOT block the request for integrity on startup.
-                        // This prevents tunnel/network wake delays from halting the UI.
                         Timber.d("New tokens saved. Proceeding with request immediately.")
                         
                         response.request.newBuilder()
@@ -137,9 +124,8 @@ class TokenAuthenticator @Inject constructor(
                         null
                     }
                 } catch (e: Exception) {
-                    Timber.e(e, "Exception during token refresh handshake.")
-                    sessionStore.setSessionBreach("नेटवर्क त्रुटि: ${e.message}")
-                    sessionStore.clearSession()
+                    Timber.e(e, "Exception during token refresh handshake. Holding session for retry.")
+                    // sessionStore.clearSession() <- Removed to prevent random logout on network flicker
                     null
                 }
             }

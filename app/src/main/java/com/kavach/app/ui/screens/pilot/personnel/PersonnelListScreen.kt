@@ -32,28 +32,40 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kavach.app.ui.components.RoleBadge
 import com.kavach.app.ui.components.StatusBadge
+import com.kavach.app.ui.components.FilterChipGroup
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PersonnelListScreen(
+    fun PersonnelListScreen(
     viewModel: PersonnelListViewModel = hiltViewModel(),
-    onUserClick: (String) -> Unit
+    onUserClick: (String) -> Unit,
+    onAddUser: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
     val listState = rememberLazyListState()
     var showFilterSheet by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState()
-    var showCreateUserDialog by remember { mutableStateOf(false) }
 
     // Detect when user scrolls to bottom
     val shouldLoadMore = remember {
         derivedStateOf {
             val totalItemsCount = listState.layoutInfo.totalItemsCount
             val lastVisibleItemIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-            lastVisibleItemIndex >= (totalItemsCount - 5) && !state.isLoading && !state.endOfPaginationReached
+            
+            // Only trigger if we have items (initial load is handled separately) 
+            // and we haven't reached the end or currently loading.
+            totalItemsCount > 0 && 
+            lastVisibleItemIndex >= (totalItemsCount - 5) && 
+            !state.isLoading && 
+            !state.isRefreshing &&
+            !state.endOfPaginationReached
         }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.syncUsers(isRefresh = true)
     }
 
     LaunchedEffect(shouldLoadMore.value) {
@@ -82,7 +94,7 @@ fun PersonnelListScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { showCreateUserDialog = true },
+                onClick = onAddUser,
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             ) {
@@ -144,183 +156,10 @@ fun PersonnelListScreen(
                 )
             }
         }
-        if (showCreateUserDialog) {
-            CreateUserDialog(
-                onDismiss = { showCreateUserDialog = false },
-                onConfirm = { request ->
-                    viewModel.createUser(request)
-                    showCreateUserDialog = false
-                }
-            )
         }
-    }
 }
 
-fun validatePassword(password: String): String? {
-    if (password.length < 8) return "Minimum 8 characters required"
-    if (!password.any { it.isUpperCase() }) return "1 capital letter required"
-    if (!password.any { it.isLowerCase() }) return "1 small letter required"
-    if (password.count { it.isDigit() } < 2) return "Minimum 2 digits required"
-    val specialRegex = Regex("[@$!%*?&#]")
-    if (!specialRegex.containsMatchIn(password)) return "1 special character required"
-    return null
-}
-
-@Composable
-fun CreateUserDialog(
-    onDismiss: () -> Unit,
-    onConfirm: (com.kavach.app.data.remote.dto.v2.CreateUserRequest) -> Unit
-) {
-    var name by remember { mutableStateOf("") }
-    var pno by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var passwordError by remember { mutableStateOf<String?>(null) }
-    var role by remember { mutableStateOf("USER") }
-    
-    // PAC Hierarchy State
-    var rankId by remember { mutableStateOf("CONSTABLE") }
-    var unitType by remember { mutableStateOf("HQ") }
-    var unitId by remember { mutableStateOf("HQ_UP_PAC") }
-    var companyId by remember { mutableStateOf<String?>(null) }
-    var platoonId by remember { mutableStateOf<String?>(null) }
-    
-    // Optional Fields
-    var phone by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-
-    val ranks = listOf(
-        "CONSTABLE" to "CONSTABLE",
-        "HEAD_CONSTABLE" to "HEAD_CONSTABLE",
-        "PLATOON_COMMANDER" to "PLATOON_COMMANDER & SUBEDAR_MEJAR",
-        "COMPANY_COMMANDER" to "COMPANY_COMMANDER",
-        "QUARTER_MASTER" to "QUARTER MASTER",
-        "ASSISTANT_COMMANDANT" to "ASSISTENT_COMMANDAT",
-        "DEPUTY_COMMANDANT" to "DEPUTY_COMMANDAT",
-        "COMMANDANT" to "COMMANDAT"
-    )
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Add Personnel (Pilot Mode)", fontWeight = FontWeight.Bold) },
-        text = {
-            Column(
-                modifier = Modifier.verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                // 1. Basic Info
-                OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Name") }, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(value = pno, onValueChange = { if (it.length <= 9) pno = it }, label = { Text("PNO (ID)") }, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(
-                    value = password, 
-                    onValueChange = { 
-                        password = it 
-                        passwordError = null
-                    }, 
-                    label = { Text("Initial Password") }, 
-                    modifier = Modifier.fillMaxWidth(),
-                    isError = passwordError != null,
-                    supportingText = { passwordError?.let { Text(it, color = MaterialTheme.colorScheme.error) } },
-                    visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
-                )
-
-                // 2. Rank & Role
-                Text("Rank", style = MaterialTheme.typography.labelMedium)
-                FilterChipGroup(
-                    options = ranks.map { it.first },
-                    displayNames = ranks.map { it.second },
-                    selectedOption = rankId,
-                    onOptionSelected = { it?.let { rankId = it } }
-                )
-
-                Text("System Role", style = MaterialTheme.typography.labelMedium)
-                FilterChipGroup(
-                    options = listOf("USER", "PILOT", "COMMANDING_OFFICER"),
-                    selectedOption = role,
-                    onOptionSelected = { it?.let { role = it } }
-                )
-
-                // 3. Hierarchy (Unit -> Company -> Platoon)
-                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                Text("Placement Hierarchy", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
-
-                Text("Unit Type", style = MaterialTheme.typography.labelMedium)
-                FilterChipGroup(
-                    options = listOf("HQ", "RTC", "BATTALION"),
-                    selectedOption = unitType,
-                    onOptionSelected = { type ->
-                        type?.let { 
-                            unitType = it
-                            if (it != "BATTALION") {
-                                companyId = null
-                                platoonId = null
-                                unitId = if (it == "HQ") "HQ_UP_PAC" else "RTC_CHUNAR"
-                            } else {
-                                unitId = "32_BN_PAC" // Default for pilot
-                            }
-                        }
-                    }
-                )
-
-                if (unitType == "BATTALION") {
-                    Text("Company", style = MaterialTheme.typography.labelMedium)
-                    FilterChipGroup(
-                        options = listOf("COY_A", "COY_B", "COY_C", "COY_D", "COY_E", "COY_F", "COY_G", "COY_H"),
-                        displayNames = listOf("A", "B", "C", "D", "E", "F", "G", "H"),
-                        selectedOption = companyId,
-                        onOptionSelected = { 
-                            companyId = it
-                            if (it == null) platoonId = null
-                        }
-                    )
-
-                    if (companyId != null) {
-                        Text("Platoon", style = MaterialTheme.typography.labelMedium)
-                        FilterChipGroup(
-                            options = listOf("PLT_1", "PLT_2", "PLT_3"),
-                            displayNames = listOf("1", "2", "3"),
-                            selectedOption = platoonId,
-                            onOptionSelected = { platoonId = it }
-                        )
-                    }
-                }
-
-                // 4. Optional Contact
-                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                OutlinedTextField(value = phone, onValueChange = { phone = it }, label = { Text("Mobile Number (Optional)") }, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(value = email, onValueChange = { email = it }, label = { Text("Email (Optional)") }, modifier = Modifier.fillMaxWidth())
-            }
-        },
-        confirmButton = {
-            Button(onClick = {
-                val error = validatePassword(password)
-                if (error != null) {
-                    passwordError = error
-                    return@Button
-                }
-
-                if (name.isBlank() || pno.isBlank()) return@Button
-
-                val request = com.kavach.app.data.remote.dto.v2.CreateUserRequest(
-                    name = name,
-                    pno = pno,
-                    password = password,
-                    role = role,
-                    rankId = rankId,
-                    unitId = unitId,
-                    companyId = companyId,
-                    platoonId = platoonId,
-                    phone = phone.ifBlank { null },
-                    email = email.ifBlank { null }
-                )
-                onConfirm(request)
-            }) { Text("Confirm & Register") }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
-        }
-    )
-}
+// CreateUserDialog is removed in favor of UserRegistrationScreen
 
 @Composable
 fun EmptyState() {
@@ -521,34 +360,4 @@ fun FilterContent(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
-@Composable
-fun FilterChipGroup(
-    options: List<String>,
-    displayNames: List<String>? = null,
-    selectedOption: String?,
-    onOptionSelected: (String?) -> Unit
-) {
-    FlowRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        options.forEachIndexed { index, option ->
-            val label = displayNames?.getOrNull(index) ?: option
-            FilterChip(
-                selected = selectedOption == option,
-                onClick = {
-                    if (selectedOption == option) onOptionSelected(null)
-                    else onOptionSelected(option)
-                },
-                label = { Text(label) },
-                shape = RoundedCornerShape(12.dp),
-                colors = FilterChipDefaults.filterChipColors(
-                    selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                    selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            )
-        }
-    }
-}
+// FilterChipGroup is moved to shared components

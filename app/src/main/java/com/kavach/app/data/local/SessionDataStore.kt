@@ -3,9 +3,11 @@ package com.kavach.app.data.local
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -37,15 +39,14 @@ class SessionDataStore @Inject constructor(
         private val KEY_DEVICE_ID        = stringPreferencesKey("registered_device_id")
         private val KEY_DEVICE_SECRET    = stringPreferencesKey("device_secret")
         private val KEY_ROLE             = stringPreferencesKey("user_role")
-        // Integrity Attestation
-        private val KEY_INTEGRITY_LEVEL  = stringPreferencesKey("integrity_level")
-        private val KEY_LAST_ATTESTED_AT = longPreferencesKey("last_attested_at_ms")
+        private val KEY_RANK_LEVEL       = intPreferencesKey("rank_level")
+
         // Consent
-        private val KEY_CONSENT_ACCEPTED  = androidx.datastore.preferences.core.booleanPreferencesKey("consent_accepted")
+        private val KEY_CONSENT_ACCEPTED  = booleanPreferencesKey("consent_accepted")
         private val KEY_CONSENT_TIMESTAMP = longPreferencesKey("consent_timestamp_ms")
-        private val KEY_PENDING_FORCE_UPDATE = androidx.datastore.preferences.core.booleanPreferencesKey("pending_force_update")
-        private val KEY_SCHEMA_VERSION = androidx.datastore.preferences.core.intPreferencesKey("db_schema_version")
-        private val KEY_PERMISSIONS_HANDLED = androidx.datastore.preferences.core.booleanPreferencesKey("permissions_handled")
+        private val KEY_PENDING_FORCE_UPDATE = booleanPreferencesKey("pending_force_update")
+        private val KEY_SCHEMA_VERSION = intPreferencesKey("db_schema_version")
+        private val KEY_PERMISSIONS_HANDLED = booleanPreferencesKey("permissions_handled")
         
         // Extended Device Binding
         private val KEY_ANDROID_ID       = stringPreferencesKey("android_id")
@@ -54,21 +55,13 @@ class SessionDataStore @Inject constructor(
         private val KEY_DEVICE_NAME      = stringPreferencesKey("device_name")
         private val KEY_LAST_AUTH_TIME   = longPreferencesKey("last_auth_time_ms")
         private val KEY_LAST_UNLOCK_TIME = longPreferencesKey("last_unlock_time_ms")
-        private val KEY_APP_LOCKED       = androidx.datastore.preferences.core.booleanPreferencesKey("app_locked_v2")
+        private val KEY_APP_LOCKED       = booleanPreferencesKey("app_locked_v2")
         private val KEY_SESSION_BREACH_REASON = stringPreferencesKey("session_breach_reason")
+        private val KEY_IS_PIN_SET       = booleanPreferencesKey("is_pin_set")
+        private val KEY_IS_BIOMETRIC_ENABLED = booleanPreferencesKey("is_biometric_enabled")
     }
 
-    // Transient State (In-memory only, reset on every app launch)
-    private val _isVerifiedInThisSession = kotlinx.coroutines.flow.MutableStateFlow(false)
-    val isVerifiedInThisSession = _isVerifiedInThisSession.asStateFlow()
 
-    fun markAsVerified() {
-        _isVerifiedInThisSession.value = true
-    }
-
-    fun markAsUnverified() {
-        _isVerifiedInThisSession.value = false
-    }
 
     val token            : Flow<String>   = context.dataStore.data.map { it[KEY_TOKEN] ?: "" }
     val refreshToken     : Flow<String>   = context.dataStore.data.map { it[KEY_REFRESH_TOKEN] ?: "" }
@@ -80,6 +73,8 @@ class SessionDataStore @Inject constructor(
     val deviceId         : Flow<String>   = context.dataStore.data.map { it[KEY_DEVICE_ID] ?: "" }
     val deviceSecret     : Flow<String>   = context.dataStore.data.map { it[KEY_DEVICE_SECRET] ?: "" }
     val role             : Flow<String>   = context.dataStore.data.map { it[KEY_ROLE] ?: "" }
+    val systemRole       : Flow<com.kavach.app.core.auth.SystemRole> = role.map { com.kavach.app.core.auth.SystemRole.fromString(it) }
+    val rankLevel        : Flow<Int>      = context.dataStore.data.map { it[KEY_RANK_LEVEL] ?: 0 }
     val consentAccepted  : Flow<Boolean>  = context.dataStore.data.map { it[KEY_CONSENT_ACCEPTED] ?: false }
     val consentTimestamp : Flow<Long?>    = context.dataStore.data.map { it[KEY_CONSENT_TIMESTAMP] }
     val pendingForceUpdate: Flow<Boolean> = context.dataStore.data.map { it[KEY_PENDING_FORCE_UPDATE] ?: false }
@@ -92,21 +87,12 @@ class SessionDataStore @Inject constructor(
     val deviceName       : Flow<String?>  = context.dataStore.data.map { it[KEY_DEVICE_NAME] }
     val lastAuthTime     : Flow<Long>     = context.dataStore.data.map { it[KEY_LAST_AUTH_TIME] ?: 0L }
     val lastUnlockTime   : Flow<Long>     = context.dataStore.data.map { it[KEY_LAST_UNLOCK_TIME] ?: 0L }
-    val isAppLocked      : Flow<Boolean>  = context.dataStore.data.map { it[KEY_APP_LOCKED] ?: true }
+    val isAppLocked      : Flow<Boolean>  = context.dataStore.data.map { it[KEY_APP_LOCKED] ?: false }
     val sessionBreachReason: Flow<String?> = context.dataStore.data.map { it[KEY_SESSION_BREACH_REASON] }
+    val isPinSet         : Flow<Boolean>  = context.dataStore.data.map { it[KEY_IS_PIN_SET] ?: false }
+    val isBiometricEnabled: Flow<Boolean> = context.dataStore.data.map { it[KEY_IS_BIOMETRIC_ENABLED] ?: false }
 
-    /**
-     * Last known integrity level from Play Integrity API.
-     * STRONG | DEVICE | BASIC | DEGRADED | FAILED | (empty = never attested)
-     * This is sent as a header to backend on every request.
-     */
-    val integrityLevel   : Flow<String>   = context.dataStore.data.map { it[KEY_INTEGRITY_LEVEL] ?: "" }
 
-    /**
-     * Timestamp of the last successful attestation in milliseconds.
-     * Backend uses this to enforce the 30-minute trust window.
-     */
-    val lastAttestedAt   : Flow<Long>     = context.dataStore.data.map { it[KEY_LAST_ATTESTED_AT] ?: 0L }
 
     suspend fun saveConsent() {
         context.dataStore.edit { prefs ->
@@ -115,16 +101,7 @@ class SessionDataStore @Inject constructor(
         }
     }
 
-    /**
-     * Saves the integrity level returned by backend after Google-side verification.
-     * Also records timestamp for trust-window enforcement.
-     */
-    suspend fun saveIntegrityLevel(level: String) {
-        context.dataStore.edit { prefs ->
-            prefs[KEY_INTEGRITY_LEVEL]  = level
-            prefs[KEY_LAST_ATTESTED_AT] = System.currentTimeMillis()
-        }
-    }
+
 
     suspend fun saveSession(
         token        : String,
@@ -137,6 +114,7 @@ class SessionDataStore @Inject constructor(
         deviceId     : String,
         deviceSecret : String,
         role         : String,
+        rankLevel    : Int = 0,
         androidId    : String = "",
         deviceName   : String = ""
     ) {
@@ -151,8 +129,14 @@ class SessionDataStore @Inject constructor(
             prefs[KEY_RANK]          = rank
             prefs[KEY_UNIT]          = unit
             prefs[KEY_DEVICE_ID]     = deviceId
-            prefs[KEY_DEVICE_SECRET] = deviceSecret
+            
+            // Only save device secret if it's missing or blank to prevent session drop due to sync races
+            if (prefs[KEY_DEVICE_SECRET].isNullOrBlank()) {
+                prefs[KEY_DEVICE_SECRET] = deviceSecret
+            }
+            
             prefs[KEY_ROLE]          = role
+            prefs[KEY_RANK_LEVEL]    = rankLevel
             
             // Extended Binding
             prefs[KEY_LAST_LOGIN_PNO] = pno
@@ -222,6 +206,18 @@ class SessionDataStore @Inject constructor(
         context.dataStore.edit { it[KEY_SESSION_BREACH_REASON] = reason }
     }
 
+    suspend fun clearSessionBreach() {
+        context.dataStore.edit { it.remove(KEY_SESSION_BREACH_REASON) }
+    }
+
+    suspend fun setPinSet(isSet: Boolean) {
+        context.dataStore.edit { it[KEY_IS_PIN_SET] = isSet }
+    }
+
+    suspend fun setBiometricEnabled(isEnabled: Boolean) {
+        context.dataStore.edit { it[KEY_IS_BIOMETRIC_ENABLED] = isEnabled }
+    }
+
     suspend fun clearSession() {
         context.dataStore.edit { prefs ->
             prefs.remove(KEY_TOKEN)
@@ -232,12 +228,9 @@ class SessionDataStore @Inject constructor(
             prefs.remove(KEY_RANK)
             prefs.remove(KEY_UNIT)
             prefs.remove(KEY_ROLE)
-            prefs.remove(KEY_INTEGRITY_LEVEL)
-            prefs.remove(KEY_LAST_ATTESTED_AT)
             // Note: We deliberately KEEP KEY_CONSENT_ACCEPTED and KEY_DEVICE_ID
             // to maintain legal compliance and device-binding integrity.
         }
-        markAsUnverified()
     }
 
     /** Point 3 FIX: Transactional Session Updates */

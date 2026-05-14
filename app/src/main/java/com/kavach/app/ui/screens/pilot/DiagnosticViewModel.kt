@@ -21,7 +21,6 @@ data class DiagnosticState(
     val appVersion: String = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})",
     val deviceModel: String = "${Build.MANUFACTURER} ${Build.MODEL}",
     val androidVersion: String = Build.VERSION.RELEASE,
-    val integrityState: String = "Loading...",
     val lastSyncTime: String = "Loading...",
     val apiBaseUrl: String = BuildConfig.BASE_URL,
     val correlationId: String = UUID.randomUUID().toString(),
@@ -43,20 +42,9 @@ class DiagnosticViewModel @Inject constructor(
 
     private fun loadDiagnostics() {
         viewModelScope.launch {
-            val integrity = sessionDataStore.integrityLevel.first()
-            val attestedAt = sessionDataStore.lastAttestedAt.first()
-            
-            val formattedTime = if (attestedAt > 0L) {
-                SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date(attestedAt))
-            } else {
-                "Never"
-            }
-
             _state.value = _state.value.copy(
-                integrityState = if (integrity.isNotBlank()) integrity else "UNKNOWN",
-                lastSyncTime = formattedTime
+                lastSyncTime = "N/A"
             )
-
             checkTunnel()
         }
     }

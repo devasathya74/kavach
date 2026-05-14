@@ -1,8 +1,8 @@
 # Android
 .gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
+local.properties
+.idea/
+captures/
 /*.iml
 /build
 /*/build
@@ -32,3 +32,8 @@ build_error*.log
 *.zip
 app/build_*/
 
+# Security
+*.keystore
+*.jks
+secrets.xml
+secrets.properties

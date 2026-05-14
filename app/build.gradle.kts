@@ -8,12 +8,12 @@ plugins {
 
 android {
     namespace = "com.kavach.app"
-    compileSdk = 35
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.kavach.app"
-        minSdk = 29          // Android 10+
-        targetSdk = 35
+        minSdk = 26          // Android 8.0+
+        targetSdk = 34
 
         // ✏️ EDIT: Match with KavachConfig.APP_VERSION_CODE
         versionCode = 1
@@ -30,7 +30,7 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file("kavach-release.keystore")
+            storeFile = file("../secure/kavach-release.keystore")
             storePassword = "kavach123"
             keyAlias = "kavach"
             keyPassword = "kavach123"
@@ -133,8 +133,8 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.messaging)
 
-    // Play Integrity API — Device Attestation
-    implementation("com.google.android.play:integrity:1.4.0")
+    // Play Integrity API — REMOVED (causes startup deadlocks and attestation timeouts)
+    // implementation("com.google.android.play:integrity:1.4.0")
 
     // Biometric Auth
     implementation("androidx.biometric:biometric:1.1.0")

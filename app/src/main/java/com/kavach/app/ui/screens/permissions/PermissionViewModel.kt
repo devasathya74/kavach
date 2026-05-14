@@ -18,7 +18,8 @@ import javax.inject.Inject
 
 data class PermissionUiState(
     val hasRequiredPermissions: Boolean = false,
-    val isChecking: Boolean = true
+    val isChecking: Boolean = true,
+    val isPermanentlyDenied: Boolean = false
 )
 
 @HiltViewModel
@@ -35,25 +36,31 @@ class PermissionViewModel @Inject constructor(
     }
 
     fun checkPermissions() {
-        val required = mutableListOf(
+        val mandatory = mutableListOf(
             Manifest.permission.CAMERA,
             Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.ACCESS_FINE_LOCATION
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
         )
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            required.add(Manifest.permission.POST_NOTIFICATIONS)
-            required.add(Manifest.permission.READ_MEDIA_IMAGES)
-            required.add(Manifest.permission.READ_MEDIA_VIDEO)
-        } else {
-            required.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+            mandatory.add(Manifest.permission.POST_NOTIFICATIONS)
         }
 
-        val allGranted = required.all {
+        val allGranted = mandatory.all {
             ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
         }
 
-        _uiState.value = PermissionUiState(hasRequiredPermissions = allGranted, isChecking = false)
+        // Note: isPermanentlyDenied should ideally be checked against activity rationale.
+        // For now, we update it from the UI or based on a failed request.
+        _uiState.value = _uiState.value.copy(
+            hasRequiredPermissions = allGranted,
+            isChecking = false
+        )
+    }
+
+    fun setPermanentlyDenied(denied: Boolean) {
+        _uiState.value = _uiState.value.copy(isPermanentlyDenied = denied)
     }
 
     fun markPermissionsAsHandled() {
