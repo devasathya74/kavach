@@ -12,7 +12,7 @@ def get_user(token):
         from rest_framework_simplejwt.tokens import AccessToken
         access_token = AccessToken(token)
         user_id = access_token['user_id']
-        return Officer.objects.get(id=user_id)
+        return Officer.objects.select_related('unit', 'profile').get(id=user_id)
     except Exception:
         return AnonymousUser()
 

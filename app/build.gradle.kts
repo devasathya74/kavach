@@ -30,10 +30,16 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file("../secure/kavach-release.keystore")
-            storePassword = "kavach123"
-            keyAlias = "kavach"
-            keyPassword = "kavach123"
+            val keystorePropertiesFile = rootProject.file("local.properties")
+            val keystoreProperties = java.util.Properties()
+            if (keystorePropertiesFile.exists()) {
+                keystoreProperties.load(keystorePropertiesFile.inputStream())
+            }
+
+            storeFile = file(keystoreProperties.getProperty("RELEASE_STORE_FILE") ?: "../secure/kavach-release.keystore")
+            storePassword = keystoreProperties.getProperty("RELEASE_STORE_PASSWORD") ?: System.getenv("KAVACH_RELEASE_STORE_PASSWORD") ?: ""
+            keyAlias = keystoreProperties.getProperty("RELEASE_KEY_ALIAS") ?: System.getenv("KAVACH_RELEASE_KEY_ALIAS") ?: ""
+            keyPassword = keystoreProperties.getProperty("RELEASE_KEY_PASSWORD") ?: System.getenv("KAVACH_RELEASE_KEY_PASSWORD") ?: ""
         }
     }
 

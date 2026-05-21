@@ -37,3 +37,4 @@ app/build_*/
 *.jks
 secrets.xml
 secrets.properties
+graphify-out/

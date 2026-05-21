@@ -88,7 +88,8 @@ class LoginView(APIView):
         device_id = request.data.get('device_id', '').strip()
 
         if password:
-            result, error = AuthService.login(pno, password, device_id)
+            client_ip = _get_client_ip(request)
+            result, error = AuthService.login(pno, password, device_id, client_ip=client_ip)
             if error:
                 return Response({'status': 'error', 'message': error}, status=401)
             
@@ -432,7 +433,7 @@ class ProfileView(APIView):
             # Suspicious if token is valid but data is missing
             if not profile:
                 import logging
-                logger = logging.getLogger('kavach')
+                logger = logging.getLogger('kavach.auth')
                 logger.error(f"PROFILE_DATA_MISSING: PNO={officer.pno} | ID={officer.id}")
             
             return Response({
@@ -453,7 +454,7 @@ class ProfileView(APIView):
         except Exception as e:
             import traceback
             import logging
-            logger = logging.getLogger('kavach')
+            logger = logging.getLogger('kavach.auth')
             error_trace = traceback.format_exc()
             logger.critical(f"PROFILE_VIEW_FAILURE: User={request.user} | Error={str(e)}\n{error_trace}")
             return Response({

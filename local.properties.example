@@ -1,0 +1,11 @@
+# local.properties - Template for Developers
+# COPY this file to 'local.properties' (ignored by Git) and fill in your details
+
+# Android SDK Directory location (usually generated automatically by Android Studio)
+sdk.dir=C\:/Users/YOUR_USERNAME/AppData/Local/Android/Sdk
+
+# Kavach Production/Release Code Signing Configuration
+RELEASE_STORE_FILE=../secure/kavach-release-new.keystore
+RELEASE_STORE_PASSWORD=your_new_keystore_password
+RELEASE_KEY_ALIAS=kavach-prod
+RELEASE_KEY_PASSWORD=your_new_key_password

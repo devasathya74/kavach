@@ -1,0 +1,13 @@
+# Exclude standard dependency, build, and environment directories from Graphify parsing
+node_modules/
+.git/
+build/
+.gradle/
+.idea/
+.vscode/
+venv/
+venv*/
+*.pyc
+__pycache__/
+db.sqlite3
+graphify-out/

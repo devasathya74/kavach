@@ -6,6 +6,9 @@ from django.db import transaction, models as django_models
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 import hashlib
+import logging
+
+logger = logging.getLogger('kavach.auth')
 
 from .models import (
     Officer, OfficerProfile, DraftChange, OverrideRequest, UnitMaster, 
@@ -350,11 +353,11 @@ class UserManagementViewSet(viewsets.ModelViewSet):
         if request.user.is_authenticated and not can_access_personnel(request.user):
              return self.http_method_not_allowed(request, *args, **kwargs)
         
-        print(f"[DISPATCH] PATH: {request.path} | USER: {request.user} | AUTH: {getattr(request, 'auth', None) is not None}")
+        logger.info(f"DISPATCH PATH: {request.path} | USER: {request.user} | AUTH: {getattr(request, 'auth', None) is not None}")
         return super().dispatch(request, *args, **kwargs)
 
     def list(self, request, *args, **kwargs):
-        print(f"[DEBUG USER] PNO: {request.user.pno} | ROLE: {request.user.role} | AUTH: {request.auth is not None}")
+        logger.info(f"LIST USER PNO: {request.user.pno} | ROLE: {request.user.role} | AUTH: {request.auth is not None}")
         return super().list(request, *args, **kwargs)
 
     def get_queryset(self):
@@ -377,7 +380,7 @@ class UserManagementViewSet(viewsets.ModelViewSet):
         from .services.personnel_service import PersonnelService
         from .models import RankMaster
         
-        print(f"DEBUG: UserManagementViewSet.create | DATA: {request.data}")
+        logger.info(f"CREATE USER | Initiated by PNO: {request.user.pno}")
         
         try:
             # 1. Extract Core Identity
@@ -406,7 +409,7 @@ class UserManagementViewSet(viewsets.ModelViewSet):
                     if obj:
                         return obj.id
                 except Exception as e:
-                    print(f"DEBUG: Error resolving {model_class.__name__} for {value}: {e}")
+                    logger.warning(f"Error resolving {model_class.__name__} for {value}: {e}")
                 return None
 
             unit_id = resolve_id(UnitMaster, request.data.get('unit_id') or request.data.get('unit')) or request.user.unit.id
@@ -438,7 +441,8 @@ class UserManagementViewSet(viewsets.ModelViewSet):
                 'email': email
             }
             
-            print(f"DEBUG: Normalized data for PersonnelService: {data}")
+            safe_data = {k: ('***' if k == 'password' else v) for k, v in data.items()}
+            logger.info(f"Normalized data for PersonnelService: {safe_data}")
             
             officer = PersonnelService.create_user(request.user, data)
             serializer = self.get_serializer(officer)
@@ -453,9 +457,7 @@ class UserManagementViewSet(viewsets.ModelViewSet):
         except PermissionError as e:
             return Response({"error": str(e)}, status=403)
         except Exception as e:
-            print(f"ERROR in UserManagementViewSet.create: {str(e)}")
-            import traceback
-            traceback.print_exc()
+            logger.error(f"ERROR in UserManagementViewSet.create: {str(e)}", exc_info=True)
             return Response({"error": str(e)}, status=400)
 
     def update(self, request, *args, **kwargs):
@@ -531,7 +533,7 @@ class UserManagementViewSet(viewsets.ModelViewSet):
 
     def partial_update(self, request, *args, **kwargs):
         from .services.personnel_service import PersonnelService
-        print(f"[DEBUG PATCH] USER: {request.user} | AUTH: {request.auth is not None}")
+        logger.info(f"PATCH USER | Target ID: {kwargs.get('pk')} | Initiated by PNO: {request.user.pno}")
         try:
             officer = PersonnelService.update_user(request.user, kwargs['pk'], request.data)
             if hasattr(officer, 'status') and officer.status == 'PENDING':
@@ -546,8 +548,7 @@ class UserManagementViewSet(viewsets.ModelViewSet):
         except PermissionError as e:
             return Response({"error": str(e)}, status=403)
         except Exception as e:
-            import traceback
-            traceback.print_exc()
+            logger.error(f"ERROR in UserManagementViewSet.partial_update: {str(e)}", exc_info=True)
             return Response({"error": str(e)}, status=400)
 
     @action(detail=True, methods=['post'])

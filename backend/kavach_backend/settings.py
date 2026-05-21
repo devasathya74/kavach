@@ -31,6 +31,9 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 # Pilot Kill Switch (Emergency strict-mode bypass)
 KAVACH_PILOT_MODE = config('KAVACH_PILOT_MODE', default=False, cast=bool)
 
+# Sandboxed Chaos Mode (Only allowed when DEBUG=True)
+KAVACH_CHAOS_MODE = config('KAVACH_CHAOS_MODE', default=False, cast=bool)
+
 # ✏️ EDIT: Your server domain(s)
 if DEBUG:
     ALLOWED_HOSTS = ["*"]
@@ -39,13 +42,16 @@ else:
 
 CSRF_TRUSTED_ORIGINS = [
     "https://api.pmsraebareli.online",
-    "http://localhost:3000"
+    "http://localhost:3000",
+    "https://*.trycloudflare.com"
 ]
 
 
 # 🚨 PRODUCTION SAFETY HARD-STOP
 if not DEBUG and KAVACH_PILOT_MODE:
     raise RuntimeError("CRITICAL SECURITY ERROR: KAVACH_PILOT_MODE cannot be True in production (DEBUG=False). This bypasses integrity checks and must be disabled before production deployment.")
+if not DEBUG and KAVACH_CHAOS_MODE:
+    raise RuntimeError("CRITICAL SECURITY ERROR: KAVACH_CHAOS_MODE cannot be True in production (DEBUG=False). This exposes transient chaos testing interfaces to production and is completely prohibited.")
 
 # 🚨 PRODUCTION SECURITY HARDENING
 if not DEBUG:
@@ -88,6 +94,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'kavach_backend.middleware_new.CorrelationIDMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -99,7 +106,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'kavach_backend.api_middleware.APIVersioningMiddleware',
     'kavach_backend.session_security.SessionSecurityMiddleware',
-    # 'kavach_backend.middleware.RequestIntegrityMiddleware',
 ]
 
 TEMPLATES = [
@@ -298,44 +304,142 @@ KAVACH_LEARNING = {
     'TRUST_THRESHOLD': 0.6
 }
 
+# Telemetry Scraping Auth Key
+METRICS_TOKEN = config('METRICS_TOKEN', default='KavachSecureMetricsToken2026!')
+
+
 import os
 LOGS_DIR = os.path.join(BASE_DIR, 'logs')
 os.makedirs(LOGS_DIR, exist_ok=True)
 
+# Create structured logging subfolders automatically
+for sub_dir in ['api', 'websocket', 'auth', 'errors', 'security']:
+    os.makedirs(os.path.join(LOGS_DIR, sub_dir), exist_ok=True)
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'filters': {
+        'correlation': {
+            '()': 'kavach_backend.logging_utils.CorrelationIDFilter',
+        },
+    },
     'formatters': {
         'verbose': {
-            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'format': '{levelname} {asctime} [CID: {correlation_id}] [USER: {user_context}] {module} {message}',
             'style': '{',
+        },
+        'json': {
+            '()': 'kavach_backend.logging_utils.JSONFormatter',
         },
     },
     'handlers': {
-        'file': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'json',
+            'filters': ['correlation'],
+        },
+        'api_file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': os.path.join(LOGS_DIR, 'api', 'api.log'),
+            'when': 'D',
+            'interval': 1,
+            'backupCount': 14,
+            'formatter': 'json',
+            'delay': True,
+            'filters': ['correlation'],
+        },
+        'websocket_file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': os.path.join(LOGS_DIR, 'websocket', 'websocket.log'),
+            'when': 'D',
+            'interval': 1,
+            'backupCount': 14,
+            'formatter': 'json',
+            'delay': True,
+            'filters': ['correlation'],
+        },
+        'auth_file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': os.path.join(LOGS_DIR, 'auth', 'auth.log'),
+            'when': 'D',
+            'interval': 1,
+            'backupCount': 14,
+            'formatter': 'json',
+            'delay': True,
+            'filters': ['correlation'],
+        },
+        'errors_file': {
+            'level': 'ERROR',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': os.path.join(LOGS_DIR, 'errors', 'errors.log'),
+            'when': 'D',
+            'interval': 1,
+            'backupCount': 30,
+            'formatter': 'json',
+            'delay': True,
+            'filters': ['correlation'],
+        },
+        'security_file': {
+            'level': 'WARNING',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': os.path.join(LOGS_DIR, 'security', 'security.log'),
+            'when': 'D',
+            'interval': 1,
+            'backupCount': 30,
+            'formatter': 'json',
+            'delay': True,
+            'filters': ['correlation'],
+        },
+        'operational_file': {
             'level': 'INFO',
             'class': 'logging.handlers.TimedRotatingFileHandler',
             'filename': os.path.join(LOGS_DIR, 'kavach_operational.log'),
             'when': 'D',
             'interval': 1,
             'backupCount': 14,
-            'formatter': 'verbose',
-            'delay': True,  # Fix Windows PermissionError during rollover
-        },
-        'console': {
-            'level': 'INFO',
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
+            'formatter': 'json',
+            'delay': True,
+            'filters': ['correlation'],
         },
     },
     'loggers': {
         'django': {
-            'handlers': ['file', 'console'],
+            'handlers': ['operational_file', 'errors_file', 'console'],
             'level': 'INFO',
             'propagate': True,
         },
+        'django.db.backends': {
+            'handlers': ['operational_file', 'console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+        'kavach.api': {
+            'handlers': ['api_file', 'errors_file', 'console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'kavach.websocket': {
+            'handlers': ['websocket_file', 'errors_file', 'console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'kavach.auth': {
+            'handlers': ['auth_file', 'errors_file', 'console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'kavach.security': {
+            'handlers': ['security_file', 'errors_file', 'console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
         'auth_app': {
-            'handlers': ['file', 'console'],
+            'handlers': ['auth_file', 'errors_file', 'console'],
             'level': 'INFO',
             'propagate': True,
         },

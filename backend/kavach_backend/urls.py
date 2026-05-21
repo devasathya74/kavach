@@ -5,11 +5,17 @@ from django.http import JsonResponse
 from django.db import connection
 from django.core.cache import cache
 
-from .health_views import health_live, health_ready, health_deep
+from .health_views import health_live, health_ready, health_deep, metrics_view
 
 urlpatterns = [
+    # ── Telemetry Endpoint (Root Level) ──────────────────
+    path('metrics/',        metrics_view, name='metrics'),
+
     # ── API v1 ───────────────────────────────────────────
     path('api/v1/', include([
+        # ── Telemetry Endpoint (v1 level) ────────────────
+        path('metrics/',     metrics_view, name='api_v1_metrics'),
+
         # ── Startup/Root APIs ──────────────────────────────────
         path('',                include('apps.auth_app.urls')),
         path('',                include('apps.monitoring.urls')),
