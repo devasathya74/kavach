@@ -44,7 +44,6 @@ class PersonnelListViewModel @Inject constructor(
 
     init {
         observeUsers()
-        syncUsers(isRefresh = true)
     }
 
     @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
@@ -59,19 +58,41 @@ class PersonnelListViewModel @Inject constructor(
 
     fun syncUsers(isRefresh: Boolean = false) {
         val currentState = _state.value
+        
+        // Pagination Guards
         if (currentState.isLoading || currentState.isRefreshing) return
+        if (!isRefresh && currentState.endOfPaginationReached) return
+
+        val nextPage = if (isRefresh) 1 else currentState.query.page + 1
+        android.util.Log.d("USER_FETCH", "Fetching Users: page=$nextPage, isRefresh=$isRefresh")
 
         viewModelScope.launch {
-            if (isRefresh) _state.update { it.copy(isRefreshing = true) }
-            else _state.update { it.copy(isLoading = true) }
+            if (isRefresh) {
+                _state.update { it.copy(isRefreshing = true, endOfPaginationReached = false) }
+            } else {
+                _state.update { it.copy(isLoading = true) }
+            }
 
-            val result = repository.refreshUsers(
-                page = if (isRefresh) 1 else currentState.query.page + 1,
-                unitType = currentState.query.unitType,
-                search = currentState.query.query.ifBlank { null }
-            )
-
-            _state.update { it.copy(isLoading = false, isRefreshing = false) }
+            try {
+                repository.refreshUsers(
+                    page = nextPage,
+                    unitType = currentState.query.unitType,
+                    search = currentState.query.query.ifBlank { null }
+                ).onSuccess { hasNext ->
+                    android.util.Log.d("USER_FETCH", "Fetch Success: hasNext=$hasNext")
+                    _state.update { 
+                        it.copy(
+                            query = it.query.copy(page = nextPage),
+                            endOfPaginationReached = !hasNext
+                        )
+                    }
+                }.onFailure { e ->
+                    android.util.Log.e("USER_FETCH", "Fetch Failed: ${e.message}")
+                    _state.update { it.copy(error = e.message) }
+                }
+            } finally {
+                _state.update { it.copy(isLoading = false, isRefreshing = false) }
+            }
         }
     }
 
@@ -108,6 +129,7 @@ class PersonnelListViewModel @Inject constructor(
             _state.update { it.copy(isLoading = true, error = null) }
             repository.createUser(request)
                 .onSuccess {
+                    _state.update { it.copy(isLoading = false) }
                     syncUsers(isRefresh = true)
                 }
                 .onFailure { e ->
@@ -121,6 +143,7 @@ class PersonnelListViewModel @Inject constructor(
             _state.update { it.copy(isLoading = true, error = null) }
             repository.updateUser(id, request)
                 .onSuccess {
+                    _state.update { it.copy(isLoading = false) }
                     syncUsers(isRefresh = true)
                 }
                 .onFailure { e ->
@@ -134,6 +157,7 @@ class PersonnelListViewModel @Inject constructor(
             _state.update { it.copy(isLoading = true, error = null) }
             repository.deleteUser(id)
                 .onSuccess {
+                    _state.update { it.copy(isLoading = false) }
                     syncUsers(isRefresh = true)
                 }
                 .onFailure { e ->

@@ -71,8 +71,15 @@ class AppLockManager @Inject constructor(
 
     /** Manually lock the application. */
     fun lock() {
-        _lockState.value = AppLockState.Locked
-        scope.launch { sessionDataStore.lockApp() }
+        scope.launch {
+            val hasPin = sessionDataStore.isPinSet.first()
+            if (hasPin) {
+                _lockState.value = AppLockState.Locked
+                sessionDataStore.lockApp()
+            } else {
+                Timber.d("AppLock: Ignoring lock request because no PIN is set.")
+            }
+        }
     }
 
     /** Mark as unlocked (after successful Biometric/PIN). */

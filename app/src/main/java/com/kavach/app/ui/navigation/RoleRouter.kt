@@ -20,23 +20,11 @@ object RoleRouter {
 
     // All known backend role string variants → canonical
     private val ROLE_MAP = mapOf(
-        // Django standard
-        "COMMANDING_OFFICER"  to "SENANAYAK",
-        "SENANAYAK"           to "SENANAYAK",
-        "ADMIN"               to "SENANAYAK",
-        "is_staff"            to "SENANAYAK",
-
-        // Pilot / Supervisor
-        "PILOT_USER"          to "PILOT",
+        "ADMIN"               to "ADMIN",
+        "COMMANDING_OFFICER"  to "ADMIN",
+        "SENANAYAK"           to "ADMIN",
         "PILOT"               to "PILOT",
-        "SUPERVISOR"          to "PILOT",
-        "OFFICER_INCHARGE"    to "PILOT",
-
-        // Normal field user
-        "NORMAL_USER"         to "USER",
         "USER"                to "USER",
-        "FIELD_OFFICER"       to "USER",
-        "OFFICER"             to "USER",
     )
 
     /**
@@ -49,11 +37,7 @@ object RoleRouter {
     /**
      * Resolve dashboard Screen route from canonical role.
      */
-    fun dashboardRoute(canonicalRole: String): String = when (canonicalRole) {
-        "SENANAYAK" -> Screen.AdminDashboard.route
-        "PILOT"     -> Screen.PilotDashboard.route
-        else        -> Screen.Dashboard.route
-    }
+    fun dashboardRoute(canonicalRole: String): String = Screen.Dashboard.route
 
     /**
      * LOCAL TEST BYPASS — for pilot testing without a live backend.
@@ -65,7 +49,7 @@ object RoleRouter {
         const val ENABLED = true   // ← Set false before production release
 
         private val PNO_ROLE_MAP = mapOf(
-            "000000000" to "SENANAYAK",
+            "000000000" to "ADMIN",
             "111111111" to "PILOT",
             "222222222" to "USER",
         )

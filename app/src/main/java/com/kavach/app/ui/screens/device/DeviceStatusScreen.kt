@@ -61,6 +61,8 @@ fun DeviceStatusScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
+            // No longer needed: Security Check button removed to eliminate security theatre
+            /*
             if (uiState.isAttesting) {
                 CircularProgressIndicator(color = GoldenYellow)
             } else {
@@ -75,6 +77,7 @@ fun DeviceStatusScreen(
                     Text("सुरक्षा जांच चलाएं (Run Check)", color = NavyBlueDark, fontWeight = FontWeight.Bold)
                 }
             }
+            */
         }
     }
 }

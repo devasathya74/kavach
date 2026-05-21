@@ -3,9 +3,12 @@ package com.kavach.app.di
 import android.content.Context
 import androidx.room.Room
 import com.kavach.app.BuildConfig
+import com.kavach.app.data.local.BroadcastFileManager
 import com.kavach.app.data.local.SessionDataStore
 import com.kavach.app.data.local.dao.*
 import com.kavach.app.data.local.db.KavachDatabase
+import com.kavach.app.data.local.db.KavachDatabase.Companion.MIGRATION_14_16
+import com.kavach.app.data.local.db.KavachDatabase.Companion.MIGRATION_15_16
 import com.kavach.app.data.remote.api.AuthRefreshApiService
 import com.kavach.app.data.remote.api.KavachApiService
 import com.kavach.app.data.remote.api.KavachApiV2
@@ -134,23 +137,10 @@ object AppModule {
 
             // 2. Fetch session states (only for routes that need auth)
             val deviceSecret = runBlocking { sessionDataStore.deviceSecret.first() }
-            val isVerified   = runBlocking { sessionDataStore.isVerifiedInThisSession.first() }
-
-            // CRITICAL: Block all non-essential traffic if not verified in THIS session
-            // This prevents "Yesterday's Truth" from making API calls.
-            // isStartupRoute already returned early above — this guard is for remaining routes.
-            if (!isVerified && !isProfileSync) {
-                return@Interceptor okhttp3.Response.Builder()
-                    .request(request)
-                    .protocol(okhttp3.Protocol.HTTP_1_1)
-                    .code(403)
-                    .message("KAVACH_SESSION_UNVERIFIED")
-                    .body(okhttp3.ResponseBody.create(null, "Session not verified. Access restricted to profile sync only."))
-                    .build()
-            }
 
             // If not an auth route, we MUST have a secret. No excuses.
             if (deviceSecret.isNullOrEmpty()) {
+                android.util.Log.e("KAVACH_AUTH", "Missing Device Secret for path: $urlPath. Forcing 401.")
                 return@Interceptor okhttp3.Response.Builder()
                     .request(request)
                     .protocol(okhttp3.Protocol.HTTP_1_1)
@@ -161,6 +151,12 @@ object AppModule {
             }
 
             val token = runBlocking { sessionDataStore.token.first() }
+            if (token.isNullOrBlank()) {
+                android.util.Log.w("KAVACH_AUTH", "Token is null or blank for path: $urlPath")
+            } else {
+                android.util.Log.d("KAVACH_AUTH", "Found token (len=${token.length}) for path: $urlPath")
+            }
+
             val timestamp = (System.currentTimeMillis() / 1000).toString()
             val nonce = java.util.UUID.randomUUID().toString()
             val method = request.method
@@ -189,18 +185,15 @@ object AppModule {
                 requestBuilder.addHeader("X-Device-Secret", it)
             }
 
-            // Integrity headers — backend uses to enforce trust window
-            val integrityLevel = runBlocking { sessionDataStore.integrityLevel.first() }
-            val lastAttestedAt = runBlocking { sessionDataStore.lastAttestedAt.first() }
-            if (integrityLevel.isNotBlank()) {
-                requestBuilder.addHeader("X-Integrity-Level", integrityLevel)
-                requestBuilder.addHeader("X-Attested-At", lastAttestedAt.toString())
-            }
-
             if (!token.isNullOrBlank()) {
+                android.util.Log.d("KAVACH_AUTH_HEADERS", "ATTACHING_BEARER: $token")
                 requestBuilder.addHeader("Authorization", "Bearer $token")
             }
-            chain.proceed(requestBuilder.build())
+
+            val finalRequest = requestBuilder.build()
+            android.util.Log.d("KAVACH_AUTH_HEADERS", "FINAL_HEADERS: ${finalRequest.headers}")
+            
+            chain.proceed(finalRequest)
         }
 
         return OkHttpClient.Builder()
@@ -343,13 +336,16 @@ object AppModule {
             context,
             KavachDatabase::class.java,
             "kavach.db"
-        ).build()
+        )
+        .addMigrations(MIGRATION_14_16, MIGRATION_15_16)  // v14→16 (direct) + v15→16
+        .build()
 
     @Provides fun provideTrainingDao(db: KavachDatabase): TrainingDao             = db.trainingDao()
     @Provides fun provideQuizDao(db: KavachDatabase): QuizDao                     = db.quizDao()
     @Provides fun provideOrderDao(db: KavachDatabase): OrderDao                   = db.orderDao()
-    @Provides fun providePendingAckDao(db: KavachDatabase): PendingAckDao         = db.pendingAckDao()
     @Provides fun provideBehaviorEventDao(db: KavachDatabase): BehaviorEventDao   = db.behaviorEventDao()
     @Provides fun provideNavigationDao(db: KavachDatabase): NavigationDao         = db.navigationDao()
     @Provides fun provideOfficerDao(db: KavachDatabase): OfficerDao               = db.officerDao()
+    @Provides fun provideIncidentDao(db: KavachDatabase): IncidentDao             = db.incidentDao()
+    @Provides fun provideBroadcastDao(db: KavachDatabase): BroadcastDao           = db.broadcastDao()
 }

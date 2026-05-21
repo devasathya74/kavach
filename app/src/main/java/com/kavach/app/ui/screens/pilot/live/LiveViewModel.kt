@@ -53,8 +53,9 @@ class LiveViewModel @Inject constructor(
         viewModelScope.launch {
             wsManager.events.collect { event ->
                 when (event) {
-                    is WsEvent.ConnectionState -> {
-                        _uiState.value = _uiState.value.copy(isConnected = event.isConnected)
+                    is WsEvent.StateChanged -> {
+                        val connected = event.state == WebSocketManager.ConnectionState.CONNECTED
+                        _uiState.value = _uiState.value.copy(isConnected = connected)
                     }
                     is WsEvent.LiveStart -> {
                         val video = event.streamUrl

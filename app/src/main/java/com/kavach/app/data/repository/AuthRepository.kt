@@ -7,8 +7,7 @@ import com.kavach.app.data.remote.dto.auth.AdminLoginRequest
 import com.kavach.app.data.remote.dto.auth.LoginRequest
 import com.kavach.app.data.remote.dto.auth.OtpRequest
 import com.kavach.app.data.remote.dto.auth.UserDto
-import com.kavach.app.security.AttestationResult
-import com.kavach.app.security.IntegrityRepository
+
 import com.kavach.app.utils.BehaviorTracker
 import com.kavach.app.utils.DeviceIdUtil
 import com.kavach.app.utils.ApiResult
@@ -17,6 +16,7 @@ import timber.log.Timber
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
+import com.kavach.app.data.local.db.KavachDatabase
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -44,31 +44,47 @@ class AuthRepository @Inject constructor(
     private val api                : KavachApiService,
     private val sessionStore       : SessionDataStore,
     private val behaviorTracker    : BehaviorTracker,
-    private val integrityRepository: IntegrityRepository,
+    private val db                 : KavachDatabase,
     @ApplicationContext private val context: Context
 ) {
-    /** Step 1: Request OTP — sends deviceId for pre-check */
-    suspend fun requestOtp(pno: String): ApiResult<Unit> = safeApiCall {
+    /** 
+     * Login with PNO and Password.
+     * Backend: POST /api/v1/login/ { pno, password, device_id }
+     */
+    suspend fun loginWithPassword(pno: String, password: String): ApiResult<Unit> = safeApiCall {
+        sessionStore.clearSession()
         val deviceId = DeviceIdUtil.getDeviceId(context)
-        val resp     = api.login(LoginRequest(pno = pno, password = "", deviceId = deviceId))
+        val resp     = api.adminLogin(AdminLoginRequest(pno = pno, password = password, deviceId = deviceId))
+        val body     = resp.body()
+
         when {
-            resp.isSuccessful -> {
-                Timber.d("OTP requested successfully for PNO: $pno")
+            resp.isSuccessful && body?.token != null && body.user != null -> {
+                Timber.d("Login success for PNO: $pno, Role: ${body.user.role}")
+                sessionStore.saveSession(
+                    token        = body.token,
+                    refreshToken = body.refreshToken ?: "",
+                    expiresIn    = body.expiresIn    ?: 3600L,
+                    pno          = body.user.pno,
+                    name         = body.user.profile?.name ?: "",
+                    rank         = body.user.profile?.rank?.name ?: "",
+                    unit         = body.user.profile?.unit?.name ?: "",
+                    deviceId     = deviceId,
+                    deviceSecret = body.deviceSecret ?: "",
+                    role         = body.user.role,
+                    rankLevel    = body.user.profile?.rank?.level ?: 0,
+                    androidId    = DeviceIdUtil.getAndroidId(context),
+                    deviceName   = DeviceIdUtil.getDeviceName()
+                )
+
+
+                
+                syncProfile()
                 ApiResult.Success(Unit)
             }
-            resp.code() == 403 -> {
-                Timber.e("Device mismatch for PNO: $pno")
-                behaviorTracker.logDeviceMismatch(pno)
-                ApiResult.Unauthorized("⛔ यह PNO किसी दूसरे डिवाइस पर पंजीकृत है। Admin से संपर्क करें।")
-            }
-            resp.code() == 503 -> {
-                Timber.e("Server maintenance (503) during OTP request")
-                ApiResult.Error("🛠️ सर्वर में रखरखाव (Maintenance) चल रहा है। कृपया कुछ देर बाद प्रयास करें।", 503)
-            }
-            else -> {
-                Timber.e("Login request failed for PNO: $pno, code: ${resp.code()}")
-                ApiResult.Error("Login failed: ${resp.code()}", code = resp.code())
-            }
+            resp.code() == 401 -> ApiResult.Unauthorized("❌ पासवर्ड गलत है।")
+            resp.code() == 404 -> ApiResult.Error("❌ PNO नहीं मिला।", code = 404)
+            resp.code() == 403 -> ApiResult.Unauthorized("⛔ डिवाइस मेल नहीं खाता। Admin से संपर्क करें।")
+            else -> ApiResult.Error("Login failed: ${resp.code()}", code = resp.code())
         }
     }
 
@@ -85,7 +101,7 @@ class AuthRepository @Inject constructor(
 
         when {
             resp.isSuccessful && body?.token != null && body.user != null -> {
-                Timber.d("Admin login success for PNO: $pno")
+                Timber.d("Admin login success for PNO: $pno, Role: ${body.user.role}")
                 sessionStore.saveSession(
                     token        = body.token,
                     refreshToken = body.refreshToken ?: "",
@@ -93,7 +109,7 @@ class AuthRepository @Inject constructor(
                     pno          = body.user.pno,
                     name         = body.user.profile?.name ?: "",
                     rank         = body.user.profile?.rank?.name ?: "",
-                    unit         = body.user.unit?.name ?: "",
+                    unit         = body.user.profile?.unit?.name ?: "",
                     deviceId     = deviceId,
                     deviceSecret = body.deviceSecret ?: "",
                     role         = body.user.role,
@@ -101,33 +117,7 @@ class AuthRepository @Inject constructor(
                     deviceName   = DeviceIdUtil.getDeviceName()
                 )
 
-                // Admin also gets attested — no exceptions for privilege
-                when (val attestation = integrityRepository.attest()) {
-                    is AttestationResult.Failed -> {
-                        if (com.kavach.app.KavachConfig.PILOT_MODE) {
-                            Timber.w("PILOT MODE: Bypassing integrity failure for Admin: $pno")
-                            sessionStore.saveIntegrityLevel("DEGRADED")
-                        } else {
-                            Timber.e("Integrity check failed for Admin: $pno")
-                            sessionStore.clearSession()
-                            return@safeApiCall ApiResult.Unauthorized(
-                                "🛡️ Admin डिवाइस सुरक्षा जाँच विफल।"
-                            )
-                        }
-                    }
-                    is AttestationResult.Restricted -> {
-                        Timber.w("Admin attestation restricted: $pno")
-                        sessionStore.saveIntegrityLevel(attestation.level)
-                    }
-                    is AttestationResult.Passed -> {
-                        Timber.d("Admin attestation passed: $pno")
-                        sessionStore.saveIntegrityLevel(attestation.verdict.integrityLevel ?: "BASIC")
-                    }
-                    is AttestationResult.Degraded -> {
-                        Timber.w("Admin attestation degraded: $pno")
-                        sessionStore.saveIntegrityLevel("DEGRADED")
-                    }
-                }
+
 
                 syncProfile()
                 ApiResult.Success(Unit)
@@ -151,93 +141,10 @@ class AuthRepository @Inject constructor(
         }
     }
 
-    /**
-     * Step 2: Verify OTP — runs attestation THEN saves session.
-     *
-     * Attestation flow:
-     * ① OTP verified → JWT issued by backend
-     * ② THEN attest device with Play Integrity
-     * ③ Save session only if attest passes or is degraded (network only)
-     * ④ Hard attest failure (rooted/tampered) → reject login
-     */
-    suspend fun verifyOtp(pno: String, otp: String): ApiResult<Unit> = safeApiCall {
-        val deviceId = DeviceIdUtil.getDeviceId(context)
-        val resp     = api.verifyOtp(OtpRequest(pno = pno, otp = otp, deviceId = deviceId))
-        val body     = resp.body()
-
-        when {
-            resp.isSuccessful && body?.token != null && body.user != null -> {
-                Timber.d("OTP verified successfully for PNO: $pno")
-                android.util.Log.i("KAVACH_AUTH", "VERIFY_SUCCESS: PNO=$pno, ROLE=${body.user.role}, SECRET=${body.deviceSecret?.take(4)}...")
-                // Save session first (needed for auth headers in nonce request)
-                sessionStore.saveSession(
-                    token        = body.token,
-                    refreshToken = body.refreshToken ?: "",
-                    expiresIn    = body.expiresIn    ?: 3600L,
-                    pno          = body.user.pno,
-                    name         = body.user.profile?.name ?: "",
-                    rank         = body.user.profile?.rank?.name ?: "",
-                    unit         = body.user.unit?.name ?: "",
-                    deviceId     = deviceId,
-                    deviceSecret = body.deviceSecret ?: "",
-                    role         = body.user.role,
-                    androidId    = DeviceIdUtil.getAndroidId(context),
-                    deviceName   = DeviceIdUtil.getDeviceName()
-                )
-
-                // Run Play Integrity attestation
-                when (val attestation = integrityRepository.attest()) {
-                    is AttestationResult.Failed -> {
-                        // Hard failure (rooted device / tampered APK) — deny login
-                        if (com.kavach.app.KavachConfig.PILOT_MODE) {
-                            Timber.w("PILOT MODE: Bypassing integrity failure for User: $pno")
-                            sessionStore.saveIntegrityLevel("DEGRADED")
-                        } else {
-                            Timber.e("Integrity check failed for User: $pno")
-                            sessionStore.clearSession()
-                            return@safeApiCall ApiResult.Unauthorized(
-                                "🛡️ डिवाइस सुरक्षा जाँच विफल। KAVACH इस डिवाइस पर नहीं चलाया जा सकता।"
-                            )
-                        }
-                    }
-                    is AttestationResult.Restricted -> {
-                        Timber.w("User attestation restricted: $pno")
-                        sessionStore.saveIntegrityLevel(attestation.level)
-                    }
-                    is AttestationResult.Passed -> {
-                        Timber.d("User attestation passed: $pno")
-                        sessionStore.saveIntegrityLevel(attestation.verdict.integrityLevel ?: "BASIC")
-                    }
-                    is AttestationResult.Degraded -> {
-                        Timber.w("User attestation degraded: $pno")
-                        sessionStore.saveIntegrityLevel("DEGRADED")
-                    }
-                }
-
-                syncProfile()
-                ApiResult.Success(Unit)
-            }
-            resp.code() == 403 -> {
-                val errBody = resp.errorBody()?.string()
-                if (errBody?.contains("device_mismatch") == true) {
-                    Timber.e("Device mismatch during OTP verify for PNO: $pno")
-                    behaviorTracker.logDeviceMismatch(pno)
-                    ApiResult.Unauthorized("⛔ डिवाइस मेल नहीं खाता। Admin से device reset करवाएं।")
-                } else {
-                    Timber.e("OTP verification forbidden for PNO: $pno")
-                    ApiResult.Unauthorized("OTP सत्यापन विफल (403)")
-                }
-            }
-            resp.code() == 503 -> {
-                Timber.e("Server maintenance (503) during OTP verify")
-                ApiResult.Error("🛠️ सर्वर में रखरखाव (Maintenance) चल रहा है। कृपया कुछ देर बाद प्रयास करें।", 503)
-            }
-            else -> {
-                Timber.e("OTP verification failed for PNO: $pno, code: ${resp.code()}")
-                ApiResult.Error("OTP verification failed: ${resp.code()}", code = resp.code())
-            }
-        }
-    }
+    // verifyOtp is removed
+    /*
+    suspend fun verifyOtp(...) { ... }
+    */
 
     /**
      * Validate on app startup.
@@ -276,10 +183,11 @@ class AuthRepository @Inject constructor(
                         pno          = user.pno,
                         name         = user.profile?.name ?: "",
                         rank         = user.profile?.rank?.name ?: "",
-                        unit         = user.unit?.name ?: "",
+                        unit         = user.profile?.unit?.name ?: "",
                         deviceId     = sessionStore.deviceId.first(),
                         deviceSecret = sessionStore.deviceSecret.first(),
-                        role         = user.role
+                        role         = user.role,
+                        rankLevel    = user.profile?.rank?.level ?: 0
                     )
                     ApiResult.Success(Unit)
                 } else {
@@ -297,6 +205,11 @@ class AuthRepository @Inject constructor(
         }
     }
 
-    /** Clears all local session data */
-    suspend fun logout() = sessionStore.clearSession()
+    /** Clears all local session data and local cache */
+    suspend fun logout() {
+        sessionStore.clearSession()
+        with(kotlinx.coroutines.Dispatchers.IO) {
+            db.clearAllTables()
+        }
+    }
 }

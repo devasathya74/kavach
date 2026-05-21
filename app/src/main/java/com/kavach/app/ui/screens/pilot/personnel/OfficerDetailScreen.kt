@@ -29,7 +29,8 @@ import com.kavach.app.data.remote.dto.personnel.OfficerDto
 @Composable
 fun OfficerDetailScreen(
     viewModel: OfficerDetailViewModel = hiltViewModel(),
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onEditUser: (String) -> Unit
 ) {
     val state by viewModel.state.collectAsState()
 
@@ -55,8 +56,11 @@ fun OfficerDetailScreen(
                 ErrorState(message = state.error!!, onRetry = { viewModel.loadDetail() })
             } else if (state.officer != null) {
                 OfficerDetailContent(
-                    officer = state.officer!!,
-                    onRevoke = { viewModel.revokeDevice(it) }
+                    state = state,
+                    onEditClick = { onEditUser(state.officer!!.id) },
+                    onDeactivate = { viewModel.deactivateUser() },
+                    onRevoke = { viewModel.revokeDevice(it) },
+                    canManage = state.canEdit
                 )
             }
         }
@@ -75,15 +79,49 @@ fun SkeletonDetail() {
 
 @Composable
 fun OfficerDetailContent(
-    officer: OfficerDto,
-    onRevoke: (String) -> Unit
+    state: OfficerDetailState,
+    onEditClick: () -> Unit,
+    onDeactivate: () -> Unit,
+    onRevoke: (String) -> Unit,
+    canManage: Boolean
 ) {
+    val officer = state.officer!!
+    
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         item { HeaderSection(officer) }
+
+        item {
+            CommandPanel(
+                isActive = officer.isActive,
+                onEditClick = onEditClick,
+                onDeactivate = onDeactivate,
+                canManage = canManage
+            )
+        }
+
+        if (!canManage) {
+            item {
+                Surface(
+                    color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.2f),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.Info, contentDescription = null, tint = MaterialTheme.colorScheme.error)
+                        Spacer(Modifier.width(12.dp))
+                        Text(
+                            "You do not have enough authority to manage this officer. Only higher ranks can perform command actions.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onErrorContainer
+                        )
+                    }
+                }
+            }
+        }
 
         item {
             DeviceIntelligencePanel(
@@ -97,6 +135,8 @@ fun OfficerDetailContent(
                 InfoRow("PNO ID", officer.pno)
                 InfoRow("Unit", officer.unit?.name ?: "N/A")
                 InfoRow("Company", officer.profile?.company?.name ?: "N/A")
+                InfoRow("Phone", officer.profile?.phone ?: "N/A")
+                InfoRow("Email", officer.profile?.email ?: "N/A")
                 InfoRow("Status", officer.profile?.serviceStatus ?: if (officer.isActive) "Active" else "Inactive")
             }
         }
@@ -119,8 +159,8 @@ fun OfficerDetailContent(
         item {
             InfoSection("Operational Security", Icons.Default.Shield) {
                 InfoRow("Role Authority", officer.role)
-                InfoRow("Integrity State", officer.devices.firstOrNull()?.status ?: "N/A")
-                InfoRow("Account Integrity", if (officer.isActive) "SECURE" else "LOCKED")
+                InfoRow("Device Status", officer.devices.firstOrNull()?.status ?: "N/A")
+                InfoRow("Account Status", if (officer.isActive) "ACTIVE" else "LOCKED")
             }
         }
     }
@@ -241,5 +281,46 @@ fun InfoRow(label: String, value: String) {
     Row(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp), horizontalArrangement = Arrangement.SpaceBetween) {
         Text(label, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
         Text(value, style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold)
+    }
+}
+
+@Composable
+fun CommandPanel(
+    isActive: Boolean,
+    onEditClick: () -> Unit,
+    onDeactivate: () -> Unit,
+    canManage: Boolean = true
+) {
+    if (!canManage) return
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Button(
+                onClick = onEditClick,
+                modifier = Modifier.weight(1f),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+            ) {
+                Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(8.dp))
+                Text("EDIT PROFILE")
+            }
+            if (isActive) {
+                OutlinedButton(
+                    onClick = onDeactivate,
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error)
+                ) {
+                    Icon(Icons.Default.Block, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text("DEACTIVATE")
+                }
+            }
+        }
     }
 }

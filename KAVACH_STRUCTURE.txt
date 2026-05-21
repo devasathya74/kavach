@@ -1,0 +1,754 @@
+﻿KAVACH PROJECT STRUCTURE
+========================
++-- .gradle
+|  +-- 8.9
+|  |  +-- checksums
+|  |  +-- dependencies-accessors
+|  |  |  +-- 43988a4102b57e24af035e6f9e31f501b5fffb96
+|  |  |  |  +-- classes
+|  |  |  |  |  +-- org
+|  |  |  |  |  |  +-- gradle
+|  |  |  |  |  |  |  +-- accessors
+|  |  |  |  |  |  |  |  +-- dm
+|  |  |  |  +-- sources
+|  |  |  |  |  +-- org
+|  |  |  |  |  |  +-- gradle
+|  |  |  |  |  |  |  +-- accessors
+|  |  |  |  |  |  |  |  +-- dm
+|  |  |  +-- ff1821280187b990ea20ff36d910fdf3532d4cfe
+|  |  |  |  +-- classes
+|  |  |  |  |  +-- org
+|  |  |  |  |  |  +-- gradle
+|  |  |  |  |  |  |  +-- accessors
+|  |  |  |  |  |  |  |  +-- dm
+|  |  |  |  +-- sources
+|  |  |  |  |  +-- org
+|  |  |  |  |  |  +-- gradle
+|  |  |  |  |  |  |  +-- accessors
+|  |  |  |  |  |  |  |  +-- dm
+|  |  |  |  |  |  |  |  |  +-- LibrariesForLibs.java
+|  |  |  |  |  |  |  |  |  +-- LibrariesForLibsInPluginsBlock.java
+|  |  |  |  +-- metadata.bin
+|  |  |  +-- gc.properties
+|  |  +-- executionHistory
+|  |  |  +-- executionHistory.lock
+|  |  +-- expanded
+|  |  +-- fileChanges
+|  |  +-- fileHashes
+|  |  |  +-- fileHashes.bin
+|  |  |  +-- fileHashes.lock
+|  |  |  +-- resourceHashesCache.bin
+|  |  +-- vcsMetadata
+|  |  +-- gc.properties
+|  +-- 9.0.0
+|  |  +-- checksums
+|  |  +-- executionHistory
+|  |  +-- expanded
+|  |  +-- fileChanges
+|  |  +-- fileHashes
+|  |  +-- vcsMetadata
+|  +-- 9.2.0
+|  |  +-- checksums
+|  |  +-- executionHistory
+|  |  +-- expanded
+|  |  +-- fileChanges
+|  |  +-- fileHashes
+|  |  +-- vcsMetadata
+|  +-- 9.4.1
+|  |  +-- checksums
+|  |  |  +-- checksums.lock
+|  |  |  +-- md5-checksums.bin
+|  |  |  +-- sha1-checksums.bin
+|  |  +-- executionHistory
+|  |  |  +-- executionHistory.bin
+|  |  |  +-- executionHistory.lock
+|  |  +-- expanded
+|  |  +-- fileChanges
+|  |  +-- fileHashes
+|  |  |  +-- fileHashes.bin
+|  |  |  +-- fileHashes.lock
+|  |  |  +-- resourceHashesCache.bin
+|  |  +-- vcsMetadata
+|  |  +-- gc.properties
+|  +-- kotlin
+|  |  +-- errors
+|  |  |  +-- errors-1778075064650.log
+|  |  |  +-- errors-1778300526290.log
+|  |  |  +-- errors-1778655665876.log
+|  |  |  +-- errors-1778655693075.log
+|  |  |  +-- errors-1778655835980.log
+|  |  |  +-- errors-1778655877906.log
+|  |  |  +-- errors-1778656103054.log
+|  |  |  +-- errors-1778656132131.log
+|  |  |  +-- errors-1778656789781.log
+|  |  |  +-- errors-1778656839309.log
+|  |  |  +-- errors-1778744827848.log
+|  |  |  +-- errors-1778744851694.log
+|  |  |  +-- errors-1778745291605.log
+|  |  |  +-- errors-1778746594638.log
+|  |  |  +-- errors-1778748987831.log
+|  |  |  +-- errors-1778749025815.log
+|  |  |  +-- errors-1778749273660.log
+|  |  |  +-- errors-1778749445399.log
+|  |  |  +-- errors-1778769846615.log
+|  |  |  +-- errors-1778777098310.log
+|  |  |  +-- errors-1778777155368.log
+|  +-- vcs-1
+|  |  +-- gc.properties
+|  +-- config.properties
+|  +-- file-system.probe
++-- .kotlin
+|  +-- errors
+|  |  +-- errors-1777977750000.log
+|  |  +-- errors-1778036792987.log
+|  |  +-- errors-1778036820622.log
+|  |  +-- errors-1778075064650.log
+|  |  +-- errors-1778300526290.log
+|  |  +-- errors-1778655665876.log
+|  |  +-- errors-1778655693074.log
+|  |  +-- errors-1778655835980.log
+|  |  +-- errors-1778655877906.log
+|  |  +-- errors-1778656103054.log
+|  |  +-- errors-1778656132131.log
+|  |  +-- errors-1778656789781.log
+|  |  +-- errors-1778656839309.log
+|  |  +-- errors-1778744827848.log
+|  |  +-- errors-1778744851693.log
+|  |  +-- errors-1778745291605.log
+|  |  +-- errors-1778746594638.log
+|  |  +-- errors-1778748987831.log
+|  |  +-- errors-1778749025815.log
+|  |  +-- errors-1778749273660.log
+|  |  +-- errors-1778749445399.log
+|  |  +-- errors-1778769846615.log
+|  |  +-- errors-1778777098310.log
+|  |  +-- errors-1778777155368.log
+|  +-- sessions
++-- .vscode
+|  +-- settings.json
++-- app
+|  +-- src
+|  |  +-- debug
+|  |  |  +-- java
+|  |  |  +-- kotlin
+|  |  +-- main
+|  |  |  +-- java
+|  |  |  |  +-- com
+|  |  |  |  |  +-- kavach
+|  |  |  |  |  |  +-- app
+|  |  |  |  |  |  |  +-- archive
+|  |  |  |  |  |  |  |  +-- ui_legacy
+|  |  |  |  |  |  |  |  |  +-- admin
+|  |  |  |  |  |  |  |  |  |  +-- AdminDashboardViewModel.kt
+|  |  |  |  |  |  |  |  |  +-- dashboard
+|  |  |  |  |  |  |  |  |  +-- field
+|  |  |  |  |  |  |  |  |  |  +-- FieldDataScreen.kt
+|  |  |  |  |  |  |  |  |  +-- live
+|  |  |  |  |  |  |  |  |  |  +-- LiveBroadcastScreen.kt
+|  |  |  |  |  |  |  |  |  |  +-- LiveViewModel.kt
+|  |  |  |  |  |  |  |  |  +-- ota
+|  |  |  |  |  |  |  |  |  |  +-- OtaUpdateScreen.kt
+|  |  |  |  |  |  |  +-- core
+|  |  |  |  |  |  |  |  +-- attention
+|  |  |  |  |  |  |  |  |  +-- AttentionBudget.kt
+|  |  |  |  |  |  |  |  +-- auth
+|  |  |  |  |  |  |  |  |  +-- AuthManager.kt
+|  |  |  |  |  |  |  |  |  +-- SystemRole.kt
+|  |  |  |  |  |  |  |  +-- authority
+|  |  |  |  |  |  |  |  |  +-- CommandAuthorityLanguage.kt
+|  |  |  |  |  |  |  |  +-- backend
+|  |  |  |  |  |  |  |  |  +-- BackendContract.kt
+|  |  |  |  |  |  |  |  +-- clock
+|  |  |  |  |  |  |  |  |  +-- TrustedClock.kt
+|  |  |  |  |  |  |  |  +-- crypto
+|  |  |  |  |  |  |  |  |  +-- CommandSignatureEngine.kt
+|  |  |  |  |  |  |  |  +-- degraded
+|  |  |  |  |  |  |  |  |  +-- DegradedModeController.kt
+|  |  |  |  |  |  |  |  +-- events
+|  |  |  |  |  |  |  |  |  +-- EventBus.kt
+|  |  |  |  |  |  |  |  |  +-- SystemEvent.kt
+|  |  |  |  |  |  |  |  +-- export
+|  |  |  |  |  |  |  |  |  +-- IncidentPackageExporter.kt
+|  |  |  |  |  |  |  |  +-- forensics
+|  |  |  |  |  |  |  |  |  +-- ForensicSnapshotSystem.kt
+|  |  |  |  |  |  |  |  +-- graph
+|  |  |  |  |  |  |  |  |  +-- CommandGraphEngine.kt
+|  |  |  |  |  |  |  |  +-- latency
+|  |  |  |  |  |  |  |  |  +-- CommandLatencyTracker.kt
+|  |  |  |  |  |  |  |  +-- metrics
+|  |  |  |  |  |  |  |  |  +-- TrustMetrics.kt
+|  |  |  |  |  |  |  |  +-- perf
+|  |  |  |  |  |  |  |  |  +-- PerformanceMonitor.kt
+|  |  |  |  |  |  |  |  +-- policy
+|  |  |  |  |  |  |  |  |  +-- PolicyEngine.kt
+|  |  |  |  |  |  |  |  +-- protocol
+|  |  |  |  |  |  |  |  |  +-- ProtocolVersion.kt
+|  |  |  |  |  |  |  |  +-- reconciliation
+|  |  |  |  |  |  |  |  |  +-- StateReconciliationEngine.kt
+|  |  |  |  |  |  |  |  +-- redteam
+|  |  |  |  |  |  |  |  |  +-- RedTeamSimulator.kt
+|  |  |  |  |  |  |  |  +-- resource
+|  |  |  |  |  |  |  |  |  +-- ResourceAdaptationEngine.kt
+|  |  |  |  |  |  |  |  +-- security
+|  |  |  |  |  |  |  |  |  +-- AppLockManager.kt
+|  |  |  |  |  |  |  |  |  +-- AppLockState.kt
+|  |  |  |  |  |  |  |  |  +-- AuthorizationEngine.kt
+|  |  |  |  |  |  |  |  |  +-- BiometricAuthManager.kt
+|  |  |  |  |  |  |  |  |  +-- CommandModeController.kt
+|  |  |  |  |  |  |  |  |  +-- PinManager.kt
+|  |  |  |  |  |  |  |  |  +-- SecureScreenController.kt
+|  |  |  |  |  |  |  |  |  +-- ThreatEffects.kt
+|  |  |  |  |  |  |  |  |  +-- ThreatLevel.kt
+|  |  |  |  |  |  |  |  |  +-- ThreatStateManager.kt
+|  |  |  |  |  |  |  |  +-- sequencing
+|  |  |  |  |  |  |  |  |  +-- EventSequencer.kt
+|  |  |  |  |  |  |  |  +-- session
+|  |  |  |  |  |  |  |  |  +-- SessionRecoveryManager.kt
+|  |  |  |  |  |  |  |  +-- simulation
+|  |  |  |  |  |  |  |  |  +-- OperationalSimulator.kt
+|  |  |  |  |  |  |  |  +-- sound
+|  |  |  |  |  |  |  |  |  +-- SoundManager.kt
+|  |  |  |  |  |  |  |  +-- telemetry
+|  |  |  |  |  |  |  |  |  +-- NetworkTelemetry.kt
+|  |  |  |  |  |  |  |  |  +-- TelemetryManager.kt
+|  |  |  |  |  |  |  |  |  +-- TelemetrySimulator.kt
+|  |  |  |  |  |  |  |  +-- testing
+|  |  |  |  |  |  |  |  |  +-- FailureTestHarness.kt
+|  |  |  |  |  |  |  |  +-- timeline
+|  |  |  |  |  |  |  |  |  +-- CommandTimelineEngine.kt
+|  |  |  |  |  |  |  +-- data
+|  |  |  |  |  |  |  |  +-- local
+|  |  |  |  |  |  |  |  |  +-- dao
+|  |  |  |  |  |  |  |  |  |  +-- Daos.kt
+|  |  |  |  |  |  |  |  |  |  +-- IncidentDao.kt
+|  |  |  |  |  |  |  |  |  |  +-- OfficerDao.kt
+|  |  |  |  |  |  |  |  |  +-- db
+|  |  |  |  |  |  |  |  |  |  +-- KavachDatabase.kt
+|  |  |  |  |  |  |  |  |  +-- entity
+|  |  |  |  |  |  |  |  |  |  +-- Entities.kt
+|  |  |  |  |  |  |  |  |  |  +-- IncidentDraftEntities.kt
+|  |  |  |  |  |  |  |  |  |  +-- OfficerCacheEntities.kt
+|  |  |  |  |  |  |  |  |  |  +-- OperationalEntities.kt
+|  |  |  |  |  |  |  |  |  +-- SessionDataStore.kt
+|  |  |  |  |  |  |  |  |  +-- StoragePressureManager.kt
+|  |  |  |  |  |  |  |  +-- remote
+|  |  |  |  |  |  |  |  |  +-- api
+|  |  |  |  |  |  |  |  |  |  +-- AuthRefreshApiService.kt
+|  |  |  |  |  |  |  |  |  |  +-- KavachApiService.kt
+|  |  |  |  |  |  |  |  |  |  +-- KavachApiV2.kt
+|  |  |  |  |  |  |  |  |  |  +-- TokenAuthenticator.kt
+|  |  |  |  |  |  |  |  |  +-- dto
+|  |  |  |  |  |  |  |  |  |  +-- auth
+|  |  |  |  |  |  |  |  |  |  |  +-- AuthDtos.kt
+|  |  |  |  |  |  |  |  |  |  |  +-- UserDto.kt
+|  |  |  |  |  |  |  |  |  |  +-- broadcast
+|  |  |  |  |  |  |  |  |  |  |  +-- BroadcastDto.kt
+|  |  |  |  |  |  |  |  |  |  +-- common
+|  |  |  |  |  |  |  |  |  |  |  +-- ApiResponse.kt
+|  |  |  |  |  |  |  |  |  |  +-- incident
+|  |  |  |  |  |  |  |  |  |  |  +-- IncidentDto.kt
+|  |  |  |  |  |  |  |  |  |  +-- orders
+|  |  |  |  |  |  |  |  |  |  |  +-- OrdersDtos.kt
+|  |  |  |  |  |  |  |  |  |  +-- personnel
+|  |  |  |  |  |  |  |  |  |  |  +-- AdminOfficerDto.kt
+|  |  |  |  |  |  |  |  |  |  |  +-- OfficerDto.kt
+|  |  |  |  |  |  |  |  |  |  +-- system
+|  |  |  |  |  |  |  |  |  |  |  +-- DraftChangeDto.kt
+|  |  |  |  |  |  |  |  |  |  |  +-- OtaUpdateDto.kt
+|  |  |  |  |  |  |  |  |  |  |  +-- SystemDtos.kt
+|  |  |  |  |  |  |  |  |  |  +-- training
+|  |  |  |  |  |  |  |  |  |  |  +-- TrainingDtos.kt
+|  |  |  |  |  |  |  |  |  |  +-- v2
+|  |  |  |  |  |  |  |  |  |  |  +-- V2AuthRequests.kt
+|  |  |  |  |  |  |  |  |  |  |  +-- V2Dtos.kt
+|  |  |  |  |  |  |  |  |  +-- websocket
+|  |  |  |  |  |  |  |  |  |  +-- WebSocketManager.kt
+|  |  |  |  |  |  |  |  |  +-- worker
+|  |  |  |  |  |  |  |  |  |  +-- IncidentSyncWorker.kt
+|  |  |  |  |  |  |  |  |  |  +-- PersonnelSyncWorker.kt
+|  |  |  |  |  |  |  |  +-- repository
+|  |  |  |  |  |  |  |  |  +-- local
+|  |  |  |  |  |  |  |  |  +-- mapper
+|  |  |  |  |  |  |  |  |  +-- remote
+|  |  |  |  |  |  |  |  |  +-- sync
+|  |  |  |  |  |  |  |  |  +-- AdminRepository.kt
+|  |  |  |  |  |  |  |  |  +-- AuthRepository.kt
+|  |  |  |  |  |  |  |  |  +-- MediaRepository.kt
+|  |  |  |  |  |  |  |  |  +-- MissionRepository.kt
+|  |  |  |  |  |  |  |  |  +-- OrderRepository.kt
+|  |  |  |  |  |  |  |  |  +-- TrainingRepository.kt
+|  |  |  |  |  |  |  |  |  +-- UserManagementRepository.kt
+|  |  |  |  |  |  |  |  +-- sync
+|  |  |  |  |  |  |  |  |  +-- AdaptiveThrottling.kt
+|  |  |  |  |  |  |  |  |  +-- LocalDomainEventBus.kt
+|  |  |  |  |  |  |  |  |  +-- SyncCoordinator.kt
+|  |  |  |  |  |  |  +-- di
+|  |  |  |  |  |  |  |  +-- AppModule.kt
+|  |  |  |  |  |  |  +-- domain
+|  |  |  |  |  |  |  |  +-- model
+|  |  |  |  |  |  |  |  |  +-- Order.kt
+|  |  |  |  |  |  |  |  |  +-- Training.kt
+|  |  |  |  |  |  |  |  |  +-- User.kt
+|  |  |  |  |  |  |  +-- receiver
+|  |  |  |  |  |  |  |  +-- BootCompletedReceiver.kt
+|  |  |  |  |  |  |  +-- security
+|  |  |  |  |  |  |  +-- service
+|  |  |  |  |  |  |  |  +-- KavachMessagingService.kt
+|  |  |  |  |  |  |  +-- ui
+|  |  |  |  |  |  |  |  +-- components
+|  |  |  |  |  |  |  |  |  +-- ConnectivityBanner.kt
+|  |  |  |  |  |  |  |  |  +-- FilterChipGroup.kt
+|  |  |  |  |  |  |  |  |  +-- KavachBadges.kt
+|  |  |  |  |  |  |  |  |  +-- TacticalSecurityComponents.kt
+|  |  |  |  |  |  |  |  |  +-- WatermarkOverlay.kt
+|  |  |  |  |  |  |  |  +-- navigation
+|  |  |  |  |  |  |  |  |  +-- graphs
+|  |  |  |  |  |  |  |  |  +-- navigators
+|  |  |  |  |  |  |  |  |  +-- KavachNavHost.kt
+|  |  |  |  |  |  |  |  |  +-- NavHostViewModel.kt
+|  |  |  |  |  |  |  |  |  +-- RoleRouter.kt
+|  |  |  |  |  |  |  |  |  +-- Screen.kt
+|  |  |  |  |  |  |  |  +-- overlay
+|  |  |  |  |  |  |  |  |  +-- OverlayViewModel.kt
+|  |  |  |  |  |  |  |  |  +-- TacticalOverlaySystem.kt
+|  |  |  |  |  |  |  |  +-- screens
+|  |  |  |  |  |  |  |  |  +-- alerts
+|  |  |  |  |  |  |  |  |  |  +-- CriticalAlertScreen.kt
+|  |  |  |  |  |  |  |  |  +-- broadcast
+|  |  |  |  |  |  |  |  |  |  +-- BroadcastInboxViewModel.kt
+|  |  |  |  |  |  |  |  |  |  +-- CreateBroadcastViewModel.kt
+|  |  |  |  |  |  |  |  |  +-- common
+|  |  |  |  |  |  |  |  |  +-- dashboard
+|  |  |  |  |  |  |  |  |  |  +-- CommandCenterScreen.kt
+|  |  |  |  |  |  |  |  |  |  +-- DashboardAuthority.kt
+|  |  |  |  |  |  |  |  |  |  +-- DashboardViewModel.kt
+|  |  |  |  |  |  |  |  |  |  +-- UnifiedDashboardScreen.kt
+|  |  |  |  |  |  |  |  |  +-- device
+|  |  |  |  |  |  |  |  |  |  +-- DeviceStatusScreen.kt
+|  |  |  |  |  |  |  |  |  |  +-- DeviceStatusViewModel.kt
+|  |  |  |  |  |  |  |  |  +-- incident
+|  |  |  |  |  |  |  |  |  |  +-- IncidentFeedScreen.kt
+|  |  |  |  |  |  |  |  |  |  +-- IncidentFeedViewModel.kt
+|  |  |  |  |  |  |  |  |  +-- integrity
+|  |  |  |  |  |  |  |  |  +-- lock
+|  |  |  |  |  |  |  |  |  |  +-- LockScreen.kt
+|  |  |  |  |  |  |  |  |  |  +-- LockViewModel.kt
+|  |  |  |  |  |  |  |  |  +-- login
+|  |  |  |  |  |  |  |  |  |  +-- LoginScreen.kt
+|  |  |  |  |  |  |  |  |  |  +-- LoginViewModel.kt
+|  |  |  |  |  |  |  |  |  +-- orders
+|  |  |  |  |  |  |  |  |  |  +-- OrderScreens.kt
+|  |  |  |  |  |  |  |  |  |  +-- OrderViewModels.kt
+|  |  |  |  |  |  |  |  |  +-- permissions
+|  |  |  |  |  |  |  |  |  |  +-- PermissionGateScreen.kt
+|  |  |  |  |  |  |  |  |  |  +-- PermissionViewModel.kt
+|  |  |  |  |  |  |  |  |  +-- pilot
+|  |  |  |  |  |  |  |  |  |  +-- approvals
+|  |  |  |  |  |  |  |  |  |  |  +-- ApprovalListScreen.kt
+|  |  |  |  |  |  |  |  |  |  |  +-- ApprovalListViewModel.kt
+|  |  |  |  |  |  |  |  |  |  +-- audit
+|  |  |  |  |  |  |  |  |  |  |  +-- AuditTimelineScreen.kt
+|  |  |  |  |  |  |  |  |  |  |  +-- AuditTimelineViewModel.kt
+|  |  |  |  |  |  |  |  |  |  +-- broadcast
+|  |  |  |  |  |  |  |  |  |  |  +-- BroadcastCenterScreen.kt
+|  |  |  |  |  |  |  |  |  |  |  +-- BroadcastCenterViewModel.kt
+|  |  |  |  |  |  |  |  |  |  +-- data
+|  |  |  |  |  |  |  |  |  |  |  +-- FieldDataScreen.kt
+|  |  |  |  |  |  |  |  |  |  |  +-- FieldDataViewModel.kt
+|  |  |  |  |  |  |  |  |  |  +-- devices
+|  |  |  |  |  |  |  |  |  |  |  +-- DeviceCenterScreen.kt
+|  |  |  |  |  |  |  |  |  |  |  +-- DeviceCenterViewModel.kt
+|  |  |  |  |  |  |  |  |  |  +-- incident
+|  |  |  |  |  |  |  |  |  |  |  +-- IncidentCenterScreen.kt
+|  |  |  |  |  |  |  |  |  |  |  +-- IncidentCenterViewModel.kt
+|  |  |  |  |  |  |  |  |  |  +-- live
+|  |  |  |  |  |  |  |  |  |  |  +-- LiveBroadcastScreen.kt
+|  |  |  |  |  |  |  |  |  |  |  +-- LiveViewModel.kt
+|  |  |  |  |  |  |  |  |  |  +-- ota
+|  |  |  |  |  |  |  |  |  |  |  +-- OtaUpdateScreen.kt
+|  |  |  |  |  |  |  |  |  |  |  +-- OtaUpdateViewModel.kt
+|  |  |  |  |  |  |  |  |  |  +-- personnel
+|  |  |  |  |  |  |  |  |  |  |  +-- OfficerDetailScreen.kt
+|  |  |  |  |  |  |  |  |  |  |  +-- OfficerDetailViewModel.kt
+|  |  |  |  |  |  |  |  |  |  |  +-- PersonnelListItemUiModel.kt
+|  |  |  |  |  |  |  |  |  |  |  +-- PersonnelListScreen.kt
+|  |  |  |  |  |  |  |  |  |  |  +-- PersonnelListViewModel.kt
+|  |  |  |  |  |  |  |  |  |  |  +-- UserRegistrationScreen.kt
+|  |  |  |  |  |  |  |  |  |  |  +-- UserRegistrationViewModel.kt
+|  |  |  |  |  |  |  |  |  |  +-- training
+|  |  |  |  |  |  |  |  |  |  |  +-- TrainingScreen.kt
+|  |  |  |  |  |  |  |  |  |  |  +-- TrainingViewModel.kt
+|  |  |  |  |  |  |  |  |  |  +-- ConnectivityViewModel.kt
+|  |  |  |  |  |  |  |  |  |  +-- DiagnosticViewModel.kt
+|  |  |  |  |  |  |  |  |  +-- profile
+|  |  |  |  |  |  |  |  |  |  +-- ProfileScreen.kt
+|  |  |  |  |  |  |  |  |  +-- security
+|  |  |  |  |  |  |  |  |  |  +-- SecureAccessScreen.kt
+|  |  |  |  |  |  |  |  |  |  +-- SecureAccessViewModel.kt
+|  |  |  |  |  |  |  |  |  |  +-- SecurityEnrollmentScreen.kt
+|  |  |  |  |  |  |  |  |  |  +-- SecurityEnrollmentViewModel.kt
+|  |  |  |  |  |  |  |  |  +-- splash
+|  |  |  |  |  |  |  |  |  |  +-- SplashScreen.kt
+|  |  |  |  |  |  |  |  |  +-- training
+|  |  |  |  |  |  |  |  |  |  +-- TrainingViewModels.kt
+|  |  |  |  |  |  |  |  +-- theme
+|  |  |  |  |  |  |  |  |  +-- Color.kt
+|  |  |  |  |  |  |  |  |  +-- Theme.kt
+|  |  |  |  |  |  |  |  |  +-- Type.kt
+|  |  |  |  |  |  |  |  +-- tokens
+|  |  |  |  |  |  |  |  |  +-- TacticalTokens.kt
+|  |  |  |  |  |  |  |  +-- transitions
+|  |  |  |  |  |  |  |  |  +-- TacticalTransitions.kt
+|  |  |  |  |  |  |  +-- util
+|  |  |  |  |  |  |  |  +-- AudioRecorder.kt
+|  |  |  |  |  |  |  |  +-- AutoUpdateManager.kt
+|  |  |  |  |  |  |  |  +-- NetworkMonitor.kt
+|  |  |  |  |  |  |  |  +-- SecureStorage.kt
+|  |  |  |  |  |  |  |  +-- SecurityUtils.kt
+|  |  |  |  |  |  |  +-- utils
+|  |  |  |  |  |  |  |  +-- ApiResult.kt
+|  |  |  |  |  |  |  |  +-- BehaviorScoreCalculator.kt
+|  |  |  |  |  |  |  |  +-- BehaviorTracker.kt
+|  |  |  |  |  |  |  |  +-- DeviceIdUtil.kt
+|  |  |  |  |  |  |  |  +-- EmulatorDetectionUtil.kt
+|  |  |  |  |  |  |  |  +-- HeartbeatManager.kt
+|  |  |  |  |  |  |  |  +-- KavachSyncWorker.kt
+|  |  |  |  |  |  |  |  +-- OperationalStrings.kt
+|  |  |  |  |  |  |  |  +-- RootDetectionUtil.kt
+|  |  |  |  |  |  |  |  +-- SessionTimeoutManager.kt
+|  |  |  |  |  |  |  |  +-- SyncAckWorker.kt
+|  |  |  |  |  |  |  +-- KavachApp.kt
+|  |  |  |  |  |  |  +-- KavachConfig.kt
+|  |  |  |  |  |  |  +-- MainActivity.kt
+|  |  |  +-- kotlin
+|  |  |  +-- res
+|  |  |  |  +-- drawable
+|  |  |  |  |  +-- ic_kavach_shield.xml
+|  |  |  |  +-- raw
+|  |  |  |  |  +-- snd_access_denied.mp3
+|  |  |  |  |  +-- snd_alert_ping.mp3
+|  |  |  |  |  +-- snd_auth_success.mp3
+|  |  |  |  |  +-- snd_emergency_broadcast.mp3
+|  |  |  |  |  +-- snd_escalation.mp3
+|  |  |  |  |  +-- snd_threat_warning.mp3
+|  |  |  |  |  +-- snd_uplink_connect.mp3
+|  |  |  |  +-- values
+|  |  |  |  |  +-- colors.xml
+|  |  |  |  |  +-- strings.xml
+|  |  |  |  |  +-- themes.xml
+|  |  |  |  +-- xml
+|  |  |  |  |  +-- file_paths.xml
+|  |  |  |  |  +-- network_security_config.xml
+|  |  |  +-- AndroidManifest.xml
+|  +-- proguard-rules.pro
++-- archive
+|  +-- admin-dashboard-react
+|  |  +-- admin-dashboard
+|  |  |  +-- public
+|  |  |  |  +-- favicon.svg
+|  |  |  |  +-- icons.svg
+|  |  |  +-- src
+|  |  |  |  +-- api
+|  |  |  |  |  +-- api.js
+|  |  |  |  +-- assets
+|  |  |  |  |  +-- hero.png
+|  |  |  |  |  +-- react.svg
+|  |  |  |  |  +-- vite.svg
+|  |  |  |  +-- components
+|  |  |  |  |  +-- SystemHealth.jsx
+|  |  |  |  +-- context
+|  |  |  |  |  +-- AuthContext.jsx
+|  |  |  |  +-- pages
+|  |  |  |  |  +-- Alerts.jsx
+|  |  |  |  |  +-- Broadcast.jsx
+|  |  |  |  |  +-- Dashboard.jsx
+|  |  |  |  |  +-- DecisionDashboard.jsx
+|  |  |  |  |  +-- Login.jsx
+|  |  |  |  |  +-- Orders.jsx
+|  |  |  |  |  +-- Reports.jsx
+|  |  |  |  |  +-- Training.jsx
+|  |  |  |  |  +-- Users.jsx
+|  |  |  |  +-- App.css
+|  |  |  |  +-- App.jsx
+|  |  |  |  +-- index.css
+|  |  |  |  +-- main.jsx
+|  |  |  +-- eslint.config.js
+|  |  |  +-- index.html
+|  |  |  +-- package-lock.json
+|  |  |  +-- package.json
+|  |  |  +-- README.md
+|  |  |  +-- vite.config.js
+|  +-- static
+|  |  +-- admin_dashboard
+|  |  +-- user_dashboard
++-- backend
+|  +-- apps
+|  |  +-- admin_panel
+|  |  |  +-- migrations
+|  |  |  |  +-- 0001_initial.py
+|  |  |  |  +-- 0002_apprelease_expires_at_apprelease_rollout_percentage.py
+|  |  |  |  +-- 0003_apprelease_is_critical_override_and_more.py
+|  |  |  |  +-- 0004_apprelease_approval_reason_and_more.py
+|  |  |  |  +-- 0005_apprelease_blast_radius_apprelease_incident_id_and_more.py
+|  |  |  |  +-- __init__.py
+|  |  |  +-- consumers.py
+|  |  |  +-- models.py
+|  |  |  +-- urls.py
+|  |  |  +-- views.py
+|  |  +-- auth_app
+|  |  |  +-- management
+|  |  |  |  +-- commands
+|  |  |  |  |  +-- operational_cleanup.py
+|  |  |  |  |  +-- reset_operational_data.py
+|  |  |  |  |  +-- seed_governance.py
+|  |  |  |  |  +-- seed_pilot_data.py
+|  |  |  +-- migrations
+|  |  |  |  +-- 0001_initial.py
+|  |  |  |  +-- 0002_officer_email.py
+|  |  |  |  +-- 0003_officer_fcm_token_officer_role_alter_officer_pno_and_more.py
+|  |  |  |  +-- 0004_officer_blind_approval_count_and_more.py
+|  |  |  |  +-- 0005_officer_is_pilot_alter_officer_role.py
+|  |  |  |  +-- 0006_remove_officer_is_pilot.py
+|  |  |  |  +-- 0007_officer_challenge_count_officer_daily_otp_count_and_more.py
+|  |  |  |  +-- 0008_remove_auditlog_device_id_auditlog_device_id_hash_and_more.py
+|  |  |  |  +-- 0009_pilotoverriderequest.py
+|  |  |  |  +-- 0010_pilotoverriderequest_approval_correlation_id_and_more.py
+|  |  |  |  +-- 0011_officer_app_channel.py
+|  |  |  |  +-- 0012_companymaster_rankmaster_unitmaster_and_more.py
+|  |  |  |  +-- 0013_adversarialsignal_constitutionalarticle_and_more.py
+|  |  |  |  +-- 0014_recoveryaction_and_more.py
+|  |  |  |  +-- 0015_unitmaster_type.py
+|  |  |  |  +-- 0016_officer_must_change_password_and_more.py
+|  |  |  |  +-- __init__.py
+|  |  |  +-- models
+|  |  |  |  +-- auth.py
+|  |  |  |  +-- broadcast.py
+|  |  |  |  +-- governance.py
+|  |  |  |  +-- incident.py
+|  |  |  |  +-- infrastructure.py
+|  |  |  |  +-- realtime.py
+|  |  |  |  +-- training.py
+|  |  |  |  +-- __init__.py
+|  |  |  +-- orchestration
+|  |  |  |  +-- event_bus.py
+|  |  |  |  +-- event_contract.py
+|  |  |  |  +-- realtime_gateway.py
+|  |  |  |  +-- recovery.py
+|  |  |  |  +-- resilience.py
+|  |  |  |  +-- scheduler.py
+|  |  |  |  +-- verification.py
+|  |  |  +-- security
+|  |  |  |  +-- ranks.py
+|  |  |  |  +-- roles.py
+|  |  |  |  +-- __init__.py
+|  |  |  +-- services
+|  |  |  |  +-- auth_service.py
+|  |  |  |  +-- personnel_service.py
+|  |  |  |  +-- __init__.py
+|  |  |  +-- consent_urls.py
+|  |  |  +-- device_urls.py
+|  |  |  +-- health_views.py
+|  |  |  +-- integrity_decorators.py
+|  |  |  +-- integrity_metrics.py
+|  |  |  +-- integrity_views.py
+|  |  |  +-- middleware.py
+|  |  |  +-- override_engine.py
+|  |  |  +-- permissions.py
+|  |  |  +-- serializers.py
+|  |  |  +-- urls.py
+|  |  |  +-- urls_v2.py
+|  |  |  +-- utils.py
+|  |  |  +-- views.py
+|  |  |  +-- views_v2.py
+|  |  +-- behavior
+|  |  |  +-- management
+|  |  |  |  +-- commands
+|  |  |  |  |  +-- run_graph_engine.py
+|  |  |  +-- migrations
+|  |  |  |  +-- 0001_initial.py
+|  |  |  |  +-- 0002_characterentry_disciplinescore_anomaly_reasons_and_more.py
+|  |  |  |  +-- 0003_behavioralcluster_pilotmetric_remoteconfig_and_more.py
+|  |  |  |  +-- 0004_reviewerreliability.py
+|  |  |  |  +-- __init__.py
+|  |  |  +-- anomaly.py
+|  |  |  +-- audit_models.py
+|  |  |  +-- bias_engine.py
+|  |  |  +-- chain_break_models.py
+|  |  |  +-- decision_core.py
+|  |  |  +-- drills.py
+|  |  |  +-- fingerprint.py
+|  |  |  +-- graph_engine.py
+|  |  |  +-- graph_models.py
+|  |  |  +-- input_trust.py
+|  |  |  +-- learning_engine.py
+|  |  |  +-- middleware.py
+|  |  |  +-- mirror_engine.py
+|  |  |  +-- ml_engine.py
+|  |  |  +-- models.py
+|  |  |  +-- neo4j_client.py
+|  |  |  +-- permissions.py
+|  |  |  +-- pilot_controller.py
+|  |  |  +-- prediction_engine.py
+|  |  |  +-- prediction_models.py
+|  |  |  +-- privileges.py
+|  |  |  +-- remote_config_urls.py
+|  |  |  +-- remote_config_views.py
+|  |  |  +-- review_engine.py
+|  |  |  +-- review_models.py
+|  |  |  +-- suggestion_engine.py
+|  |  |  +-- suggestion_models.py
+|  |  |  +-- urls.py
+|  |  |  +-- views.py
+|  |  +-- monitoring
+|  |  |  +-- management
+|  |  |  |  +-- commands
+|  |  |  |  |  +-- run_alert_engine.py
+|  |  |  |  |  +-- __init__.py
+|  |  |  |  +-- __init__.py
+|  |  |  +-- migrations
+|  |  |  |  +-- 0001_initial.py
+|  |  |  |  +-- __init__.py
+|  |  |  +-- adaptive.py
+|  |  |  +-- apps.py
+|  |  |  +-- models.py
+|  |  |  +-- urls.py
+|  |  |  +-- utils.py
+|  |  |  +-- views.py
+|  |  |  +-- __init__.py
+|  |  +-- orders
+|  |  |  +-- migrations
+|  |  |  |  +-- 0001_initial.py
+|  |  |  |  +-- 0002_alert_alertack.py
+|  |  |  |  +-- __init__.py
+|  |  |  +-- models.py
+|  |  |  +-- urls.py
+|  |  |  +-- views.py
+|  |  |  +-- __init__.py
+|  |  +-- training
+|  |  |  +-- migrations
+|  |  |  |  +-- 0001_initial.py
+|  |  |  |  +-- 0002_remove_training_s3_key_training_video_path.py
+|  |  |  |  +-- __init__.py
+|  |  |  +-- models.py
+|  |  |  +-- urls.py
+|  |  |  +-- views.py
+|  +-- archive
+|  |  +-- orchestration_experimental
+|  |  |  +-- analysis.py
+|  |  |  +-- archival.py
+|  |  |  +-- awareness.py
+|  |  |  +-- backpressure.py
+|  |  |  +-- circuit_breaker.py
+|  |  |  +-- cognition.py
+|  |  |  +-- commands.py
+|  |  |  +-- consolidation.py
+|  |  |  +-- continuity.py
+|  |  |  +-- convergence.py
+|  |  |  +-- degradation.py
+|  |  |  +-- enforcement.py
+|  |  |  +-- entropy_governance.py
+|  |  |  +-- forensics.py
+|  |  |  +-- humility.py
+|  |  |  +-- incident_policy.py
+|  |  |  +-- interpretation.py
+|  |  |  +-- legitimacy.py
+|  |  |  +-- meta_governance.py
+|  |  |  +-- narration.py
+|  |  |  +-- philosophy.py
+|  |  |  +-- policies.py
+|  |  |  +-- policy_engine.py
+|  |  |  +-- read_fencing.py
+|  |  |  +-- realism.py
+|  |  |  +-- reconciliation.py
+|  |  |  +-- refusal.py
+|  |  |  +-- registry.py
+|  |  |  +-- shared_context.py
+|  |  |  +-- slo_engine.py
+|  |  |  +-- snapshot_hierarchy.py
+|  |  |  +-- sovereignty.py
+|  |  |  +-- stability.py
+|  |  |  +-- stability_phase.py
+|  |  |  +-- survivability.py
+|  |  |  +-- transfer.py
+|  |  |  +-- trust_graph.py
+|  +-- k8s
+|  |  +-- kavach-cluster.yaml
+|  +-- kavach_backend
+|  |  +-- api_middleware.py
+|  |  +-- asgi.py
+|  |  +-- celery.py
+|  |  +-- exception_handler.py
+|  |  +-- health_views.py
+|  |  +-- middleware.py
+|  |  +-- session_security.py
+|  |  +-- settings.py
+|  |  +-- supabase_client.py
+|  |  +-- urls.py
+|  |  +-- __init__.py
+|  +-- scripts
+|  |  +-- governance_cleanup.py
+|  |  +-- outbox_dispatcher.py
+|  +-- seeds
+|  |  +-- bootstrap_admin.py
+|  |  +-- create_test_users.py
+|  |  +-- reset_auth_db.py
+|  |  +-- seed_data.py
+|  |  +-- seed_pilot_deployment.py
+|  |  +-- seed_pilot_users.py
+|  |  +-- seed_v3.py
+|  |  +-- setup_pilot_admin.py
+|  +-- templates
+|  +-- tools
+|  |  +-- pilot_telemetry_report.py
+|  |  +-- simulate_attack_phase_1.py
+|  |  +-- simulate_human_bias_attack.py
+|  |  +-- simulate_multi_attack.py
+|  |  +-- verify_release.py
+|  +-- .env
+|  +-- .env.development
+|  +-- .env.example
+|  +-- .env.production
+|  +-- Dockerfile
+|  +-- manage.py
+|  +-- pilot_operations_config.py
+|  +-- requirements.txt
+|  +-- setup_db.py
+|  +-- __structure__.py
++-- deploy
+|  +-- docker-compose.yml
+|  +-- setup.sh
++-- docs
+|  +-- architecture
+|  +-- legacy_docs
+|  |  +-- KAVACH_PILOT_INCIDENT_NOTEBOOK.md
+|  |  +-- project_structure.txt
+|  |  +-- SYSTEM_BOUNDARIES.md
++-- gradle
+|  +-- wrapper
+|  |  +-- gradle-wrapper.jar
+|  |  +-- gradle-wrapper.properties
+|  +-- libs.versions.toml
++-- media-server
+|  +-- nginx.conf
++-- scripts
+|  +-- backup_kavach.ps1
++-- secure
+|  +-- kavach-release.jks
+|  +-- kavach-release.keystore
++-- tools
++-- assemble_log.txt
++-- backend_clean.zip
++-- compile_errors.txt
++-- ENVIRONMENT_MANIFEST.md
++-- env_check.ps1
++-- FAILURE_RUNBOOKS.md
++-- gradle.properties
++-- gradlew
++-- gradlew.bat
++-- kavach.zip
++-- local.properties
++-- OPERATOR_QUICKSTART.md
++-- PROJECT_STRUCTURE_OVERVIEW.md
++-- PROJECT_TREE.md
++-- settings.gradle.kts
++-- tmp_login.json

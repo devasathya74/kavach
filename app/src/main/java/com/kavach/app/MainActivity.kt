@@ -37,6 +37,8 @@ import com.kavach.app.util.SecurityUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.*
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -53,6 +55,7 @@ class MainActivity : ComponentActivity() {
     @Inject lateinit var navigationDao           : com.kavach.app.data.local.dao.NavigationDao
     @Inject lateinit var secureScreenController  : SecureScreenController
     @Inject lateinit var appLockManager          : AppLockManager
+    @Inject lateinit var webSocketManager        : com.kavach.app.data.remote.websocket.WebSocketManager
 
 
 
@@ -103,12 +106,21 @@ class MainActivity : ComponentActivity() {
                 // Cancel pending background lock if foregrounded quickly (rotation/dialog)
                 backgroundRunnable?.let { handler.removeCallbacks(it) }
                 appLockManager.onAppForegrounded()
+                
+                // Re-trigger WebSocket on foreground if token exists
+                lifecycleScope.launch {
+                    val token = sessionDataStore.token.firstOrNull()
+                    if (!token.isNullOrBlank()) {
+                        webSocketManager.connect(token)
+                    }
+                }
             }
 
             override fun onStop(owner: LifecycleOwner) {
                 // Point 1: 700ms delay to verify it's a real background transition
                 backgroundRunnable = Runnable {
                     appLockManager.onAppBackgrounded()
+                    webSocketManager.disconnect()
                 }.also { handler.postDelayed(it, 700) }
             }
         })
@@ -173,10 +185,13 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                // ── Mission-Grade OTA Lifecycle ─────────────────
+                // ── Mission-Grade OTA & Realtime Lifecycle ─────────────────
                 // connectivity check (done in NavHost) -> session validation (token) -> update check
                 LaunchedEffect(token) {
                     if (!token.isNullOrBlank()) {
+                        // Ensure WebSocket is updated with fresh token
+                        webSocketManager.connect(token!!)
+                        
                         scope.launch {
                             val info = autoUpdateManager.checkUpdate()
                             if (info != null) {
@@ -310,7 +325,7 @@ class MainActivity : ComponentActivity() {
         val notifId = intent.getStringExtra("notif_id") ?: "INTERNAL_${System.currentTimeMillis()}"
         val priority = intent.getIntExtra("priority", 0)
 
-        lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+        lifecycleScope.launch(Dispatchers.IO) {
             // 1. Persistent Dedup & Priority Capping
             if (!navigationDao.isHandled(notifId)) {
                 navigationDao.insertWithCapping(
@@ -328,7 +343,7 @@ class MainActivity : ComponentActivity() {
                 try {
                     apiService.sendNotificationAck(mapOf("notif_id" to notifId, "type" to "OPENED"))
                 } catch (e: Exception) {
-                    android.util.Log.e("MainActivity", "Failed to send ACK: ${e.message}")
+                    Log.e("MainActivity", "Failed to send ACK: ${e.message}")
                 }
             }
         }

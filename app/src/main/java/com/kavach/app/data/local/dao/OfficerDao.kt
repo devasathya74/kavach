@@ -31,12 +31,13 @@ interface OfficerDao {
         insertDevices(devices)
     }
 
+    @Transaction
     @Query("""
         SELECT * FROM officer_cache 
         WHERE (:unitType IS NULL OR unitCode = :unitType)
         AND (:search IS NULL OR pno LIKE '%' || :search || '%')
     """)
-    fun getFilteredOfficers(unitType: String?, search: String?): Flow<List<OfficerCacheEntity>>
+    fun getFilteredOfficers(unitType: String?, search: String?): Flow<List<com.kavach.app.data.local.entity.OfficerWithProfile>>
 
     @Query("SELECT * FROM officer_cache")
     fun getAllOfficers(): Flow<List<OfficerCacheEntity>>

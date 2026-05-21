@@ -35,7 +35,8 @@ import com.kavach.app.ui.screens.dashboard.PilotDashboardScreen
 import com.kavach.app.ui.screens.dashboard.RestrictedDashboardScreen
 import com.kavach.app.ui.screens.login.ConsentScreen
 import com.kavach.app.ui.screens.login.LoginScreen
-import com.kavach.app.ui.screens.login.OtpVerifyScreen
+import com.kavach.app.ui.screens.security.SecurityEnrollmentScreen
+import com.kavach.app.ui.screens.security.SecureAccessScreen
 import com.kavach.app.ui.screens.orders.OrderDetailScreen
 import com.kavach.app.ui.screens.orders.OrderListScreen
 import com.kavach.app.ui.screens.profile.ProfileScreen
@@ -52,7 +53,9 @@ import com.kavach.app.util.ConnectionStatus
 import com.kavach.app.ui.components.ConnectivityBanner
 import com.kavach.app.ui.overlay.OverlayViewModel
 import com.kavach.app.ui.overlay.TacticalOverlaySystem
+import com.kavach.app.core.security.BiometricAuthManager
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import timber.log.Timber
 
 /**
  * Root navigation host with role-based routing.
@@ -66,9 +69,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 fun KavachNavHost(
     navController     : NavHostController = rememberNavController(),
     viewModel         : NavHostViewModel  = hiltViewModel(),
-    authorizationEngine: com.kavach.app.core.security.AuthorizationEngine = hiltViewModel(),
+    authorizationEngine: com.kavach.app.core.security.AuthorizationEngine = viewModel.authorizationEngine,
     onUserInteraction : () -> Unit        = {}
 ) {
+    val biometricAuthManager = viewModel.biometricAuthManager
     val sessionDataStore   = viewModel.sessionDataStore
     val scope              = rememberCoroutineScope()
 
@@ -109,18 +113,16 @@ fun KavachNavHost(
             is AuthState.Unauthenticated -> {
                 // If we are on any screen other than Login/Splash, go to Login
                 if (currentRoute != Screen.Login.route && 
-                    currentRoute != Screen.Splash.route &&
-                    currentRoute != Screen.OtpVerify.route) {
+                    currentRoute != Screen.Splash.route) {
                     navController.navigate(Screen.Login.route) {
                         popUpTo(0) { inclusive = true }
                     }
                 }
             }
-            is AuthState.NeedsIntegrity -> {
-                // Redirect to integrity scan if not already there
-                if (currentRoute != Screen.IntegrityScan.route && 
-                    currentRoute != Screen.Splash.route) {
-                    navController.navigate(Screen.IntegrityScan.route) {
+
+            is AuthState.NeedsSecurityEnrollment -> {
+                if (currentRoute != Screen.SecurityEnrollment.route) {
+                    navController.navigate(Screen.SecurityEnrollment.route) {
                         popUpTo(Screen.Login.route) { inclusive = true }
                     }
                 }
@@ -131,10 +133,9 @@ fun KavachNavHost(
                     RoleRouter.LocalTestBypass.resolveRole(state.pno) ?: RoleRouter.normalize(state.role)
                 )
                 
-                if (currentRoute == Screen.IntegrityScan.route || 
-                    currentRoute == Screen.Login.route ||
+                if (currentRoute == Screen.Login.route ||
                     currentRoute == Screen.Splash.route ||
-                    currentRoute == Screen.OtpVerify.route ||
+                    currentRoute == Screen.SecurityEnrollment.route ||
                     currentRoute == Screen.Consent.route ||
                     currentRoute == Screen.PermissionGate.route) {
                     
@@ -148,8 +149,6 @@ fun KavachNavHost(
                 // Stay on current screen but UI will show error overlay
             }
             else -> {} 
-        }
-    }
         }
     }
 
@@ -173,7 +172,7 @@ fun KavachNavHost(
 
     // ── Point 9 & 10 FIX: Lock Screen Isolation ─────────────────
     if (authState is AuthState.AppLocked) {
-        com.kavach.app.ui.screens.lock.LockScreen()
+        SecureAccessScreen(biometricManager = biometricAuthManager)
         return
     }
 
@@ -274,6 +273,9 @@ fun KavachNavHost(
                 status = connectionStatus,
                 lastSyncedMs = if (lastSyncTime > 0) lastSyncTime else null
             )
+
+
+
             NavHost(
                 navController    = navController,
                 startDestination = Screen.Splash.route,
@@ -333,17 +335,22 @@ fun KavachNavHost(
                 // ── Login ───────────────────────────────────────
                 composable(Screen.Login.route) {
                     LoginScreen(
-                        onLoginSuccess = { pno ->
-                            navController.navigate(Screen.OtpVerify.createRoute(pno))
+                        onLoginSuccess = { 
+                            // After login, AuthState will update to NeedsSecurityEnrollment or Authenticated
                         },
                         onAdminLoggedIn = {
-                            navController.navigate(Screen.IntegrityScan.route) {
-                                popUpTo(Screen.Login.route) { inclusive = true }
-                                launchSingleTop = true
-                            }
+                            // Unified login now
                         },
                         onDiagnosticsClick = {
                             navController.navigate(Screen.PilotDiagnostics.route)
+                        }
+                    )
+                }
+
+                composable(Screen.SecurityEnrollment.route) {
+                    SecurityEnrollmentScreen(
+                        onComplete = {
+                            // AuthState will become Authenticated
                         }
                     )
                 }
@@ -354,35 +361,10 @@ fun KavachNavHost(
                     )
                 }
 
-                composable(
-                    route = Screen.OtpVerify.route,
-                    arguments = listOf(navArgument("pno") { type = NavType.StringType })
-                ) { backStackEntry ->
-                    val pnoArg = backStackEntry.arguments?.getString("pno") ?: ""
-                    OtpVerifyScreen(
-                        pno = pnoArg,
-                        onVerified = {
-                            navController.navigate(Screen.IntegrityScan.route) {
-                                popUpTo(Screen.Login.route) { inclusive = true }
-                                launchSingleTop = true
-                            }
-                        }
-                    )
-                }
+                // OtpVerify is removed
 
-                // ── IntegrityScan → routes to correct dashboard ─
-                composable(Screen.IntegrityScan.route) {
-                    com.kavach.app.ui.screens.integrity.IntegrityScanScreen(
-                        onContinue = {
-                            // Just mark as verified in DataStore.
-                            // AuthState will become Authenticated and NavHost will redirect.
-                            viewModel.sessionDataStore.markAsVerified()
-                        },
-                        onAbort = {
-                            viewModel.logout()
-                        }
-                    )
-                }
+
+
 
                 // ── Restricted ──────────────────────────────────
                 composable(Screen.Restricted.route) {
@@ -399,32 +381,26 @@ fun KavachNavHost(
 
                 // ── ROLE DASHBOARDS ─────────────────────────────
 
-                // USER / NORMAL_USER → Field Dashboard
+                // Unified Dashboard (Role-based content visibility inside)
                 composable(Screen.Dashboard.route) {
-                    FieldDashboardScreen(
+                    val role = (authState as? AuthState.Authenticated)?.role ?: "USER"
+                    com.kavach.app.ui.screens.dashboard.UnifiedDashboardScreen(
+                        role = RoleRouter.normalize(role),
                         onNavigate = { route -> navController.navigate(route) }
                     )
                 }
 
-                // PILOT / PILOT_USER → Pilot Dashboard
-                composable(Screen.PilotDashboard.route) {
-                    PilotDashboardScreen(
-                        onNavigate = { route -> navController.navigate(route) }
-                    )
-                }
-
-                // SENANAYAK / COMMANDING_OFFICER → Command Center
-                composable(Screen.AdminDashboard.route) {
-                    CommandCenterScreen(
-                        onNavigate = { route -> navController.navigate(route) }
-                    )
-                }
 
                 // ── Personnel ───────────────────────────────────
                 composable(Screen.UserManagement.route) {
                     PersonnelListScreen(
                         onUserClick = { userId ->
                             navController.navigate(Screen.UserDetail.createRoute(userId))
+                        },
+                        onAddUser = {
+                            navController.navigate(Screen.UserRegistration.createRoute()) {
+                                launchSingleTop = true
+                            }
                         }
                     )
                 }
@@ -433,7 +409,29 @@ fun KavachNavHost(
                     route = Screen.UserDetail.route,
                     arguments = listOf(navArgument("userId") { type = NavType.StringType })
                 ) {
-                    OfficerDetailScreen(onBack = { navController.popBackStack() })
+                    OfficerDetailScreen(
+                        onBack = { navController.popBackStack() },
+                        onEditUser = { userId ->
+                            navController.navigate(Screen.UserRegistration.createRoute(userId)) {
+                                launchSingleTop = true
+                            }
+                        }
+                    )
+                }
+
+                composable(
+                    route = Screen.UserRegistration.route,
+                    arguments = listOf(
+                        navArgument("userId") { 
+                            type = NavType.StringType
+                            nullable = true
+                            defaultValue = null
+                        }
+                    )
+                ) {
+                    com.kavach.app.ui.screens.pilot.personnel.UserRegistrationScreen(
+                        onBack = { navController.popBackStack() }
+                    )
                 }
 
                 composable(Screen.PendingApprovals.route) {
