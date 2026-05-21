@@ -1,5 +1,4 @@
 package com.kavach.app.ui.screens.training
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -9,6 +8,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.kavach.app.ui.theme.NavyBlueDark
 import com.kavach.app.ui.theme.GoldenYellow
 import com.kavach.app.ui.theme.OnSurface
+import androidx.compose.ui.Alignment
+
 
 /**
  * Entry screen for a training session.
@@ -58,4 +59,3 @@ class TrainingScreenViewModel : androidx.lifecycle.ViewModel() {
     val trainingTitle: String? = "Sample Training"
 }
 
-import androidx.compose.ui.Alignment

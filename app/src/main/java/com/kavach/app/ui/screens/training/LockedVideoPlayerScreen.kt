@@ -1,5 +1,4 @@
 package com.kavach.app.ui.screens.training
-
 import android.content.Context
 import android.view.SurfaceView
 import androidx.compose.foundation.layout.Box
@@ -17,6 +16,9 @@ import com.kavach.app.ui.theme.GoldenYellow
 import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
+import androidx.media3.common.Player
+import androidx.compose.foundation.layout.padding
+
 
 /**
  * Locked video player composable. Seek, speed, PiP, external controls are disabled.
@@ -99,5 +101,3 @@ class LockedVideoPlayerViewModel : androidx.lifecycle.ViewModel() {
     }
 }
 
-import androidx.media3.common.Player
-import androidx.compose.foundation.layout.padding

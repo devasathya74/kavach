@@ -1,5 +1,4 @@
 package com.kavach.app.ui.screens.training
-
 import android.content.Context
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +18,10 @@ import com.kavach.app.ui.theme.NavyBlueDark
 import com.kavach.app.ui.theme.GoldenYellow
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.media3.common.Player
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.foundation.layout.padding
+
 
 /**
  * TrainingPlayer composable – locked video playback for compliance verification.
@@ -126,6 +129,3 @@ class TrainingPlayerViewModel : androidx.lifecycle.ViewModel() {
     }
 }
 
-import androidx.media3.common.Player
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.compose.foundation.layout.padding
