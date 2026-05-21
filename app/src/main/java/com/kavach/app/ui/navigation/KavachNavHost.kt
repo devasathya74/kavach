@@ -30,11 +30,15 @@ import com.kavach.app.ui.screens.broadcast.BroadcastInboxScreen
 import com.kavach.app.ui.screens.broadcast.CreateBroadcastScreen
 import com.kavach.app.ui.theme.NavyBlueDark
 import com.kavach.app.ui.screens.common.ComingSoonScreen
-import com.kavach.app.ui.screens.home.HomeScreen
-
-
-
-
+import com.kavach.app.ui.screens.dashboard.admin.AdminDashboardScreen
+import com.kavach.app.ui.screens.dashboard.pilot.PilotDashboardScreen
+import com.kavach.app.ui.screens.dashboard.user.UserDashboardScreen
+import com.kavach.app.ui.screens.user.orders.MyOrdersScreen
+import com.kavach.app.ui.screens.user.broadcasts.MyBroadcastsScreen
+import com.kavach.app.ui.screens.user.incident.UserIncidentReportScreen
+import com.kavach.app.ui.screens.user.sync.MySyncStatusScreen
+import com.kavach.app.ui.screens.dashboard.UnifiedDashboardScreen
+import com.kavach.app.ui.screens.dashboard.CommandCenterScreen
 import com.kavach.app.ui.screens.login.ConsentScreen
 import com.kavach.app.ui.screens.login.LoginScreen
 import com.kavach.app.ui.screens.security.SecurityEnrollmentScreen
@@ -43,11 +47,7 @@ import com.kavach.app.ui.screens.profile.ProfileScreen
 import com.kavach.app.ui.screens.training.QuizResultScreen
 import com.kavach.app.ui.screens.training.QuizScreen
 import com.kavach.app.ui.screens.training.TrainingListScreen
-import com.kavach.app.ui.screens.training.TrainingPlayer
-import com.kavach.app.ui.screens.units.UnitsScreen
-import com.kavach.app.ui.screens.alerts.AlertsScreen
-import com.kavach.app.ui.screens.broadcast.BroadcastScreen
-import com.kavach.app.ui.screens.profile.ProfileScreen
+import com.kavach.app.ui.screens.training.VideoPlayerScreen
 import com.kavach.app.ui.screens.pilot.personnel.PersonnelListScreen
 import com.kavach.app.ui.screens.pilot.personnel.OfficerDetailScreen
 import com.kavach.app.ui.screens.pilot.approvals.ApprovalListScreen
@@ -396,6 +396,16 @@ fun KavachNavHost(
                     val rank by sessionStore.rank.collectAsState(initial = "")
                     val unit by sessionStore.unit.collectAsState(initial = "")
                     val connStatus by viewModel.connectionStatus.collectAsState(initial = ConnectionStatus.AVAILABLE)
+                    
+                    AdminDashboardScreen(
+                        name = name,
+                        rank = rank,
+                        unit = unit,
+                        metrics = dashboardUiState.metrics,
+                        isOnline = connStatus == ConnectionStatus.AVAILABLE,
+                        wsConnected = wsState == com.kavach.app.data.remote.websocket.WebSocketManager.ConnectionState.CONNECTED,
+                        onNavigate = { route -> navController.navigate(route) }
+                    )
                 }
 
                 // 2. PILOT
@@ -403,13 +413,40 @@ fun KavachNavHost(
                     val sessionStore = viewModel.sessionDataStore
                     val name by sessionStore.name.collectAsState(initial = "Officer")
                     val connStatus by viewModel.connectionStatus.collectAsState(initial = ConnectionStatus.AVAILABLE)
+                    
+                    PilotDashboardScreen(
+                        name = name,
+                        metrics = dashboardUiState.metrics,
+                        isOnline = connStatus == ConnectionStatus.AVAILABLE,
+                        wsConnected = wsState == com.kavach.app.data.remote.websocket.WebSocketManager.ConnectionState.CONNECTED,
+                        onNavigate = { route -> navController.navigate(route) }
+                    )
                 }
 
-                // 3. USER
+                // 3. USER — Mission Execution Runtime (Isolated — NO PilotOpsAggregator)
                 composable(Screen.UserDashboard.route) {
-                    val sessionStore = viewModel.sessionDataStore
-                    val name by sessionStore.name.collectAsState(initial = "Officer")
-                    val connStatus by viewModel.connectionStatus.collectAsState(initial = ConnectionStatus.AVAILABLE)
+                    // UserDashboardScreen uses its own UserDashboardViewModel (hiltViewModel inside)
+                    // which NEVER injects PilotOpsAggregator.
+                    UserDashboardScreen(
+                        onNavigate = { route -> navController.navigate(route) }
+                    )
+                }
+
+                // ── USER RUNTIME ROUTES ──────────────────────────────
+                composable(Screen.MyOrders.route) {
+                    MyOrdersScreen(onBack = { navController.popBackStack() })
+                }
+
+                composable(Screen.MyBroadcasts.route) {
+                    MyBroadcastsScreen(onBack = { navController.popBackStack() })
+                }
+
+                composable(Screen.UserReportIncident.route) {
+                    UserIncidentReportScreen(onBack = { navController.popBackStack() })
+                }
+
+                composable(Screen.MySyncStatus.route) {
+                    MySyncStatusScreen(onBack = { navController.popBackStack() })
                 }
 
                 // ── LEGACY ALIAS REDIRECT ──────────────────────────
@@ -430,20 +467,16 @@ fun KavachNavHost(
                 }
 
                 // Unified Dashboard (Legacy - Kept for stabilization verification)
+                composable("legacy_unified_dashboard") {
+                    val role = (authState as? AuthState.Authenticated)?.role ?: "USER"
+                    UnifiedDashboardScreen(
+                        role = RoleRouter.normalize(role),
+                        onNavigate = { route -> navController.navigate(route) }
+                    )
+                }
+
 
                 // ── Personnel ───────────────────────────────────
-            UnitsScreen(onBack = { navController.popBackStack() })
-        }
-        composable(Screen.Alerts.route) {
-            AlertsScreen()
-        }
-        composable(Screen.Broadcast.route) {
-            BroadcastScreen()
-        }
-        
-        composable(Screen.Profile.route) {
-            ProfileScreen(onLogout = { /* no-op */ }, onBack = { navController.popBackStack() })
-        }
                 composable(Screen.UserManagement.route) {
                     PersonnelListScreen(
                         onUserClick = { userId ->
@@ -557,13 +590,16 @@ fun KavachNavHost(
                     )
                 }
 
-                composable(Screen.VideoPlayer.route) { back ->
-    val id = back.arguments?.getString("trainingId") ?: return@composable
-    LockedVideoPlayerScreen(
-        trainingId = id,
-        onVideoComplete = { navController.navigate(Screen.Quiz.createRoute(id)) }
-    )
-}
+                composable(
+                    route = Screen.VideoPlayer.route,
+                    arguments = listOf(navArgument("trainingId") { type = NavType.StringType })
+                ) { back ->
+                    val id = back.arguments?.getString("trainingId") ?: return@composable
+                    VideoPlayerScreen(
+                        trainingId      = id,
+                        onVideoComplete = { navController.navigate(Screen.Quiz.createRoute(id)) }
+                    )
+                }
 
                 composable(
                     route = Screen.Quiz.route,

@@ -28,6 +28,12 @@ sealed class Screen(val route: String) {
     object PilotDashboard : Screen("pilot/dashboard")
     object UserDashboard  : Screen("user/dashboard")
 
+    // ── USER RUNTIME (Namespaced — Mission Execution only) ────────
+    object MyOrders         : Screen("user/orders")
+    object MyBroadcasts     : Screen("user/broadcasts")
+    object UserReportIncident : Screen("user/report")
+    object MySyncStatus     : Screen("user/sync")
+
     object PilotDiagnostics : Screen("pilot_diagnostics")
     object Restricted       : Screen("restricted")
     object LiveBroadcast    : Screen("live_broadcast")
@@ -82,13 +88,7 @@ sealed class Screen(val route: String) {
     object CreateBroadcast  : Screen("route_create_broadcast")
     object FieldData        : Screen("route_field_data")
     object AuditCenter      : Screen("route_audit")
-// ----- New UI Routes -----
-object Home       : Screen("home")
-object Alerts     : Screen("alerts")
-object Broadcast  : Screen("broadcast")
-object Units      : Screen("units")
-object Profile    : Screen("profile")
-object TrainingScreen : Screen("training_screen")
+
     // ── ComingSoon placeholder routes ─────────────────────────────
     // Each module that is architecturally complete but not yet
     // backend-integrated gets its own route so navigation works.

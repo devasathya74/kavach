@@ -206,6 +206,35 @@ class WebSocketManager @Inject constructor(
         }
     }
 
+    fun isConnected(): Boolean = lastState == ConnectionState.CONNECTED
+
+    /**
+     * sendSosSignal — Priority SOS payload via WebSocket.
+     * Sends a structured JSON message to the server's WS handler.
+     */
+    fun sendSosSignal(
+        correlationId: String,
+        senderPno: String,
+        senderUnit: String,
+        message: String,
+        latitude: Double?,
+        longitude: Double?
+    ) {
+        val payload = buildString {
+            append("{")
+            append("\"type\":\"SOS\",")
+            append("\"correlation_id\":\"$correlationId\",")
+            append("\"sender_pno\":\"$senderPno\",")
+            append("\"sender_unit\":\"$senderUnit\",")
+            append("\"message\":\"$message\"")
+            if (latitude != null) append(",\"latitude\":$latitude")
+            if (longitude != null) append(",\"longitude\":$longitude")
+            append("}")
+        }
+        send(payload)
+        Log.i(TAG_WS, "[$currentSessionId] SOS_SIGNAL sent: correlationId=$correlationId")
+    }
+
     private fun updateState(state: ConnectionState, reason: String) {
         lastState = state
         emitEvent(WsEvent.StateChanged(state))

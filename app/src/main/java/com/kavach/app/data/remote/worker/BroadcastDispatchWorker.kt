@@ -55,17 +55,24 @@ class BroadcastDispatchWorker @AssistedInject constructor(
             // Move to dispatching state
             broadcastDao.updateDispatchStatus(dispatchId, "DISPATCHING")
 
-            // Parse selected recipients
+            // Resolve recipients from broadcast_draft_recipients table (process-death safe)
+            // Falls back to JSON array for backward compatibility
             val recipientIds = mutableListOf<String>()
-            try {
-                val array = JSONArray(draft.selectedUserIdsJson)
-                for (i in 0 until array.length()) {
-                    recipientIds.add(array.getString(i))
+            val dbRecipients = broadcastDao.getDraftRecipientIds(draft.draftId)
+            if (dbRecipients.isNotEmpty()) {
+                recipientIds.addAll(dbRecipients)
+            } else {
+                // Fallback: parse legacy JSON array from draft
+                try {
+                    val array = JSONArray(draft.selectedUserIdsJson)
+                    for (i in 0 until array.length()) {
+                        recipientIds.add(array.getString(i))
+                    }
+                } catch (e: Exception) {
+                    Timber.e(e, "Failed to parse recipient IDs from JSON")
+                    broadcastDao.updateDispatchStatus(dispatchId, "FAILED", "Invalid recipient JSON")
+                    return@withContext Result.failure()
                 }
-            } catch (e: Exception) {
-                Timber.e(e, "Failed to parse recipient IDs")
-                broadcastDao.updateDispatchStatus(dispatchId, "FAILED", "Invalid recipient JSON")
-                return@withContext Result.failure()
             }
 
             // Map attachments
@@ -86,7 +93,12 @@ class BroadcastDispatchWorker @AssistedInject constructor(
                 type = draft.type,
                 traceId = job.correlationId,
                 recipientIds = recipientIds,
-                attachments = attachmentsList
+                attachments = attachmentsList,
+                isEmergency = draft.isEmergency,
+                requireAck = draft.requireAck,
+                isHighPriority = draft.isHighPriority,
+                targetUnit = draft.targetUnit,
+                targetCompany = draft.targetCompany
             )
 
             val response = api.finalizeBroadcast(request)

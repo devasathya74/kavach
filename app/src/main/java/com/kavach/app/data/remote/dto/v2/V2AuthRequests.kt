@@ -63,13 +63,20 @@ data class UploadAttachmentResponse(
 
 @JsonClass(generateAdapter = true)
 data class FinalizeBroadcastRequest(
-    @Json(name = "title")         val title: String,
-    @Json(name = "content")       val content: String,
-    @Json(name = "priority")      val priority: String,
-    @Json(name = "type")          val type: String,
-    @Json(name = "trace_id")      val traceId: String,
-    @Json(name = "recipient_ids") val recipientIds: List<String>,
-    @Json(name = "attachments")   val attachments: List<Map<String, Any>>
+    @Json(name = "title")            val title: String,
+    @Json(name = "content")          val content: String,
+    @Json(name = "priority")         val priority: String,
+    @Json(name = "type")             val type: String,
+    @Json(name = "trace_id")         val traceId: String,
+    @Json(name = "recipient_ids")    val recipientIds: List<String>,
+    @Json(name = "attachments")      val attachments: List<Map<String, Any>>,
+    // Delivery mode flags
+    @Json(name = "is_emergency")     val isEmergency: Boolean = false,
+    @Json(name = "require_ack")      val requireAck: Boolean = false,
+    @Json(name = "is_high_priority") val isHighPriority: Boolean = false,
+    // Filter snapshot (for audit trail)
+    @Json(name = "target_unit")      val targetUnit: String? = null,
+    @Json(name = "target_company")   val targetCompany: String? = null
 )
 
 @JsonClass(generateAdapter = true)
@@ -87,7 +94,8 @@ data class CreateIncidentRequest(
     @Json(name = "severity") val severity: String,
     @Json(name = "type") val type: String? = null,
     @Json(name = "occurred_at") val occurredAt: String? = null,
-    @Json(name = "status") val status: String = "OPEN"
+    @Json(name = "status") val status: String = "OPEN",
+    @Json(name = "media_url") val mediaUrl: String? = null
 )
 
 
