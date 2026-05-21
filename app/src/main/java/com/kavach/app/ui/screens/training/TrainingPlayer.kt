@@ -63,16 +63,16 @@ fun TrainingPlayer(
     }
 
     // Prepare and play video
-    LaunchedEffect(trainingId) {
+    DisposableEffect(trainingId) {
         val videoUrl = viewModel.getVideoUrl(trainingId)
         val mediaItem = MediaItem.fromUri(videoUrl)
         player.setMediaItem(mediaItem)
         player.prepare()
         player.playWhenReady = true
         // Listener for completion
-        val listener = object : androidx.media3.exoplayer.Player.Listener {
+        val listener = object : androidx.media3.common.Player.Listener {
             override fun onPlaybackStateChanged(state: Int) {
-                if (state == androidx.media3.exoplayer.Player.STATE_ENDED) {
+                if (state == androidx.media3.common.Player.STATE_ENDED) {
                     onVideoComplete()
                 }
             }

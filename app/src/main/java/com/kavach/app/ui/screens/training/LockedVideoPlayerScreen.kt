@@ -29,7 +29,7 @@ import androidx.compose.foundation.layout.padding
 fun LockedVideoPlayerScreen(
     trainingId: String,
     onVideoComplete: () -> Unit,
-    viewModel: LockedVideoPlayerViewModel = androidx.lifecycle.viewmodel.compose.hiltViewModel()
+    viewModel: LockedVideoPlayerViewModel = androidx.hilt.navigation.compose.hiltViewModel()
 ) {
     val context = LocalContext.current
     val player = remember {
@@ -53,9 +53,9 @@ fun LockedVideoPlayerScreen(
         player.prepare()
         player.playWhenReady = true
         // Listener for completion
-        val listener = object : androidx.media3.exoplayer.Player.Listener {
+        val listener = object : androidx.media3.common.Player.Listener {
             override fun onPlaybackStateChanged(state: Int) {
-                if (state == androidx.media3.exoplayer.Player.STATE_ENDED) {
+                if (state == androidx.media3.common.Player.STATE_ENDED) {
                     onVideoComplete()
                 }
             }

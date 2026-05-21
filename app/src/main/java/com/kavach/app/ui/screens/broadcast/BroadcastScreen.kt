@@ -33,18 +33,18 @@ fun BroadcastScreen() {
                     Text(
                         text = broadcast.title,
                         fontWeight = FontWeight.SemiBold,
-                        fontSize = androidx.compose.ui.unit.sp(15)
+                        fontSize = 15.sp
                     )
                     Text(
                         text = "${broadcast.timestamp}",
-                        fontSize = androidx.compose.ui.unit.sp(12),
+                        fontSize = 12.sp,
                         color = androidx.compose.ui.graphics.Color.Gray
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = broadcast.content,
                         maxLines = 2,
-                        fontSize = androidx.compose.ui.unit.sp(14)
+                        fontSize = 14.sp
                     )
                 }
             }
