@@ -13,7 +13,7 @@ import retrofit2.http.POST
  */
 interface AuthRefreshApiService {
 
-    @POST("auth/refresh")
+    @POST("api/v1/auth/refresh/")
     suspend fun refreshToken(
         @Body body: RefreshTokenRequest
     ): Response<RefreshTokenResponse>

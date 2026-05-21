@@ -110,16 +110,21 @@ class TokenAuthenticator @Inject constructor(
                             .build()
 
                     } else {
-                        val errorReason = when (refreshResp.code()) {
+                        val code = refreshResp.code()
+                        val errorReason = when (code) {
                             401 -> "सत्र समाप्त (Refresh Token Expired)"
                             403 -> "सुरक्षा उल्लंघन: डिवाइस मेल नहीं खाता (Device Mismatch)"
-                            else -> "सर्वर त्रुटि: ${refreshResp.code()}"
+                            else -> "सर्वर त्रुटि: $code"
                         }
-                        Timber.e("Token refresh API failed: $errorReason. Terminating session.")
                         
-                        sessionStore.setSessionBreach(errorReason)
-                        sessionStore.clearSession()
-                        sessionStore.lockApp() 
+                        if (code == 401 || code == 403) {
+                            Timber.e("Token refresh API failed with critical auth failure: $errorReason. Terminating session.")
+                            sessionStore.setSessionBreach(errorReason)
+                            sessionStore.clearSession()
+                            sessionStore.lockApp()
+                        } else {
+                            Timber.w("Token refresh API failed with non-auth failure ($code): $errorReason. Continuing runtime with active local session.")
+                        }
                         
                         null
                     }
