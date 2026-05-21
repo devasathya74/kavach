@@ -17,3 +17,12 @@ data class NotificationAckEntity(
     val acknowledgedAt: Long = System.currentTimeMillis(),
     val isSynced: Boolean = false
 )
+
+@Entity(tableName = "personnel_mutation_queue")
+data class PersonnelActionEntity(
+    @PrimaryKey val officerId: String,
+    val actionType: String,             // DELETE, BLOCK, UNBLOCK
+    val createdAt: Long = System.currentTimeMillis(),
+    val retryCount: Int = 0,
+    val isProcessing: Boolean = false
+)

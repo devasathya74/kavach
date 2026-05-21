@@ -3,9 +3,7 @@ package com.kavach.app.data.remote.worker
 import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.*
-import com.kavach.app.data.local.BroadcastFileManager
 import com.kavach.app.data.local.dao.BroadcastDao
-import com.kavach.app.data.local.entity.BroadcastAttachmentEntity
 import com.kavach.app.data.remote.api.KavachApiV2
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -16,130 +14,94 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import timber.log.Timber
 import java.io.File
+import java.net.URI
 
-/**
- * UploadWorker — Uploads broadcast attachments from app-private storage to the backend.
- *
- * SAFETY RULES:
- * 1. Only reads files from app-private storage (absolute path — never content://)
- * 2. Computes SHA-256 checksum before upload for deduplication
- * 3. If same checksum already uploaded → reuse remote URL, skip network call
- * 4. On success → updates DB with remoteUrl + checksum, chains BroadcastDispatchWorker
- * 5. On failure → marks attachment as FAILED, returns Result.retry() for WorkManager backoff
- */
 @HiltWorker
 class UploadWorker @AssistedInject constructor(
     @Assisted private val context: Context,
     @Assisted workerParams: WorkerParameters,
     private val broadcastDao: BroadcastDao,
-    private val api: KavachApiV2,
-    private val fileManager: BroadcastFileManager
+    private val api: KavachApiV2
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
-        val dispatchId = inputData.getString(KEY_DISPATCH_ID)
-            ?: return@withContext Result.failure()
-
+        val dispatchId = inputData.getString(KEY_DISPATCH_ID) ?: return@withContext Result.failure()
+        
         try {
+            // Find the dispatch job
             val jobs = broadcastDao.getPendingDispatches()
             val currentJob = jobs.find { it.dispatchId == dispatchId }
-
+            
             if (currentJob == null) {
-                Timber.e("UploadWorker: Dispatch job $dispatchId not found")
+                Timber.e("Dispatch Job $dispatchId not found")
                 return@withContext Result.failure()
             }
 
+            // Get the draft to find local ID
             val draft = broadcastDao.getDraft(currentJob.draftId)
             if (draft == null) {
-                Timber.e("UploadWorker: Draft not found for job $dispatchId")
+                Timber.e("Draft not found for job $dispatchId")
                 return@withContext Result.failure()
             }
 
+            // Get attachments for this draft
             val attachments = broadcastDao.getAttachments(draft.draftId)
             var allSuccessful = true
 
             for (attachment in attachments) {
-                if (attachment.uploadStatus == "UPLOADED") {
-                    Timber.d("UploadWorker: Attachment ${attachment.localId} already uploaded, skipping")
-                    continue
-                }
+                if (attachment.uploadStatus == "UPLOADED") continue
 
-                val privatePath = attachment.uri // stored as absolute private path
-                val file = File(privatePath)
-
-                if (!file.exists()) {
-                    Timber.e("UploadWorker: Private file not found: $privatePath")
-                    broadcastDao.insertAttachment(attachment.copy(uploadStatus = "FAILED"))
-                    allSuccessful = false
-                    continue
-                }
-
-                // ── Checksum Deduplication ────────────────────────────────
-                val checksum = try {
-                    fileManager.computeChecksum(privatePath)
-                } catch (e: Exception) {
-                    Timber.e(e, "UploadWorker: Checksum failed for $privatePath")
-                    broadcastDao.insertAttachment(attachment.copy(uploadStatus = "FAILED"))
-                    allSuccessful = false
-                    continue
-                }
-
-                // Check if already uploaded with same hash — skip network call
-                val existing = broadcastDao.getAttachmentByChecksum(checksum)
-                if (existing?.uploadStatus == "UPLOADED" && existing.remoteUrl != null) {
-                    Timber.d("UploadWorker: Checksum match — reusing remote URL for ${attachment.localId}")
-                    broadcastDao.insertAttachment(
-                        attachment.copy(
-                            uploadStatus = "UPLOADED",
-                            remoteUrl = existing.remoteUrl,
-                            checksum = checksum
-                        )
-                    )
-                    continue
-                }
-                // ─────────────────────────────────────────────────────────
-
-                // Mark as UPLOADING
-                broadcastDao.insertAttachment(attachment.copy(uploadStatus = "UPLOADING", checksum = checksum))
+                // Update status to UPLOADING
+                val uploadingAtt = attachment.copy(uploadStatus = "UPLOADING")
+                broadcastDao.insertAttachment(uploadingAtt)
 
                 try {
+                    val file = File(URI(attachment.uri))
+                    if (!file.exists()) {
+                        throw Exception("File not found at ${attachment.uri}")
+                    }
+
                     val requestFile = file.asRequestBody(attachment.mimeType.toMediaTypeOrNull())
                     val body = MultipartBody.Part.createFormData("file", file.name, requestFile)
 
+                    // Call the upload API (which we added to BroadcastViewSet)
                     val response = api.uploadAttachment(body)
 
                     if (response.isSuccessful && response.body() != null) {
-                        val body = response.body()!!
-                        broadcastDao.insertAttachment(
-                            attachment.copy(
-                                uploadStatus = "UPLOADED",
-                                remoteUrl = body.remote_url,
-                                checksum = checksum
-                            )
+                        val bodyData = response.body()!!
+                        val remoteUrl = bodyData.remote_url
+                        val checksum = bodyData.checksum
+
+                        val uploadedAtt = uploadingAtt.copy(
+                            uploadStatus = "UPLOADED",
+                            remoteUrl = remoteUrl,
+                            checksum = checksum
                         )
-                        Timber.d("UploadWorker: Uploaded ${attachment.localId} → ${body.remote_url}")
+                        broadcastDao.insertAttachment(uploadedAtt)
                     } else {
-                        throw Exception("Upload API returned ${response.code()}")
+                        throw Exception("Upload failed with code: ${response.code()}")
                     }
+
                 } catch (e: Exception) {
-                    Timber.e(e, "UploadWorker: Upload failed for ${attachment.localId}")
-                    broadcastDao.insertAttachment(
-                        attachment.copy(uploadStatus = "FAILED", checksum = checksum)
-                    )
+                    Timber.e(e, "Failed to upload attachment ${attachment.localId}")
                     allSuccessful = false
+                    val failedAtt = uploadingAtt.copy(uploadStatus = "FAILED")
+                    broadcastDao.insertAttachment(failedAtt)
                 }
             }
 
-            return@withContext if (allSuccessful) {
+            if (allSuccessful) {
+                // If all attachments uploaded, we can move the dispatch job state to READY_FOR_DISPATCH
+                // and chain the Dispatch Worker
                 broadcastDao.updateDispatchStatus(dispatchId, "READY_FOR_DISPATCH")
                 BroadcastDispatchWorker.enqueue(context, dispatchId)
-                Result.success()
+                return@withContext Result.success()
             } else {
-                Result.retry()
+                return@withContext Result.retry()
             }
 
         } catch (e: Exception) {
-            Timber.e(e, "UploadWorker: Unexpected failure for dispatchId=$dispatchId")
+            Timber.e(e, "UploadWorker failed")
             return@withContext Result.retry()
         }
     }
@@ -155,7 +117,6 @@ class UploadWorker @AssistedInject constructor(
             val request = OneTimeWorkRequestBuilder<UploadWorker>()
                 .setConstraints(constraints)
                 .setInputData(workDataOf(KEY_DISPATCH_ID to dispatchId))
-                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 30_000L, java.util.concurrent.TimeUnit.MILLISECONDS)
                 .build()
 
             WorkManager.getInstance(context)

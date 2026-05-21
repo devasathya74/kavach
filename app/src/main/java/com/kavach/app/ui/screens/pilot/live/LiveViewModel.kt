@@ -93,6 +93,7 @@ class LiveViewModel @Inject constructor(
                             newOrder = OrderPopup(event.orderId, event.content)
                         )
                     }
+                    else -> {}
                 }
             }
         }

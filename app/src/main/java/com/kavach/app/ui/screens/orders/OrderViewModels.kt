@@ -24,7 +24,7 @@ class OrderListViewModel @Inject constructor(
     private val repository: OrderRepository
 ) : ViewModel() {
 
-    val uiState: StateFlow<OrderListUiState> = repository.getAllOrders()
+    val uiState: StateFlow<OrderListUiState> = repository.observeOrders()
         .map { OrderListUiState(orders = it) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), OrderListUiState(isLoading = true))
 
@@ -64,7 +64,7 @@ class OrderDetailViewModel @Inject constructor(
         val pno = sessionDataStore.pno.firstOrNull() ?: "UNKNOWN"
         _uiState.value = OrderDetailUiState(isLoading = true, viewerPno = pno)
         when (val result = repository.getOrderById(orderId)) {
-            is ApiResult.Success -> _uiState.value = OrderDetailUiState(
+            is ApiResult.Success<Order> -> _uiState.value = OrderDetailUiState(
                 order = result.data, isLoading = false,
                 acknowledged = result.data.isAcknowledged,
                 viewerPno = pno
@@ -77,7 +77,7 @@ class OrderDetailViewModel @Inject constructor(
     fun acknowledgeOrder(readDuration: Long) = viewModelScope.launch {
         _uiState.value = _uiState.value.copy(isAcknowledging = true)
         when (repository.acknowledgeOrder(orderId, readDuration)) {
-            is ApiResult.Success -> _uiState.value = _uiState.value.copy(
+            is ApiResult.Success<Unit> -> _uiState.value = _uiState.value.copy(
                 isAcknowledging = false, acknowledged = true
             )
             is ApiResult.Error   -> _uiState.value = _uiState.value.copy(

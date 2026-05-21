@@ -181,9 +181,9 @@ fun UnifiedDashboardScreen(
                         .padding(12.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    StatusIndicator("à¤•à¥à¤² à¤•à¤°à¥à¤®à¥€", uiState.incidentCount.toString(), GoldenYellow) // Using incidentCount as dummy for now
-                    StatusIndicator("à¤¸à¤•à¥à¤°à¤¿à¤¯", "12", SuccessGreen)
-                    StatusIndicator("à¤²à¤‚à¤¬à¤¿à¤¤", uiState.broadcastCount.toString(), DangerRed)
+                    StatusIndicator("à¤•à¥ à¤² à¤•à¤°à¥ à¤®à¥€", uiState.metrics.incidentCount.toString(), GoldenYellow) // Using incidentCount as dummy for now
+                    StatusIndicator("à¤¸à¤•à¥ à¤°à¤¿à¤¯", "12", SuccessGreen)
+                    StatusIndicator("à¤²à¤‚à¤¬à¤¿à¤¤", uiState.metrics.broadcastCount.toString(), DangerRed)
                 }
             }
 

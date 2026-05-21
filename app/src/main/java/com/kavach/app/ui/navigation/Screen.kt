@@ -18,10 +18,15 @@ sealed class Screen(val route: String) {
     //     fun createRoute(pno: String) = "otp_verify/$pno"
     // }
 
-    // ── Dashboards (role-separated) ──────────────────────────────
-    object Dashboard      : Screen("dashboard")        // USER / NORMAL_USER
-    object PilotDashboard : Screen("pilot_dashboard")  // PILOT / PILOT_USER
-    object AdminDashboard : Screen("admin_dashboard")  // SENANAYAK / COMMANDING_OFFICER
+    // ── LEGACY ROUTES (Stability Aliases) ──────────────────────
+    object Dashboard      : Screen("dashboard")        // Legacy Entry Point
+    object OldPilotDashboard : Screen("pilot_dashboard") // To be purged
+    object OldAdminDashboard : Screen("admin_dashboard") // To be purged
+
+    // ── ROLE DASHBOARDS (New Namespaces) ────────────────────────
+    object AdminDashboard : Screen("admin/dashboard")
+    object PilotDashboard : Screen("pilot/dashboard")
+    object UserDashboard  : Screen("user/dashboard")
 
     object PilotDiagnostics : Screen("pilot_diagnostics")
     object Restricted       : Screen("restricted")
@@ -49,7 +54,18 @@ sealed class Screen(val route: String) {
     object Profile             : Screen("profile")
     object DeviceChangeRequest : Screen("device_change_request")
 
-    // ── Pilot Dashboard Modules ───────────────────────────────────
+    // ── PILOT MODULES (Namespaced) ───────────────────────────────
+    object PilotPersonnel  : Screen("pilot/personnel")
+    object PilotIncidents  : Screen("pilot/incidents")
+    object PilotDevices    : Screen("pilot/devices")
+    object PilotApprovals  : Screen("pilot/approvals")
+    object PilotBroadcast  : Screen("pilot/broadcast")
+    object PilotTraining   : Screen("pilot/training")
+    object PilotOta        : Screen("pilot/ota")
+    object PilotAudit      : Screen("pilot/audit")
+    object PilotFieldData  : Screen("pilot/field_data")
+
+    // ── Legacy Operational Routes (Flat) ─────────────────────────
     object UserManagement  : Screen("route_users")
     object UserDetail      : Screen("route_users/{userId}") {
         fun createRoute(userId: String) = "route_users/$userId"
@@ -66,7 +82,13 @@ sealed class Screen(val route: String) {
     object CreateBroadcast  : Screen("route_create_broadcast")
     object FieldData        : Screen("route_field_data")
     object AuditCenter      : Screen("route_audit")
-
+// ----- New UI Routes -----
+object Home       : Screen("home")
+object Alerts     : Screen("alerts")
+object Broadcast  : Screen("broadcast")
+object Units      : Screen("units")
+object Profile    : Screen("profile")
+object TrainingScreen : Screen("training_screen")
     // ── ComingSoon placeholder routes ─────────────────────────────
     // Each module that is architecturally complete but not yet
     // backend-integrated gets its own route so navigation works.

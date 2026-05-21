@@ -12,6 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -127,9 +128,9 @@ fun CommandCenterScreen(
                         .padding(12.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    CmdStatusChip("PENDING", uiState.incidentCount.toString(), DangerRed)
-                    CmdStatusChip("INCIDENTS", uiState.incidentCount.toString(), Color(0xFFFB923C))
-                    CmdStatusChip("BROADCASTS", uiState.broadcastCount.toString(), GoldenYellow)
+                    CmdStatusChip("PENDING", uiState.metrics.incidentCount.toString(), DangerRed)
+                    CmdStatusChip("INCIDENTS", uiState.metrics.incidentCount.toString(), Color(0xFFFB923C))
+                    CmdStatusChip("BROADCASTS", uiState.metrics.broadcastCount.toString(), GoldenYellow)
                 }
             }
 
@@ -210,3 +211,99 @@ private fun CmdStatusChip(label: String, value: String, color: Color) {
             letterSpacing = 0.5.sp)
     }
 }
+
+@Composable
+private fun ConnStatusChip(isOnline: Boolean) {
+    Surface(
+        color = (if (isOnline) SuccessGreen else DangerRed).copy(alpha = 0.15f),
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier.padding(end = 8.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(6.dp)
+                    .clip(CircleShape)
+                    .background(if (isOnline) SuccessGreen else DangerRed)
+            )
+            Spacer(Modifier.width(6.dp))
+            Text(
+                text = if (isOnline) "ONLINE" else "OFFLINE",
+                style = MaterialTheme.typography.labelSmall,
+                color = if (isOnline) SuccessGreen else DangerRed,
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
+}
+
+@Composable
+private fun DashTile(
+    title: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    color: Color,
+    active: Boolean = true,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(110.dp)
+            .clickable(enabled = active, onClick = onClick),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Surface1)
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                if (active) color.copy(alpha = 0.05f) else Color.Transparent,
+                                Color.Transparent
+                            )
+                        )
+                    )
+            )
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .alpha(if (active) 1f else 0.5f),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = if (active) color else Color.Gray,
+                        modifier = Modifier.size(28.dp)
+                    )
+                    if (!active) {
+                        Text(
+                            text = "जल्द आ रहा है",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = GoldenYellow,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        lineHeight = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    color = if (active) Color.White else Color.Gray
+                )
+            }
+        }
+    }
+}
+

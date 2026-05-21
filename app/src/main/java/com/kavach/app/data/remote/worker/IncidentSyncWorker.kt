@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.*
 import com.kavach.app.data.local.db.KavachDatabase
-import com.kavach.app.data.local.entity.DraftSyncState
 import com.kavach.app.data.remote.api.KavachApiV2
 import com.kavach.app.data.repository.MediaRepository
 import com.kavach.app.utils.ApiResult
@@ -24,110 +23,81 @@ class IncidentSyncWorker @AssistedInject constructor(
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
-        Timber.d("IncidentSyncWorker: Starting sync")
-        val pendingDrafts = db.incidentDao().getPendingSyncDrafts()
+        Timber.d("IncidentSyncWorker: Starting sync loop")
+        val pendingIncidents = db.incidentDao().getIncidentsByStatus("PENDING_SYNC")
         
-        if (pendingDrafts.isEmpty()) {
-            Timber.d("IncidentSyncWorker: No pending drafts found")
+        if (pendingIncidents.isEmpty()) {
+            Timber.d("IncidentSyncWorker: No pending incidents")
             return Result.success()
         }
 
         var hasFailures = false
 
-        for (draft in pendingDrafts) {
+        for (incident in pendingIncidents) {
             try {
-                Timber.d("IncidentSyncWorker: Syncing draft ${draft.localId}")
+                // 1. Mark as Syncing
+                db.incidentDao().upsertIncident(incident.copy(syncStatus = "SYNCING"))
                 
-                // 1. Upload evidence items first
-                val evidence = db.incidentDao().getEvidenceForDraft(draft.localId)
-                val serverUrls = mutableMapOf<String, String>()
+                // 2. Upload attachments
+                val attachments = db.incidentDao().getAttachmentsForIncident(incident.localId)
+                var attachmentsSuccess = true
                 
-                var mediaUploadSuccess = true
-                for (item in evidence) {
-                    if (item.serverUrl != null) {
-                        serverUrls["primary_image"] = item.serverUrl
-                        continue
-                    }
-
-                    val file = File(item.filePath)
-                    if (!file.exists()) {
-                        Timber.e("IncidentSyncWorker: Evidence file missing at ${item.filePath}")
-                        continue
-                    }
-
-                    val uploadResult = mediaRepository.uploadEvidence(
-                        title = "Evidence for ${draft.title}",
-                        imageUri = Uri.fromFile(file)
+                for (attachment in attachments) {
+                    if (attachment.status == "COMPLETED") continue
+                    
+                    val uri = attachment.localUri?.let { Uri.parse(it) } ?: continue
+                    val result = mediaRepository.uploadEvidence(
+                        title = "Attachment for ${incident.title}",
+                        imageUri = uri
                     )
-
-                    if (uploadResult is ApiResult.Success) {
-                        val uploadedUrl = uploadResult.data.fileUrl
-                        if (uploadedUrl != null) {
-                            db.incidentDao().updateEvidence(item.copy(
-                                serverUrl = uploadedUrl,
-                                status = "COMPLETED"
-                            ))
-                            serverUrls["primary_image"] = uploadedUrl
-                        } else {
-                            mediaUploadSuccess = false
-                            break
-                        }
+                    
+                    if (result is ApiResult.Success) {
+                        db.incidentDao().updateAttachment(attachment.copy(
+                            status = "COMPLETED",
+                            remoteUrl = result.data.fileUrl,
+                            uploadProgress = 100
+                        ))
                     } else {
-                        Timber.e("IncidentSyncWorker: Media upload failed for ${draft.localId}")
-                        mediaUploadSuccess = false
+                        Timber.e("IncidentSyncWorker: Attachment upload failed for ${incident.localId}")
+                        attachmentsSuccess = false
                         break
                     }
                 }
 
-                if (!mediaUploadSuccess) {
+                if (!attachmentsSuccess) {
+                    db.incidentDao().upsertIncident(incident.copy(syncStatus = "PENDING_SYNC")) // Fallback to retry
                     hasFailures = true
                     continue
                 }
 
-                // 2. Create Incident on Server
+                // 3. Submit Incident
                 val request = com.kavach.app.data.remote.dto.v2.CreateIncidentRequest(
-                    title = draft.title,
-                    summary = draft.summary,
-                    severity = draft.severity,
-                    type = draft.type,
-                    occurredAt = java.time.Instant.ofEpochMilli(draft.occurredAt).toString()
+                    title = incident.title,
+                    summary = incident.summary,
+                    severity = incident.severity,
+                    type = incident.type,
+                    occurredAt = java.time.Instant.ofEpochMilli(incident.occurredAt).toString()
                 )
-                
+
                 val response = api.createIncident(request)
                 if (response.isSuccessful && response.body()?.status == "success") {
-                    db.incidentDao().updateSyncStatus(
-                        localId = draft.localId,
-                        state = DraftSyncState.SYNCED,
-                        serverId = response.body()?.data?.id
-                    )
-                    
-                    // Cleanup: Delete local evidence files after success
-                    for (item in evidence) {
-                        try {
-                            File(item.filePath).delete()
-                        } catch (e: Exception) {
-                            Timber.w("Failed to delete synced evidence file: ${item.filePath}")
-                        }
-                    }
-                    
-                    Timber.d("IncidentSyncWorker: Successfully synced ${draft.localId}")
+                    val serverId = response.body()?.data?.id ?: ""
+                    db.incidentDao().markAsSynced(incident.localId, serverId)
+                    Timber.d("IncidentSyncWorker: Successfully synced incident ${incident.localId} -> $serverId")
                 } else {
-                    val errorBody = response.errorBody()?.string()
-                    Timber.e("IncidentSyncWorker: Server rejected incident ${draft.localId}: ${response.body()?.message ?: errorBody}")
+                    Timber.e("IncidentSyncWorker: Server rejected incident ${incident.localId}")
+                    db.incidentDao().upsertIncident(incident.copy(syncStatus = "FAILED"))
                     hasFailures = true
                 }
 
             } catch (e: Exception) {
-                Timber.e(e, "IncidentSyncWorker: Unexpected error syncing ${draft.localId}")
+                Timber.e(e, "IncidentSyncWorker: Critical error during sync")
+                db.incidentDao().upsertIncident(incident.copy(syncStatus = "PENDING_SYNC"))
                 hasFailures = true
             }
         }
 
-        return if (hasFailures) {
-            Result.retry()
-        } else {
-            Result.success()
-        }
+        return if (hasFailures) Result.retry() else Result.success()
     }
 
     companion object {
@@ -146,7 +116,7 @@ class IncidentSyncWorker @AssistedInject constructor(
 
             WorkManager.getInstance(context).enqueueUniqueWork(
                 WORK_NAME,
-                ExistingWorkPolicy.APPEND_OR_REPLACE,
+                ExistingWorkPolicy.KEEP,
                 request
             )
         }

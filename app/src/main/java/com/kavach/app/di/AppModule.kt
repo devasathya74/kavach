@@ -3,12 +3,9 @@ package com.kavach.app.di
 import android.content.Context
 import androidx.room.Room
 import com.kavach.app.BuildConfig
-import com.kavach.app.data.local.BroadcastFileManager
 import com.kavach.app.data.local.SessionDataStore
 import com.kavach.app.data.local.dao.*
 import com.kavach.app.data.local.db.KavachDatabase
-import com.kavach.app.data.local.db.KavachDatabase.Companion.MIGRATION_14_16
-import com.kavach.app.data.local.db.KavachDatabase.Companion.MIGRATION_15_16
 import com.kavach.app.data.remote.api.AuthRefreshApiService
 import com.kavach.app.data.remote.api.KavachApiService
 import com.kavach.app.data.remote.api.KavachApiV2
@@ -336,9 +333,7 @@ object AppModule {
             context,
             KavachDatabase::class.java,
             "kavach.db"
-        )
-        .addMigrations(MIGRATION_14_16, MIGRATION_15_16)  // v14→16 (direct) + v15→16
-        .build()
+        ).build()
 
     @Provides fun provideTrainingDao(db: KavachDatabase): TrainingDao             = db.trainingDao()
     @Provides fun provideQuizDao(db: KavachDatabase): QuizDao                     = db.quizDao()

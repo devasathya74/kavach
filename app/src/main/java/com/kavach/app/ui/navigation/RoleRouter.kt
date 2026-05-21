@@ -36,8 +36,13 @@ object RoleRouter {
 
     /**
      * Resolve dashboard Screen route from canonical role.
+     * MUST return namespaced routes only (admin/dashboard, pilot/dashboard, user/dashboard).
      */
-    fun dashboardRoute(canonicalRole: String): String = Screen.Dashboard.route
+    fun dashboardRoute(canonicalRole: String): String = when (normalize(canonicalRole)) {
+        "ADMIN" -> Screen.AdminDashboard.route
+        "PILOT" -> Screen.PilotDashboard.route
+        else    -> Screen.UserDashboard.route
+    }
 
     /**
      * LOCAL TEST BYPASS — for pilot testing without a live backend.

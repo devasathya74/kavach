@@ -42,6 +42,44 @@ data class ResetPasswordRequest(
 )
 
 @JsonClass(generateAdapter = true)
+data class CreateBroadcastRequest(
+    @Json(name = "title")          val title: String,
+    @Json(name = "message")        val message: String,
+    @Json(name = "priority")       val priority: String = "INFO",
+    @Json(name = "type")           val type: String = "TEXT",
+    @Json(name = "recipient_unit") val recipientUnit: String? = null,
+    @Json(name = "data")           val data: String? = null
+)
+
+@JsonClass(generateAdapter = true)
+data class UploadAttachmentResponse(
+    @Json(name = "status")      val status: String,
+    @Json(name = "remote_url")  val remote_url: String,
+    @Json(name = "checksum")    val checksum: String,
+    @Json(name = "file_name")   val file_name: String,
+    @Json(name = "mime_type")   val mime_type: String,
+    @Json(name = "file_size")   val file_size: Long
+)
+
+@JsonClass(generateAdapter = true)
+data class FinalizeBroadcastRequest(
+    @Json(name = "title")         val title: String,
+    @Json(name = "content")       val content: String,
+    @Json(name = "priority")      val priority: String,
+    @Json(name = "type")          val type: String,
+    @Json(name = "trace_id")      val traceId: String,
+    @Json(name = "recipient_ids") val recipientIds: List<String>,
+    @Json(name = "attachments")   val attachments: List<Map<String, Any>>
+)
+
+@JsonClass(generateAdapter = true)
+data class FinalizeBroadcastResponse(
+    @Json(name = "status")        val status: String,
+    @Json(name = "message")       val message: String,
+    @Json(name = "broadcast_id")  val broadcastId: String
+)
+
+@JsonClass(generateAdapter = true)
 data class CreateIncidentRequest(
     @Json(name = "title") val title: String,
     @Json(name = "description") val description: String? = null,
@@ -52,14 +90,7 @@ data class CreateIncidentRequest(
     @Json(name = "status") val status: String = "OPEN"
 )
 
-@JsonClass(generateAdapter = true)
-data class CreateBroadcastRequest(
-    @Json(name = "title") val title: String,
-    @Json(name = "content") val content: String,
-    @Json(name = "priority") val priority: String,
-    @Json(name = "image_url") val imageUrl: String? = null,
-    @Json(name = "targeted_officers") val targetedOfficers: List<String>? = null
-)
+
 
 @JsonClass(generateAdapter = true)
 data class CreateDraftChangeRequest(

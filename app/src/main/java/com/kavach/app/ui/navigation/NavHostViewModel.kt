@@ -261,7 +261,7 @@ class NavHostViewModel @Inject constructor(
     fun logout() {
         viewModelScope.launch {
             sessionDataStore.clearSessionBreach()
-            sessionDataStore.clearSession()
+            authRepo.logout()
         }
     }
 

@@ -1,0 +1,661 @@
+INFO 2026-05-07 11:02:29,090 autoreload 20256 21752 Watching for file changes with StatReloader
+INFO 2026-05-07 11:02:29,100 autoreload 16016 7700 Watching for file changes with StatReloader
+INFO 2026-05-07 11:04:46,770 autoreload 16016 7700 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\models\governance.py changed, reloading.
+INFO 2026-05-07 11:04:46,772 autoreload 20256 21752 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\models\governance.py changed, reloading.
+INFO 2026-05-07 11:04:48,688 autoreload 5672 21764 Watching for file changes with StatReloader
+INFO 2026-05-07 11:04:48,697 autoreload 16148 2988 Watching for file changes with StatReloader
+INFO 2026-05-07 11:46:59,852 autoreload 16148 2988 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\models\broadcast.py changed, reloading.
+INFO 2026-05-07 11:46:59,935 autoreload 5672 21764 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\models\broadcast.py changed, reloading.
+INFO 2026-05-07 11:47:02,440 autoreload 8556 9244 Watching for file changes with StatReloader
+INFO 2026-05-07 11:47:02,442 autoreload 21740 6200 Watching for file changes with StatReloader
+INFO 2026-05-07 12:16:20,255 autoreload 17824 21768 Watching for file changes with StatReloader
+INFO 2026-05-07 12:16:30,557 autoreload 22684 22680 Watching for file changes with StatReloader
+INFO 2026-05-07 12:28:45,859 autoreload 22684 22680 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\models\__init__.py changed, reloading.
+INFO 2026-05-07 12:28:46,513 autoreload 8556 9244 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\models\__init__.py changed, reloading.
+INFO 2026-05-07 12:28:48,157 autoreload 15588 22992 Watching for file changes with StatReloader
+INFO 2026-05-07 12:28:48,415 autoreload 23072 7088 Watching for file changes with StatReloader
+INFO 2026-05-07 12:29:36,761 autoreload 20624 2360 Watching for file changes with StatReloader
+INFO 2026-05-07 12:31:27,494 autoreload 23072 7088 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\models\governance.py changed, reloading.
+INFO 2026-05-07 12:31:27,531 autoreload 20624 2360 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\models\governance.py changed, reloading.
+INFO 2026-05-07 12:31:29,627 autoreload 1208 5440 Watching for file changes with StatReloader
+INFO 2026-05-07 12:31:29,628 autoreload 23276 19504 Watching for file changes with StatReloader
+INFO 2026-05-07 12:32:00,478 autoreload 8136 4812 Watching for file changes with StatReloader
+INFO 2026-05-07 12:32:46,899 autoreload 23276 19504 C:\Users\CO_25\Desktop\kavach\backend\kavach_backend\settings.py changed, reloading.
+INFO 2026-05-07 12:32:46,904 autoreload 1208 5440 C:\Users\CO_25\Desktop\kavach\backend\kavach_backend\settings.py changed, reloading.
+INFO 2026-05-07 12:32:46,987 autoreload 8136 4812 C:\Users\CO_25\Desktop\kavach\backend\kavach_backend\settings.py changed, reloading.
+INFO 2026-05-07 12:32:49,198 autoreload 12500 22264 Watching for file changes with StatReloader
+INFO 2026-05-07 12:32:49,199 autoreload 4996 5640 Watching for file changes with StatReloader
+
+INFO 2026-05-07 12:33:04,703 autoreload 23432 23340 Watching for file changes with StatReloader
+INFO 2026-05-07 12:33:38,528 autoreload 18796 18828 Watching for file changes with StatReloader
+WARNING 2026-05-07 12:34:06,135 log 18796 23320 Not Found: /health/live/
+WARNING 2026-05-07 12:34:06,136 runserver 18796 11836 HTTP GET /health/live/ 404 [0.02, 127.0.0.1:58688]
+INFO 2026-05-07 12:34:22,559 runserver 18796 11836 HTTP GET /api/v1/health/live/ 200 [0.00, 127.0.0.1:58696]
+INFO 2026-05-07 12:34:43,124 runserver 18796 11836 HTTP GET /api/v1/health/live/ 200 [0.00, 127.0.0.1:58714]
+INFO 2026-05-07 12:39:26,036 autoreload 22704 17344 Watching for file changes with StatReloader
+WARNING 2026-05-07 12:39:38,295 log 18796 23320 Not Found: /
+WARNING 2026-05-07 12:39:38,296 runserver 18796 11836 HTTP GET / 404 [0.02, 127.0.0.1:51197]
+WARNING 2026-05-07 12:39:39,923 log 18796 23320 Not Found: /favicon.ico
+WARNING 2026-05-07 12:39:39,924 runserver 18796 11836 HTTP GET /favicon.ico 404 [0.01, 127.0.0.1:51197]
+INFO 2026-05-07 12:41:23,140 autoreload 5144 23404 Watching for file changes with StatReloader
+WARNING 2026-05-07 12:41:31,103 log 5144 22848 Not Found: /
+WARNING 2026-05-07 12:41:31,104 runserver 5144 22376 [33mHTTP GET / 404 [0.02, 127.0.0.1:51711][0m
+WARNING 2026-05-07 12:41:32,488 log 5144 22848 Not Found: /favicon.ico
+WARNING 2026-05-07 12:41:32,489 runserver 5144 22376 [33mHTTP GET /favicon.ico 404 [0.01, 127.0.0.1:51711][0m
+WARNING 2026-05-07 12:42:10,054 log 5144 22848 Not Found: /api/v1/
+WARNING 2026-05-07 12:42:10,055 runserver 5144 22376 [33mHTTP GET /api/v1/ 404 [0.02, 127.0.0.1:51711][0m
+WARNING 2026-05-07 12:42:22,140 log 5144 22848 Forbidden: /api/v2/
+WARNING 2026-05-07 12:42:22,141 runserver 5144 22376 [31;1mHTTP GET /api/v2/ 403 [0.00, 127.0.0.1:51711][0m
+WARNING 2026-05-07 12:44:13,444 log 5144 22848 Not Found: /api/v1/
+WARNING 2026-05-07 12:44:13,445 runserver 5144 22376 [33mHTTP GET /api/v1/ 404 [0.02, 127.0.0.1:58996][0m
+WARNING 2026-05-07 12:44:17,768 log 5144 22848 Not Found: /favicon.ico
+WARNING 2026-05-07 12:44:17,772 runserver 5144 22376 [33mHTTP GET /favicon.ico 404 [0.02, 127.0.0.1:58998][0m
+INFO 2026-05-07 14:18:50,275 autoreload 7684 10340 C:\Users\CO_25\Desktop\kavach\backend\kavach_backend\asgi.py changed, reloading.
+INFO 2026-05-07 14:18:50,550 autoreload 4996 5640 C:\Users\CO_25\Desktop\kavach\backend\kavach_backend\asgi.py changed, reloading.
+INFO 2026-05-07 14:18:50,707 autoreload 23432 23340 C:\Users\CO_25\Desktop\kavach\backend\kavach_backend\asgi.py changed, reloading.
+INFO 2026-05-07 14:28:56,844 autoreload 4200 25228 Watching for file changes with StatReloader
+INFO 2026-05-07 14:30:09,850 autoreload 4200 25228 C:\Users\CO_25\Desktop\kavach\backend\kavach_backend\asgi.py changed, reloading.
+INFO 2026-05-07 14:30:12,176 autoreload 16624 24892 Watching for file changes with StatReloader
+INFO 2026-05-07 14:30:50,218 autoreload 16624 24892 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\urls_v2.py changed, reloading.
+INFO 2026-05-07 14:30:52,322 autoreload 22616 4108 Watching for file changes with StatReloader
+INFO 2026-05-07 14:34:08,137 autoreload 19624 2244 Watching for file changes with StatReloader
+INFO 2026-05-07 15:02:35,622 autoreload 23064 17860 Watching for file changes with StatReloader
+INFO 2026-05-07 15:11:59,078 runserver 23064 23876 [mHTTP GET /api/v1/health/live/ 200 [0.01, 127.0.0.1:64386][0m
+INFO 2026-05-07 15:12:52,237 runserver 23064 23876 [mHTTP GET /api/v1/health/live/ 200 [0.01, 127.0.0.1:64386][0m
+INFO 2026-05-07 15:16:24,936 runserver 23064 23876 [mHTTP HEAD /api/v1/health/live/ 200 [0.00, 127.0.0.1:64266][0m
+INFO 2026-05-07 15:16:24,941 runserver 23064 23876 [mHTTP GET /api/v1/health/live/ 200 [0.00, 127.0.0.1:64266][0m
+WARNING 2026-05-07 15:16:34,519 log 23064 20616 Not Found: /api/v1/health/db/
+WARNING 2026-05-07 15:16:34,520 runserver 23064 23876 [33mHTTP HEAD /api/v1/health/db/ 404 [0.08, 127.0.0.1:64266][0m
+WARNING 2026-05-07 15:16:34,536 log 23064 20616 Not Found: /api/v1/health/db/
+WARNING 2026-05-07 15:16:34,537 runserver 23064 23876 [33mHTTP GET /api/v1/health/db/ 404 [0.02, 127.0.0.1:64266][0m
+INFO 2026-05-07 15:25:31,386 autoreload 17460 24088 Watching for file changes with StatReloader
+INFO 2026-05-07 15:29:54,329 runserver 17460 16776 [mHTTP GET /api/v1/health/live/ 200 [0.01, 127.0.0.1:65381][0m
+WARNING 2026-05-07 15:29:55,241 log 17460 24288 Not Found: /favicon.ico
+WARNING 2026-05-07 15:29:55,242 runserver 17460 16776 [33mHTTP GET /favicon.ico 404 [0.05, 127.0.0.1:65381][0m
+INFO 2026-05-07 15:35:22,012 runserver 17460 16776 [mHTTP GET /api/v1/health/live/ 200 [0.00, 127.0.0.1:56888][0m
+WARNING 2026-05-07 15:35:22,932 log 17460 24288 Not Found: /favicon.ico
+WARNING 2026-05-07 15:35:22,933 runserver 17460 16776 [33mHTTP GET /favicon.ico 404 [0.01, 127.0.0.1:56888][0m
+INFO 2026-05-07 15:35:59,282 runserver 17460 16776 [mHTTP GET /api/v1/health/live/ 200 [0.00, 127.0.0.1:56888][0m
+WARNING 2026-05-07 15:40:40,335 log 17460 24288 Not Found: /api/v1/login/
+WARNING 2026-05-07 15:40:40,337 runserver 17460 16776 [33mHTTP POST /api/v1/login/ 404 [0.06, 127.0.0.1:60257][0m
+WARNING 2026-05-07 15:41:25,584 log 17460 24288 Not Found: /api/v1/login/
+WARNING 2026-05-07 15:41:25,585 runserver 17460 16776 [33mHTTP POST /api/v1/login/ 404 [0.05, 127.0.0.1:60257][0m
+WARNING 2026-05-07 15:43:17,580 log 17460 24288 Not Found: /api/v1/login/
+WARNING 2026-05-07 15:43:17,581 runserver 17460 16776 [33mHTTP POST /api/v1/login/ 404 [0.01, 127.0.0.1:56517][0m
+WARNING 2026-05-07 15:43:20,132 log 17460 24288 Not Found: /api/v1/login/
+WARNING 2026-05-07 15:43:20,133 runserver 17460 16776 [33mHTTP POST /api/v1/login/ 404 [0.01, 127.0.0.1:56517][0m
+WARNING 2026-05-07 15:44:55,579 log 17460 24288 Not Found: /api/v1/login/
+WARNING 2026-05-07 15:44:55,580 runserver 17460 16776 [33mHTTP POST /api/v1/login/ 404 [0.01, 127.0.0.1:55789][0m
+WARNING 2026-05-07 15:52:17,708 log 17460 24288 Unauthorized: /api/v1/login/
+WARNING 2026-05-07 15:52:17,709 runserver 17460 16776 [31;1mHTTP POST /api/v1/login/ 401 [0.98, 127.0.0.1:57947][0m
+WARNING 2026-05-07 15:52:44,855 log 17460 24288 Unauthorized: /api/v1/login/
+WARNING 2026-05-07 15:52:44,856 runserver 17460 16776 [31;1mHTTP POST /api/v1/login/ 401 [0.90, 127.0.0.1:57947][0m
+WARNING 2026-05-07 15:53:10,812 log 17460 24288 Unauthorized: /api/v1/login/
+WARNING 2026-05-07 15:53:10,813 runserver 17460 16776 [31;1mHTTP POST /api/v1/login/ 401 [0.95, 127.0.0.1:57947][0m
+INFO 2026-05-07 15:55:44,776 runserver 17460 16776 [mHTTP POST /api/v1/login/ 200 [1.11, 127.0.0.1:57977][0m
+INFO 2026-05-07 15:55:45,628 runserver 17460 16776 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.01, 127.0.0.1:57977][0m
+INFO 2026-05-07 15:56:36,080 runserver 17460 16776 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.01, 127.0.0.1:57977][0m
+WARNING 2026-05-07 15:58:09,818 log 17460 24288 Unauthorized: /api/v1/login/
+WARNING 2026-05-07 15:58:09,819 runserver 17460 16776 [31;1mHTTP POST /api/v1/login/ 401 [1.04, 127.0.0.1:59021][0m
+INFO 2026-05-07 15:58:17,531 runserver 17460 16776 [mHTTP POST /api/v1/login/ 200 [1.07, 127.0.0.1:59021][0m
+INFO 2026-05-07 15:58:18,106 runserver 17460 16776 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.01, 127.0.0.1:59021][0m
+INFO 2026-05-07 15:58:49,338 runserver 17460 16776 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.01, 127.0.0.1:59021][0m
+INFO 2026-05-07 15:59:08,529 runserver 17460 16776 [mHTTP POST /api/v1/login/ 200 [1.07, 127.0.0.1:59021][0m
+INFO 2026-05-07 15:59:09,408 runserver 17460 16776 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:59021][0m
+INFO 2026-05-08 11:35:28,776 runserver 17460 16776 [mHTTP POST /api/v1/login/ 200 [0.55, 127.0.0.1:50791][0m
+INFO 2026-05-08 11:35:29,614 runserver 17460 16776 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.01, 127.0.0.1:50791][0m
+INFO 2026-05-08 11:35:37,974 runserver 17460 16776 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:50791][0m
+INFO 2026-05-08 11:47:24,795 autoreload 17460 24088 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\views.py changed, reloading.
+INFO 2026-05-08 11:47:26,403 autoreload 18152 23292 Watching for file changes with StatReloader
+INFO 2026-05-08 11:47:30,374 autoreload 18152 23292 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\models\auth.py changed, reloading.
+INFO 2026-05-08 11:47:31,495 autoreload 17292 3328 Watching for file changes with StatReloader
+INFO 2026-05-08 11:49:48,320 autoreload 17292 3328 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\views_v2.py changed, reloading.
+INFO 2026-05-08 11:49:49,813 autoreload 4236 27052 Watching for file changes with StatReloader
+INFO 2026-05-08 11:51:00,092 autoreload 4236 27052 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\models\auth.py changed, reloading.
+INFO 2026-05-08 11:51:01,360 autoreload 20184 20424 Watching for file changes with StatReloader
+INFO 2026-05-08 11:51:07,440 autoreload 20184 20424 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\serializers.py changed, reloading.
+INFO 2026-05-08 11:51:08,592 autoreload 22180 20012 Watching for file changes with StatReloader
+INFO 2026-05-08 11:51:45,638 autoreload 22180 20012 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\models\auth.py changed, reloading.
+INFO 2026-05-08 11:51:46,752 autoreload 26368 22280 Watching for file changes with StatReloader
+INFO 2026-05-08 11:51:51,717 autoreload 26368 22280 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\serializers.py changed, reloading.
+INFO 2026-05-08 11:51:52,863 autoreload 22916 27232 Watching for file changes with StatReloader
+INFO 2026-05-08 11:53:00,111 runserver 22916 15036 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.02, 127.0.0.1:59451][0m
+INFO 2026-05-08 11:55:24,653 runserver 22916 15036 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:59489][0m
+INFO 2026-05-08 11:56:09,147 runserver 22916 15036 [mHTTP POST /api/v1/login/ 200 [0.53, 127.0.0.1:59489][0m
+INFO 2026-05-08 11:56:10,388 runserver 22916 15036 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.01, 127.0.0.1:59489][0m
+ERROR 2026-05-08 11:56:10,557 log 22916 25944 Internal Server Error: /api/v1/profile/
+ERROR 2026-05-08 11:56:10,557 runserver 22916 15036 [35;1mHTTP GET /api/v1/profile/ 500 [0.01, 127.0.0.1:59489][0m
+ERROR 2026-05-08 11:56:11,392 log 22916 25944 Internal Server Error: /api/v1/profile/
+ERROR 2026-05-08 11:56:11,393 runserver 22916 15036 [35;1mHTTP GET /api/v1/profile/ 500 [0.01, 127.0.0.1:59489][0m
+WARNING 2026-05-08 11:56:12,555 log 22916 25944 Forbidden: /api/v2/auth/users/
+WARNING 2026-05-08 11:56:12,555 runserver 22916 15036 [31;1mHTTP GET /api/v2/auth/users/?page=1 403 [0.00, 127.0.0.1:59489][0m
+WARNING 2026-05-08 11:56:14,045 log 22916 25944 Forbidden: /api/v2/auth/users/
+WARNING 2026-05-08 11:56:14,045 runserver 22916 15036 [31;1mHTTP GET /api/v2/auth/users/?page=1 403 [0.00, 127.0.0.1:59489][0m
+WARNING 2026-05-08 11:56:14,574 log 22916 25944 Forbidden: /api/v2/auth/users/
+WARNING 2026-05-08 11:56:14,575 runserver 22916 15036 [31;1mHTTP GET /api/v2/auth/users/?page=1 403 [0.00, 127.0.0.1:59489][0m
+WARNING 2026-05-08 11:56:15,170 log 22916 25944 Forbidden: /api/v2/auth/users/
+WARNING 2026-05-08 11:56:15,171 runserver 22916 15036 [31;1mHTTP GET /api/v2/auth/users/?page=1 403 [0.00, 127.0.0.1:59489][0m
+WARNING 2026-05-08 11:56:29,166 log 22916 25944 Forbidden: /api/v2/auth/users/
+WARNING 2026-05-08 11:56:29,167 runserver 22916 15036 [31;1mHTTP GET /api/v2/auth/users/?page=1&unit__code=HQ-01 403 [0.00, 127.0.0.1:59489][0m
+WARNING 2026-05-08 11:56:34,766 log 22916 25944 Forbidden: /api/v2/auth/users/
+WARNING 2026-05-08 11:56:34,767 runserver 22916 15036 [31;1mHTTP GET /api/v2/auth/users/?page=1&unit__code=BAT-05 403 [0.00, 127.0.0.1:59489][0m
+WARNING 2026-05-08 11:56:36,221 log 22916 25944 Forbidden: /api/v2/auth/users/
+WARNING 2026-05-08 11:56:36,221 runserver 22916 15036 [31;1mHTTP GET /api/v2/auth/users/?page=1&unit__code=BAT-05&profile__company__code=A 403 [0.00, 127.0.0.1:59489][0m
+WARNING 2026-05-08 11:56:36,951 log 22916 25944 Forbidden: /api/v2/auth/users/
+WARNING 2026-05-08 11:56:36,952 runserver 22916 15036 [31;1mHTTP GET /api/v2/auth/users/?page=1&unit__code=BAT-05&profile__company__code=C 403 [0.00, 127.0.0.1:59489][0m
+ERROR 2026-05-08 11:57:08,935 log 22916 25944 Internal Server Error: /api/v1/profile/
+ERROR 2026-05-08 11:57:08,936 runserver 22916 15036 [35;1mHTTP GET /api/v1/profile/ 500 [0.01, 127.0.0.1:59489][0m
+INFO 2026-05-08 12:02:13,246 autoreload 22916 27232 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\permissions.py changed, reloading.
+INFO 2026-05-08 12:02:14,478 autoreload 21200 6732 Watching for file changes with StatReloader
+INFO 2026-05-08 12:02:26,732 autoreload 21200 6732 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\models\auth.py changed, reloading.
+INFO 2026-05-08 12:02:27,828 autoreload 13204 400 Watching for file changes with StatReloader
+INFO 2026-05-08 12:02:51,485 autoreload 13204 400 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\views_v2.py changed, reloading.
+INFO 2026-05-08 12:02:52,578 autoreload 12764 28488 Watching for file changes with StatReloader
+INFO 2026-05-08 12:03:40,073 autoreload 12764 28488 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\views_v2.py changed, reloading.
+INFO 2026-05-08 12:03:41,180 autoreload 15828 20372 Watching for file changes with StatReloader
+ERROR 2026-05-08 12:04:07,690 log 15828 27548 Internal Server Error: /api/v1/profile/
+ERROR 2026-05-08 12:04:07,691 runserver 15828 27964 [35;1mHTTP GET /api/v1/profile/ 500 [0.03, 127.0.0.1:52527][0m
+INFO 2026-05-08 12:05:15,093 runserver 15828 27964 [mHTTP POST /api/v1/login/ 200 [0.53, 127.0.0.1:52571][0m
+INFO 2026-05-08 12:05:15,938 runserver 15828 27964 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:52571][0m
+ERROR 2026-05-08 12:05:16,369 log 15828 27548 Internal Server Error: /api/v1/profile/
+ERROR 2026-05-08 12:05:16,369 runserver 15828 27964 [35;1mHTTP GET /api/v1/profile/ 500 [0.01, 127.0.0.1:52571][0m
+ERROR 2026-05-08 12:05:17,507 log 15828 27548 Internal Server Error: /api/v1/profile/
+ERROR 2026-05-08 12:05:17,508 runserver 15828 27964 [35;1mHTTP GET /api/v1/profile/ 500 [0.01, 127.0.0.1:52571][0m
+WARNING 2026-05-08 12:05:23,429 log 15828 27548 Forbidden: /api/v2/auth/users/
+WARNING 2026-05-08 12:05:23,430 runserver 15828 27964 [31;1mHTTP GET /api/v2/auth/users/?page=1 403 [0.00, 127.0.0.1:52571][0m
+INFO 2026-05-08 12:06:59,847 autoreload 15828 20372 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\views.py changed, reloading.
+INFO 2026-05-08 12:07:01,049 autoreload 14896 21040 Watching for file changes with StatReloader
+ERROR 2026-05-08 12:08:11,457 log 14896 21740 Internal Server Error: /api/v1/profile/
+ERROR 2026-05-08 12:08:11,458 runserver 14896 25292 [35;1mHTTP GET /api/v1/profile/ 500 [0.02, 127.0.0.1:52619][0m
+INFO 2026-05-08 12:08:46,741 runserver 14896 25292 [mHTTP POST /api/v1/login/ 200 [0.48, 127.0.0.1:52619][0m
+INFO 2026-05-08 12:08:47,622 runserver 14896 25292 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:52619][0m
+ERROR 2026-05-08 12:08:47,788 log 14896 21740 Internal Server Error: /api/v1/profile/
+ERROR 2026-05-08 12:08:47,788 runserver 14896 25292 [35;1mHTTP GET /api/v1/profile/ 500 [0.01, 127.0.0.1:52619][0m
+ERROR 2026-05-08 12:08:49,139 log 14896 21740 Internal Server Error: /api/v1/profile/
+ERROR 2026-05-08 12:08:49,139 runserver 14896 25292 [35;1mHTTP GET /api/v1/profile/ 500 [0.01, 127.0.0.1:52619][0m
+WARNING 2026-05-08 12:08:56,247 log 14896 21740 Forbidden: /api/v2/auth/users/
+WARNING 2026-05-08 12:08:56,247 runserver 14896 25292 [31;1mHTTP GET /api/v2/auth/users/?page=1 403 [0.00, 127.0.0.1:52619][0m
+INFO 2026-05-08 12:09:53,787 autoreload 14896 21040 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\views_v2.py changed, reloading.
+INFO 2026-05-08 12:09:54,973 autoreload 2340 8340 Watching for file changes with StatReloader
+INFO 2026-05-08 12:11:01,702 runserver 2340 21804 [mHTTP POST /api/v1/login/ 200 [0.50, 127.0.0.1:52668][0m
+INFO 2026-05-08 12:11:02,567 runserver 2340 21804 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:52668][0m
+ERROR 2026-05-08 12:11:02,790 log 2340 10904 Internal Server Error: /api/v1/profile/
+ERROR 2026-05-08 12:11:02,791 runserver 2340 21804 [35;1mHTTP GET /api/v1/profile/ 500 [0.01, 127.0.0.1:52668][0m
+ERROR 2026-05-08 12:11:03,932 log 2340 10904 Internal Server Error: /api/v1/profile/
+ERROR 2026-05-08 12:11:03,933 runserver 2340 21804 [35;1mHTTP GET /api/v1/profile/ 500 [0.01, 127.0.0.1:52668][0m
+WARNING 2026-05-08 12:11:06,456 log 2340 10904 Forbidden: /api/v2/auth/users/
+WARNING 2026-05-08 12:11:06,457 runserver 2340 21804 [31;1mHTTP GET /api/v2/auth/users/?page=1 403 [0.00, 127.0.0.1:52668][0m
+INFO 2026-05-08 12:11:17,890 runserver 2340 21804 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:52668][0m
+ERROR 2026-05-08 12:11:18,037 log 2340 10904 Internal Server Error: /api/v1/profile/
+ERROR 2026-05-08 12:11:18,037 runserver 2340 21804 [35;1mHTTP GET /api/v1/profile/ 500 [0.01, 127.0.0.1:52668][0m
+WARNING 2026-05-08 12:11:36,593 log 2340 10904 Not Found: /
+WARNING 2026-05-08 12:11:36,594 runserver 2340 21804 [33mHTTP HEAD / 404 [0.01, 127.0.0.1:52676][0m
+INFO 2026-05-08 12:11:36,644 runserver 2340 21804 [mHTTP POST /api/v1/login/ 200 [0.49, 127.0.0.1:52668][0m
+INFO 2026-05-08 12:12:00,001 runserver 2340 21804 [mHTTP POST /api/v1/login/ 200 [0.49, 127.0.0.1:52668][0m
+INFO 2026-05-08 12:12:00,742 runserver 2340 21804 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:52668][0m
+ERROR 2026-05-08 12:12:00,939 log 2340 10904 Internal Server Error: /api/v1/profile/
+ERROR 2026-05-08 12:12:00,940 runserver 2340 21804 [35;1mHTTP GET /api/v1/profile/ 500 [0.01, 127.0.0.1:52668][0m
+ERROR 2026-05-08 12:12:02,190 log 2340 10904 Internal Server Error: /api/v1/profile/
+ERROR 2026-05-08 12:12:02,191 runserver 2340 21804 [35;1mHTTP GET /api/v1/profile/ 500 [0.01, 127.0.0.1:52668][0m
+WARNING 2026-05-08 12:12:08,371 log 2340 10904 Forbidden: /api/v2/auth/users/
+WARNING 2026-05-08 12:12:08,372 runserver 2340 21804 [31;1mHTTP GET /api/v2/auth/users/?page=1 403 [0.00, 127.0.0.1:52668][0m
+WARNING 2026-05-08 12:12:10,395 log 2340 10904 Forbidden: /api/v2/auth/users/
+WARNING 2026-05-08 12:12:10,396 runserver 2340 21804 [31;1mHTTP GET /api/v2/auth/users/?page=1 403 [0.00, 127.0.0.1:52668][0m
+WARNING 2026-05-08 12:12:10,940 log 2340 10904 Forbidden: /api/v2/auth/users/
+WARNING 2026-05-08 12:12:10,941 runserver 2340 21804 [31;1mHTTP GET /api/v2/auth/users/?page=1 403 [0.00, 127.0.0.1:52668][0m
+INFO 2026-05-08 12:13:10,527 autoreload 2340 8340 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\views.py changed, reloading.
+INFO 2026-05-08 12:13:11,738 autoreload 26712 22292 Watching for file changes with StatReloader
+INFO 2026-05-08 12:13:41,623 autoreload 26712 22292 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\views_v2.py changed, reloading.
+INFO 2026-05-08 12:13:42,817 autoreload 24352 23536 Watching for file changes with StatReloader
+INFO 2026-05-08 12:13:47,771 autoreload 24352 23536 C:\Users\CO_25\Desktop\kavach\backend\kavach_backend\api_middleware.py changed, reloading.
+INFO 2026-05-08 12:13:48,957 autoreload 19080 12380 Watching for file changes with StatReloader
+INFO 2026-05-08 12:14:29,744 runserver 19080 10840 [mHTTP GET /api/v1/profile/ 200 [0.02, 127.0.0.1:54039][0m
+INFO 2026-05-08 12:14:32,078 runserver 19080 10840 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.03, 127.0.0.1:54039][0m
+INFO 2026-05-08 12:14:38,419 runserver 19080 10840 [mHTTP GET /api/v2/auth/users/27b2969f-440d-411b-9b7c-4004d93b0b6c/ 200 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:14:54,512 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:14:54,512 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:14:55,825 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:14:55,825 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:14:56,318 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:14:56,319 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:14:56,813 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:14:56,814 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:14:57,329 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:14:57,329 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:14:57,835 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:14:57,835 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:14:58,359 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:14:58,360 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:14:58,912 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:14:58,912 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:14:59,380 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:14:59,380 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:14:59,849 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:14:59,850 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:00,288 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:00,289 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:00,805 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:00,806 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:01,319 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:01,319 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:01,829 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:01,829 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:02,328 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:02,329 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:02,857 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:02,858 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:03,358 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:03,359 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:03,779 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:03,780 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:04,303 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:04,304 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:04,829 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:04,830 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:05,313 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:05,313 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:05,840 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:05,841 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:06,362 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:06,363 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:06,877 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:06,878 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:07,362 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:07,363 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:07,877 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:07,878 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:08,418 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:08,419 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:08,939 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:08,939 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:09,439 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:09,439 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:09,920 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:09,921 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:10,352 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:10,352 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:10,946 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:10,946 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:11,434 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:11,434 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:11,954 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:11,955 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:12,394 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:12,395 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:12,898 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:12,899 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:13,442 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:13,442 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:13,922 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:13,922 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:14,417 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:14,417 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:14,971 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:14,971 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:15,482 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:15,483 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:15,980 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:15,981 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:16,451 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:16,451 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:16,921 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:16,922 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:17,425 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:17,426 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:17,928 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:17,929 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:18,460 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:18,460 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:18,940 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:18,941 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:19,666 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:19,667 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:20,196 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:20,197 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:20,690 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:20,690 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:21,124 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:21,124 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:21,605 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:21,605 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:22,119 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:22,120 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:22,634 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:22,635 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:23,146 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:23,146 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:23,660 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:23,660 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:24,183 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:24,183 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:24,641 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:24,641 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:25,078 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:25,078 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:25,596 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:25,596 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:26,125 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:26,125 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:26,624 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:26,624 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:27,140 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:27,141 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:27,628 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:27,629 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:28,053 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:28,053 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:28,472 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:28,473 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:28,893 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:28,893 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:29,295 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:29,296 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:29,696 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:29,697 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:30,945 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:30,945 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:31,333 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:31,333 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:31,733 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:31,733 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:32,146 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:32,146 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:32,543 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:32,544 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:32,949 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:32,950 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:33,376 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:33,376 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:33,799 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:33,800 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:34,207 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:34,207 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:34,636 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:34,636 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:35,036 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:35,036 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:35,436 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:35,436 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:35,836 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:35,836 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:36,311 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:36,312 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:15:36,820 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:15:36,821 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+INFO 2026-05-08 12:15:41,267 runserver 19080 10840 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:54039][0m
+INFO 2026-05-08 12:15:41,520 runserver 19080 10840 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:54039][0m
+INFO 2026-05-08 12:15:54,092 runserver 19080 10840 [mHTTP POST /api/v1/login/ 200 [0.50, 127.0.0.1:54039][0m
+INFO 2026-05-08 12:16:21,419 runserver 19080 10840 [mHTTP POST /api/v1/login/ 200 [0.48, 127.0.0.1:54039][0m
+INFO 2026-05-08 12:16:22,276 runserver 19080 10840 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:54039][0m
+INFO 2026-05-08 12:16:22,465 runserver 19080 10840 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:54039][0m
+INFO 2026-05-08 12:16:23,685 runserver 19080 10840 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:54039][0m
+INFO 2026-05-08 12:16:29,354 runserver 19080 10840 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.02, 127.0.0.1:54039][0m
+INFO 2026-05-08 12:16:34,123 runserver 19080 10840 [mHTTP GET /api/v2/auth/users/999b3611-a48b-4c5a-9197-0f2228b960f1/ 200 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:16:42,901 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:16:42,902 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:16:43,418 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:16:43,419 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:16:43,921 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:16:43,922 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:16:44,356 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:16:44,357 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:16:45,479 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:16:45,480 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:16:45,978 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:16:45,979 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:16:46,470 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:16:46,470 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:16:47,095 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:16:47,096 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:16:47,734 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:16:47,734 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:16:48,287 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:16:48,287 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:16:48,770 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:16:48,771 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:16:49,337 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:16:49,338 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:16:49,819 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:16:49,820 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:16:50,282 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:16:50,283 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:16:50,731 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:16:50,732 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+WARNING 2026-05-08 12:16:51,384 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:16:51,384 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:54039][0m
+INFO 2026-05-08 12:18:14,676 runserver 19080 10840 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:62878][0m
+INFO 2026-05-08 12:19:31,869 runserver 19080 10840 [mHTTP POST /api/v1/login/ 200 [0.61, 127.0.0.1:62913][0m
+INFO 2026-05-08 12:19:32,747 runserver 19080 10840 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:62913][0m
+INFO 2026-05-08 12:19:32,949 runserver 19080 10840 [mHTTP GET /api/v1/profile/ 200 [0.02, 127.0.0.1:62913][0m
+INFO 2026-05-08 12:19:33,919 runserver 19080 10840 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:62913][0m
+INFO 2026-05-08 12:19:36,305 runserver 19080 10840 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.02, 127.0.0.1:62913][0m
+INFO 2026-05-08 12:19:43,500 runserver 19080 10840 [mHTTP GET /api/v2/auth/users/ecc47d1b-ac49-41a1-acd7-fef8fc0b4d81/ 200 [0.02, 127.0.0.1:62913][0m
+WARNING 2026-05-08 12:19:49,976 log 19080 28416 Not Found: /api/v2/auth/users/
+WARNING 2026-05-08 12:19:49,976 runserver 19080 10840 [33mHTTP GET /api/v2/auth/users/?page=2 404 [0.01, 127.0.0.1:62913][0m
+INFO 2026-05-08 12:19:53,564 runserver 19080 10840 [mHTTP GET /api/v2/auth/users/999b3611-a48b-4c5a-9197-0f2228b960f1/ 200 [0.02, 127.0.0.1:62913][0m
+INFO 2026-05-08 12:19:58,133 runserver 19080 10840 [mHTTP GET /api/v2/auth/users/27b2969f-440d-411b-9b7c-4004d93b0b6c/ 200 [0.01, 127.0.0.1:62913][0m
+INFO 2026-05-08 12:20:08,876 runserver 19080 10840 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.02, 127.0.0.1:62913][0m
+INFO 2026-05-08 12:22:53,462 autoreload 19080 12380 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\serializers.py changed, reloading.
+INFO 2026-05-08 12:22:54,730 autoreload 26784 15776 Watching for file changes with StatReloader
+INFO 2026-05-08 12:25:13,868 autoreload 26784 15776 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\views_v2.py changed, reloading.
+INFO 2026-05-08 12:25:15,019 autoreload 19032 18636 Watching for file changes with StatReloader
+INFO 2026-05-08 12:27:36,792 autoreload 19032 18636 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\serializers.py changed, reloading.
+INFO 2026-05-08 12:27:38,207 autoreload 4508 2940 Watching for file changes with StatReloader
+INFO 2026-05-08 12:27:45,516 autoreload 4508 2940 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\views_v2.py changed, reloading.
+INFO 2026-05-08 12:27:46,896 autoreload 25184 16976 Watching for file changes with StatReloader
+INFO 2026-05-08 12:29:46,730 autoreload 25184 16976 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\models\auth.py changed, reloading.
+INFO 2026-05-08 12:29:47,942 autoreload 8136 18872 Watching for file changes with StatReloader
+INFO 2026-05-08 12:30:03,278 autoreload 8136 18872 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\views_v2.py changed, reloading.
+INFO 2026-05-08 12:30:04,541 autoreload 8364 12728 Watching for file changes with StatReloader
+INFO 2026-05-08 12:30:10,492 autoreload 8364 12728 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\serializers.py changed, reloading.
+INFO 2026-05-08 12:30:11,575 autoreload 28424 8004 Watching for file changes with StatReloader
+INFO 2026-05-08 12:30:36,178 autoreload 28424 8004 C:\Users\CO_25\Desktop\kavach\backend\kavach_backend\settings.py changed, reloading.
+INFO 2026-05-08 12:30:37,274 autoreload 26984 27480 Watching for file changes with StatReloader
+WARNING 2026-05-08 12:36:06,754 log 26984 25864 Unauthorized: /api/v1/profile/
+WARNING 2026-05-08 12:36:06,754 log 26984 28060 Unauthorized: /api/v2/auth/users/
+WARNING 2026-05-08 12:36:06,755 runserver 26984 7488 [31;1mHTTP GET /api/v1/profile/ 401 [0.03, 127.0.0.1:57708][0m
+WARNING 2026-05-08 12:36:06,755 runserver 26984 7488 [31;1mHTTP GET /api/v2/auth/users/?page=1 401 [0.03, 127.0.0.1:57709][0m
+WARNING 2026-05-08 12:36:08,095 log 26984 28060 Not Found: /auth/refresh
+WARNING 2026-05-08 12:36:08,096 runserver 26984 7488 [33mHTTP POST /auth/refresh 404 [0.01, 127.0.0.1:57709][0m
+ERROR 2026-05-08 14:35:47,718 log 26984 25864 Internal Server Error: /api/v1/login/
+ERROR 2026-05-08 14:35:47,728 runserver 26984 7488 [35;1mHTTP POST /api/v1/login/ 500 [0.45, 127.0.0.1:60662][0m
+INFO 2026-05-08 14:36:21,993 autoreload 9900 12372 Watching for file changes with StatReloader
+ERROR 2026-05-08 14:36:30,644 log 9900 26268 Internal Server Error: /api/v1/login/
+ERROR 2026-05-08 14:36:30,647 runserver 9900 28356 [35;1mHTTP POST /api/v1/login/ 500 [0.03, 127.0.0.1:60600][0m
+INFO 2026-05-08 14:37:47,123 autoreload 5144 14752 Watching for file changes with StatReloader
+ERROR 2026-05-08 14:38:00,802 log 5144 28508 Internal Server Error: /api/v1/login/
+ERROR 2026-05-08 14:38:00,803 runserver 5144 5816 [35;1mHTTP POST /api/v1/login/ 500 [0.06, 127.0.0.1:50660][0m
+INFO 2026-05-08 14:39:17,546 autoreload 5144 14752 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\views.py changed, reloading.
+INFO 2026-05-08 14:39:18,724 autoreload 26496 7092 Watching for file changes with StatReloader
+INFO 2026-05-08 14:42:29,890 runserver 26496 27440 [mHTTP POST /api/v1/login/ 200 [0.50, 127.0.0.1:51771][0m
+INFO 2026-05-08 14:42:31,164 runserver 26496 27440 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:51771][0m
+INFO 2026-05-08 14:42:31,333 runserver 26496 27440 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:51771][0m
+INFO 2026-05-08 14:42:32,211 runserver 26496 27440 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:51771][0m
+INFO 2026-05-08 14:43:02,417 runserver 26496 27440 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:51771][0m
+INFO 2026-05-08 14:43:03,020 runserver 26496 27440 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:51771][0m
+INFO 2026-05-08 14:43:07,042 runserver 26496 27440 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:51771][0m
+INFO 2026-05-08 14:43:18,011 runserver 26496 27440 [mHTTP POST /api/v1/login/ 200 [0.49, 127.0.0.1:51771][0m
+INFO 2026-05-08 14:44:07,801 runserver 26496 27440 [mHTTP POST /api/v1/login/ 200 [0.49, 127.0.0.1:51771][0m
+INFO 2026-05-08 14:44:08,607 runserver 26496 27440 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:51771][0m
+INFO 2026-05-08 14:44:08,816 runserver 26496 27440 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:51771][0m
+INFO 2026-05-08 14:44:09,733 runserver 26496 27440 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:51771][0m
+INFO 2026-05-08 15:11:14,339 runserver 26496 27440 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.49, 127.0.0.1:54030][0m
+WARNING 2026-05-08 15:11:15,166 log 26496 15624 Unauthorized: /api/v1/profile/
+WARNING 2026-05-08 15:11:15,611 runserver 26496 27440 [31;1mHTTP GET /api/v1/profile/ 401 [1.63, 127.0.0.1:54029][0m
+WARNING 2026-05-08 15:11:17,499 log 26496 15624 Not Found: /auth/refresh
+WARNING 2026-05-08 15:11:17,500 runserver 26496 27440 [33mHTTP POST /auth/refresh 404 [0.19, 127.0.0.1:54029][0m
+INFO 2026-05-08 15:11:35,624 runserver 26496 27440 [mHTTP POST /api/v1/login/ 200 [4.16, 127.0.0.1:54029][0m
+INFO 2026-05-08 15:11:36,326 runserver 26496 27440 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.03, 127.0.0.1:54029][0m
+INFO 2026-05-08 15:11:36,448 runserver 26496 27440 [mHTTP GET /api/v1/profile/ 200 [0.02, 127.0.0.1:54029][0m
+INFO 2026-05-08 15:11:37,682 runserver 26496 27440 [mHTTP GET /api/v1/profile/ 200 [0.02, 127.0.0.1:54029][0m
+INFO 2026-05-08 15:11:47,422 runserver 26496 27440 [mHTTP GET /api/v1/orders/ 200 [0.16, 127.0.0.1:54029][0m
+INFO 2026-05-08 15:11:57,380 runserver 26496 27440 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.08, 127.0.0.1:54029][0m
+INFO 2026-05-08 15:11:57,811 runserver 26496 27440 [mHTTP GET /api/v1/profile/ 200 [0.08, 127.0.0.1:54029][0m
+INFO 2026-05-08 15:14:02,465 runserver 26496 27440 [mHTTP GET /api/v1/profile/ 200 [0.39, 127.0.0.1:54141][0m
+WARNING 2026-05-08 15:14:32,470 log 26496 15624 Unauthorized: /api/v1/login/
+WARNING 2026-05-08 15:14:32,682 runserver 26496 27440 [31;1mHTTP POST /api/v1/login/ 401 [3.21, 127.0.0.1:54158][0m
+INFO 2026-05-08 15:14:49,101 runserver 26496 27440 [mHTTP POST /api/v1/login/ 200 [2.68, 127.0.0.1:54158][0m
+INFO 2026-05-08 15:14:50,662 runserver 26496 27440 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.54, 127.0.0.1:54158][0m
+INFO 2026-05-08 15:14:51,801 runserver 26496 27440 [mHTTP GET /api/v1/profile/ 200 [1.14, 127.0.0.1:54158][0m
+INFO 2026-05-08 15:14:51,815 runserver 26496 27440 [mHTTP GET /api/v1/profile/ 200 [0.56, 127.0.0.1:54163][0m
+INFO 2026-05-08 15:14:52,644 runserver 26496 27440 [mHTTP GET /api/v1/orders/ 200 [0.05, 127.0.0.1:54158][0m
+WARNING 2026-05-08 15:14:53,066 log 26496 15624 Forbidden: /api/v2/auth/v2/incidents/
+WARNING 2026-05-08 15:14:53,067 runserver 26496 27440 [31;1mHTTP GET /api/v2/auth/v2/incidents/?page=1 403 [0.32, 127.0.0.1:54158][0m
+WARNING 2026-05-08 15:14:54,488 log 26496 15624 Forbidden: /api/v2/auth/v2/broadcasts/
+WARNING 2026-05-08 15:14:54,489 runserver 26496 27440 [31;1mHTTP GET /api/v2/auth/v2/broadcasts/ 403 [0.30, 127.0.0.1:54158][0m
+INFO 2026-05-08 15:15:14,451 runserver 26496 27440 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.07, 127.0.0.1:54158][0m
+INFO 2026-05-08 15:15:14,929 runserver 26496 27440 [mHTTP GET /api/v1/profile/ 200 [0.35, 127.0.0.1:54158][0m
+INFO 2026-05-08 15:15:36,386 runserver 26496 27440 [mHTTP GET /api/v1/profile/ 200 [0.23, 127.0.0.1:54158][0m
+INFO 2026-05-08 15:18:29,046 autoreload 22928 25864 Watching for file changes with StatReloader
+INFO 2026-05-08 15:20:03,813 autoreload 22928 25864 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\views_v2.py changed, reloading.
+INFO 2026-05-08 15:20:14,907 autoreload 22632 23744 Watching for file changes with StatReloader
+INFO 2026-05-08 15:20:36,162 autoreload 22632 23744 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\views_v2.py changed, reloading.
+INFO 2026-05-08 15:20:44,376 autoreload 14788 22472 Watching for file changes with StatReloader
+INFO 2026-05-08 15:21:13,544 runserver 14788 26936 [mHTTP POST /api/v1/login/ 200 [4.92, 127.0.0.1:53740][0m
+INFO 2026-05-08 15:21:14,040 runserver 14788 26936 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.01, 127.0.0.1:53740][0m
+INFO 2026-05-08 15:21:14,341 runserver 14788 26936 [mHTTP GET /api/v1/profile/ 200 [0.13, 127.0.0.1:53740][0m
+INFO 2026-05-08 15:21:15,594 runserver 14788 26936 [mHTTP GET /api/v1/profile/ 200 [0.27, 127.0.0.1:53740][0m
+INFO 2026-05-08 15:21:19,365 autoreload 14788 22472 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\views_v2.py changed, reloading.
+INFO 2026-05-08 15:21:29,144 autoreload 26004 27516 Watching for file changes with StatReloader
+INFO 2026-05-08 15:22:08,280 autoreload 26004 27516 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\views.py changed, reloading.
+INFO 2026-05-08 15:22:14,437 autoreload 18020 5864 Watching for file changes with StatReloader
+INFO 2026-05-08 15:22:34,959 autoreload 18020 5864 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\views.py changed, reloading.
+INFO 2026-05-08 15:22:48,644 autoreload 28404 22076 Watching for file changes with StatReloader
+INFO 2026-05-08 15:52:33,390 autoreload 7612 4112 Watching for file changes with StatReloader
+INFO 2026-05-08 15:52:51,402 runserver 7612 10332 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.01, 127.0.0.1:61273][0m
+WARNING 2026-05-08 15:52:51,454 log 7612 8464 Unauthorized: /api/v1/profile/
+WARNING 2026-05-08 15:52:51,455 runserver 7612 10332 [31;1mHTTP GET /api/v1/profile/ 401 [0.06, 127.0.0.1:61275][0m
+WARNING 2026-05-08 15:52:52,921 log 7612 8464 Not Found: /auth/refresh
+WARNING 2026-05-08 15:52:52,922 runserver 7612 10332 [33mHTTP POST /auth/refresh 404 [0.01, 127.0.0.1:61275][0m
+WARNING 2026-05-08 15:53:17,075 log 7612 8464 Unauthorized: /api/v1/login/
+WARNING 2026-05-08 15:53:17,076 runserver 7612 10332 [31;1mHTTP POST /api/v1/login/ 401 [0.88, 127.0.0.1:61275][0m
+INFO 2026-05-08 16:48:10,855 autoreload 7612 4112 C:\Users\CO_25\Desktop\kavach\backend\apps\auth_app\views.py changed, reloading.
+INFO 2026-05-08 16:48:15,849 autoreload 8260 20872 Watching for file changes with StatReloader
+INFO 2026-05-09 09:35:53,796 autoreload 3892 3912 Watching for file changes with StatReloader
+INFO 2026-05-09 09:37:46,411 runserver 3892 9872 HTTP GET /api/v1/health/live/ 200 [0.02, 127.0.0.1:64934]
+WARNING 2026-05-09 09:37:47,394 log 3892 7568 Not Found: /favicon.ico
+WARNING 2026-05-09 09:37:47,396 runserver 3892 9872 HTTP GET /favicon.ico 404 [0.03, 127.0.0.1:64934]
+INFO 2026-05-09 09:38:23,535 runserver 3892 9872 HTTP GET /api/v1/health/live/ 200 [0.01, 127.0.0.1:64934]
+WARNING 2026-05-09 09:39:07,315 log 3892 7568 Bad Request: /api/v1/login/
+WARNING 2026-05-09 09:39:07,316 runserver 3892 9872 HTTP POST /api/v1/login/ 400 [0.02, 127.0.0.1:64934]
+WARNING 2026-05-09 09:39:23,783 log 3892 7568 Bad Request: /api/v1/login/
+WARNING 2026-05-09 09:39:23,784 runserver 3892 9872 HTTP POST /api/v1/login/ 400 [0.01, 127.0.0.1:64934]
+WARNING 2026-05-09 09:39:48,806 log 3892 7568 Unauthorized: /api/v1/login/
+WARNING 2026-05-09 09:39:48,807 runserver 3892 9872 HTTP POST /api/v1/login/ 401 [1.32, 127.0.0.1:64934]
+INFO 2026-05-09 09:44:06,311 runserver 3892 9872 HTTP POST /api/v1/login/ 200 [1.31, 127.0.0.1:57569]
+INFO 2026-05-09 09:44:27,206 runserver 3892 9872 HTTP GET /api/v1/profile/ 200 [0.02, 127.0.0.1:57569]
+INFO 2026-05-09 12:22:14,678 autoreload 19860 1828 Watching for file changes with StatReloader
+INFO 2026-05-09 12:22:37,603 runserver 3892 9872 HTTP HEAD /api/v1/health/live/ 200 [0.08, 127.0.0.1:51692]
+INFO 2026-05-09 12:22:39,446 runserver 3892 9872 HTTP GET /api/v1/health/live/ 200 [0.01, 127.0.0.1:51692]
+INFO 2026-05-09 12:23:14,955 autoreload 13304 18192 Watching for file changes with StatReloader
+INFO 2026-05-09 12:29:54,628 runserver 3892 9872 HTTP POST /api/v1/login/ 200 [0.89, 127.0.0.1:64834]
+INFO 2026-05-09 12:30:07,763 runserver 3892 9872 HTTP POST /api/v1/login/ 200 [0.73, 127.0.0.1:64834]
+INFO 2026-05-09 12:30:15,917 runserver 3892 9872 HTTP POST /api/v1/login/ 200 [0.69, 127.0.0.1:64834]
+INFO 2026-05-09 12:30:22,718 runserver 3892 9872 HTTP POST /api/v1/login/ 200 [0.70, 127.0.0.1:64834]
+INFO 2026-05-09 12:30:25,040 runserver 3892 9872 HTTP POST /api/v1/login/ 200 [0.85, 127.0.0.1:64834]
+WARNING 2026-05-09 12:30:27,247 log 3892 7568 Too Many Requests: /api/v1/login/
+WARNING 2026-05-09 12:30:27,250 runserver 3892 9872 HTTP POST /api/v1/login/ 429 [0.02, 127.0.0.1:64834]
+WARNING 2026-05-09 12:30:28,953 log 3892 7568 Too Many Requests: /api/v1/login/
+WARNING 2026-05-09 12:30:28,954 runserver 3892 9872 HTTP POST /api/v1/login/ 429 [0.00, 127.0.0.1:64834]
+WARNING 2026-05-09 12:30:29,993 log 3892 7568 Too Many Requests: /api/v1/login/
+WARNING 2026-05-09 12:30:29,994 runserver 3892 9872 HTTP POST /api/v1/login/ 429 [0.00, 127.0.0.1:64834]
+WARNING 2026-05-09 12:30:30,951 log 3892 7568 Too Many Requests: /api/v1/login/
+WARNING 2026-05-09 12:30:30,952 runserver 3892 9872 HTTP POST /api/v1/login/ 429 [0.01, 127.0.0.1:64834]
+WARNING 2026-05-09 12:30:31,801 log 3892 7568 Too Many Requests: /api/v1/login/
+WARNING 2026-05-09 12:30:31,801 runserver 3892 9872 HTTP POST /api/v1/login/ 429 [0.00, 127.0.0.1:64834]
+WARNING 2026-05-09 12:30:32,658 log 3892 7568 Too Many Requests: /api/v1/login/
+WARNING 2026-05-09 12:30:32,658 runserver 3892 9872 HTTP POST /api/v1/login/ 429 [0.00, 127.0.0.1:64834]
+INFO 2026-05-09 12:30:55,484 runserver 3892 9872 HTTP POST /api/v1/login/ 200 [0.89, 127.0.0.1:64834]
+WARNING 2026-05-09 12:31:00,102 log 3892 7568 Too Many Requests: /api/v1/login/
+WARNING 2026-05-09 12:31:00,103 runserver 3892 9872 HTTP POST /api/v1/login/ 429 [0.01, 127.0.0.1:64834]
+WARNING 2026-05-09 12:31:03,020 log 3892 7568 Too Many Requests: /api/v1/login/
+WARNING 2026-05-09 12:31:03,021 runserver 3892 9872 HTTP POST /api/v1/login/ 429 [0.00, 127.0.0.1:64834]
+INFO 2026-05-09 12:31:24,111 runserver 3892 9872 HTTP POST /api/v1/login/ 200 [0.70, 127.0.0.1:64834]
+INFO 2026-05-09 12:31:41,912 runserver 3892 9872 HTTP POST /api/v1/login/ 200 [0.79, 127.0.0.1:64834]
+INFO 2026-05-09 12:31:49,441 runserver 3892 9872 HTTP POST /api/v1/login/ 200 [0.69, 127.0.0.1:64834]
+INFO 2026-05-09 12:32:24,675 runserver 3892 9872 HTTP POST /api/v1/login/ 200 [0.78, 127.0.0.1:64834]
+INFO 2026-05-09 12:32:28,407 runserver 3892 9872 HTTP POST /api/v1/login/ 200 [1.29, 127.0.0.1:64834]
+INFO 2026-05-09 12:32:34,535 runserver 3892 9872 HTTP POST /api/v1/login/ 200 [0.70, 127.0.0.1:64834]
+WARNING 2026-05-09 12:32:36,619 log 3892 7568 Too Many Requests: /api/v1/login/
+WARNING 2026-05-09 12:32:36,620 runserver 3892 9872 HTTP POST /api/v1/login/ 429 [0.01, 127.0.0.1:64834]
+INFO 2026-05-09 12:32:44,521 runserver 3892 9872 HTTP POST /api/v1/login/ 200 [0.66, 127.0.0.1:64834]
+WARNING 2026-05-09 12:32:46,825 log 3892 7568 Too Many Requests: /api/v1/login/
+WARNING 2026-05-09 12:32:46,825 runserver 3892 9872 HTTP POST /api/v1/login/ 429 [0.00, 127.0.0.1:64834]
+WARNING 2026-05-09 12:32:47,367 log 3892 7568 Too Many Requests: /api/v1/login/
+WARNING 2026-05-09 12:32:47,368 runserver 3892 9872 HTTP POST /api/v1/login/ 429 [0.01, 127.0.0.1:64834]
+INFO 2026-05-09 12:33:02,514 runserver 3892 9872 HTTP POST /api/v1/login/ 200 [0.74, 127.0.0.1:64834]
+WARNING 2026-05-09 12:33:08,557 log 3892 7568 Too Many Requests: /api/v1/login/
+WARNING 2026-05-09 12:33:08,558 runserver 3892 9872 HTTP POST /api/v1/login/ 429 [0.00, 127.0.0.1:64834]
+WARNING 2026-05-09 12:33:18,105 log 3892 7568 Too Many Requests: /api/v1/login/
+WARNING 2026-05-09 12:33:18,105 runserver 3892 9872 HTTP POST /api/v1/login/ 429 [0.00, 127.0.0.1:64834]
+WARNING 2026-05-09 12:33:22,955 log 3892 7568 Too Many Requests: /api/v1/login/
+WARNING 2026-05-09 12:33:22,956 runserver 3892 9872 HTTP POST /api/v1/login/ 429 [0.00, 127.0.0.1:64834]
+INFO 2026-05-09 12:33:38,097 runserver 3892 9872 HTTP POST /api/v1/login/ 200 [0.74, 127.0.0.1:64834]
+INFO 2026-05-09 12:34:12,735 runserver 3892 9872 HTTP POST /api/v1/login/ 200 [0.70, 127.0.0.1:64834]
+INFO 2026-05-09 12:34:49,430 runserver 3892 9872 HTTP POST /api/v1/login/ 200 [0.83, 127.0.0.1:64834]
+INFO 2026-05-09 12:34:52,988 runserver 3892 9872 HTTP POST /api/v1/login/ 200 [0.95, 127.0.0.1:64834]
+INFO 2026-05-09 12:35:00,251 runserver 3892 9872 HTTP POST /api/v1/login/ 200 [0.79, 127.0.0.1:64834]
+INFO 2026-05-09 12:35:17,178 runserver 3892 9872 HTTP POST /api/v1/login/ 200 [1.08, 127.0.0.1:64834]
+INFO 2026-05-09 12:35:31,477 runserver 3892 9872 HTTP POST /api/v1/login/ 200 [0.96, 127.0.0.1:64834]
+INFO 2026-05-09 12:36:04,845 runserver 3892 9872 HTTP POST /api/v1/login/ 200 [0.98, 127.0.0.1:64834]
+INFO 2026-05-09 12:59:58,534 runserver 3892 9872 HTTP POST /api/v1/login/ 200 [0.74, 127.0.0.1:49707]
+INFO 2026-05-09 13:38:39,577 runserver 3892 9872 HTTP GET /api/v1/health/live/ 200 [0.01, 127.0.0.1:54821]
+WARNING 2026-05-09 13:38:41,519 log 3892 7568 Not Found: /favicon.ico
+WARNING 2026-05-09 13:38:41,521 runserver 3892 9872 HTTP GET /favicon.ico 404 [0.07, 127.0.0.1:54821]
+INFO 2026-05-09 13:39:10,609 runserver 3892 9872 HTTP GET /api/v1/health/live/ 200 [0.01, 127.0.0.1:61026]
+INFO 2026-05-09 13:57:18,664 runserver 3892 9872 HTTP POST /api/v1/login/ 200 [0.53, 127.0.0.1:51314]
+INFO 2026-05-09 13:57:19,960 runserver 3892 9872 HTTP GET /api/v1/app-version/?version_code=1 200 [0.01, 127.0.0.1:51314]
+INFO 2026-05-09 13:57:48,686 runserver 3892 9872 HTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:51314]
+INFO 2026-05-09 13:57:57,577 runserver 3892 9872 HTTP POST /api/v1/login/ 200 [0.51, 127.0.0.1:51314]
+INFO 2026-05-09 13:59:00,013 runserver 3892 9872 HTTP GET /api/v1/health/live/ 200 [0.00, 127.0.0.1:51372]
+INFO 2026-05-09 13:59:31,633 autoreload 16608 20704 Watching for file changes with StatReloader
+INFO 2026-05-09 13:59:43,737 runserver 16608 2872 [mHTTP GET /api/v1/health/live/ 200 [0.01, 127.0.0.1:51391][0m
+INFO 2026-05-09 14:00:06,671 runserver 16608 2872 [mHTTP POST /api/v1/login/ 200 [0.53, 127.0.0.1:51402][0m
+INFO 2026-05-09 14:00:07,996 runserver 16608 2872 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:51402][0m
+INFO 2026-05-09 14:01:08,092 runserver 16608 2872 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:51419][0m
+INFO 2026-05-09 14:01:13,205 runserver 16608 2872 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:51419][0m
+INFO 2026-05-09 14:01:16,543 runserver 16608 2872 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:51419][0m
+INFO 2026-05-09 14:01:21,382 runserver 16608 2872 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:51419][0m
+INFO 2026-05-09 14:07:46,655 runserver 16608 2872 [mHTTP POST /api/v1/login/ 200 [1.08, 127.0.0.1:63629][0m
+INFO 2026-05-09 14:07:48,020 runserver 16608 2872 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.01, 127.0.0.1:63629][0m
+INFO 2026-05-09 14:07:58,769 runserver 16608 2872 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.01, 127.0.0.1:63629][0m
+INFO 2026-05-09 14:08:36,857 runserver 16608 2872 [mHTTP POST /api/v1/login/ 200 [0.96, 127.0.0.1:63629][0m
+INFO 2026-05-09 14:27:05,478 runserver 16608 2872 [mHTTP POST /api/v1/login/ 200 [1.08, 127.0.0.1:60524][0m
+INFO 2026-05-09 14:27:05,973 runserver 16608 2872 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.01, 127.0.0.1:60524][0m
+INFO 2026-05-09 14:27:19,557 runserver 16608 2872 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.01, 127.0.0.1:60524][0m
+INFO 2026-05-09 14:33:33,669 runserver 16608 2872 [mHTTP POST /api/v1/login/ 200 [1.01, 127.0.0.1:58204][0m
+INFO 2026-05-09 14:33:35,008 runserver 16608 2872 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.01, 127.0.0.1:58204][0m
+INFO 2026-05-09 14:33:47,085 runserver 16608 2872 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.01, 127.0.0.1:58204][0m
+INFO 2026-05-09 14:49:22,880 runserver 16608 2872 [mHTTP POST /api/v1/login/ 200 [0.90, 127.0.0.1:61774][0m
+INFO 2026-05-09 14:49:23,450 runserver 16608 2872 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.01, 127.0.0.1:61774][0m
+INFO 2026-05-09 14:49:26,829 runserver 16608 2872 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:61774][0m
+INFO 2026-05-09 14:49:51,007 runserver 16608 2872 [mHTTP POST /api/v1/login/ 200 [0.74, 127.0.0.1:61774][0m
+INFO 2026-05-09 14:49:52,111 runserver 16608 2872 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:61774][0m
+WARNING 2026-05-09 14:50:00,705 log 16608 17640 Too Many Requests: /api/v1/app-version/
+WARNING 2026-05-09 14:50:00,708 runserver 16608 2872 [31;1mHTTP GET /api/v1/app-version/?version_code=1 429 [0.06, 127.0.0.1:61774][0m
+INFO 2026-05-09 14:59:06,805 runserver 16608 2872 [mHTTP POST /api/v1/login/ 200 [0.54, 127.0.0.1:59109][0m
+INFO 2026-05-09 14:59:07,696 runserver 16608 2872 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:59109][0m
+INFO 2026-05-09 14:59:17,708 runserver 16608 2872 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:59109][0m
+INFO 2026-05-09 14:59:35,475 runserver 16608 2872 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:59109][0m
+INFO 2026-05-09 15:00:03,937 runserver 16608 2872 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:59109][0m
+INFO 2026-05-09 15:08:29,446 runserver 16608 2872 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.01, 127.0.0.1:65396][0m
+INFO 2026-05-09 15:08:46,010 runserver 16608 2872 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.01, 127.0.0.1:65396][0m
+INFO 2026-05-09 15:18:14,471 runserver 16608 2872 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:50480][0m
+INFO 2026-05-09 15:18:21,962 runserver 16608 2872 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:50480][0m
+INFO 2026-05-09 15:18:29,157 runserver 16608 2872 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:50480][0m
+INFO 2026-05-09 15:27:41,874 runserver 16608 2872 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:49299][0m
+INFO 2026-05-09 15:42:03,628 runserver 16608 2872 [mHTTP POST /api/v1/login/ 200 [0.55, 127.0.0.1:60517][0m
+INFO 2026-05-09 15:42:04,489 runserver 16608 2872 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:60517][0m
+INFO 2026-05-09 15:44:57,432 runserver 16608 2872 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:50775][0m
+INFO 2026-05-10 09:26:57,481 autoreload 24404 12384 Watching for file changes with StatReloader
+WARNING 2026-05-10 09:27:24,997 log 24404 6836 Not Found: /api/v1/
+WARNING 2026-05-10 09:27:24,999 runserver 24404 3664 [33mHTTP GET /api/v1/ 404 [0.02, 127.0.0.1:64827][0m
+WARNING 2026-05-10 09:27:26,030 log 24404 6836 Not Found: /favicon.ico
+WARNING 2026-05-10 09:27:26,031 runserver 24404 3664 [33mHTTP GET /favicon.ico 404 [0.01, 127.0.0.1:64827][0m
+INFO 2026-05-10 09:28:27,146 runserver 24404 3664 [32mHTTP GET /api/v1/health/ready 301 [0.01, 127.0.0.1:53870][0m
+INFO 2026-05-10 09:28:27,550 runserver 24404 3664 [mHTTP GET /api/v1/health/ready/ 200 [0.00, 127.0.0.1:53870][0m
+INFO 2026-05-10 18:53:31,492 autoreload 16412 18580 Watching for file changes with StatReloader
+WARNING 2026-05-10 18:53:41,330 log 16412 6316 Not Found: /api/v1/
+WARNING 2026-05-10 18:53:41,332 runserver 16412 27844 [33mHTTP GET /api/v1/ 404 [0.09, 127.0.0.1:63788][0m
+WARNING 2026-05-10 18:53:42,315 log 16412 6316 Not Found: /favicon.ico
+WARNING 2026-05-10 18:53:42,317 runserver 16412 27844 [33mHTTP GET /favicon.ico 404 [0.01, 127.0.0.1:63788][0m

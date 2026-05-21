@@ -14,22 +14,32 @@ import kotlinx.coroutines.launch
 import com.kavach.app.data.remote.websocket.WebSocketManager
 import javax.inject.Inject
 
+data class DashboardMetrics(
+    val personnelCount : Int = 0,
+    val incidentCount  : Int = 0,
+    val broadcastCount : Int = 0,
+    val approvalCount  : Int = 0,
+    val orderCount     : Int = 0,
+    val trainingCount  : Int = 0,
+    val activePilots   : Int = 0
+)
+
 data class DashboardUiState(
-    val orders         : List<Order> = emptyList(),
-    val incidentCount  : Int  = 0,
-    val broadcastCount : Int  = 0,
-    val trainingCount  : Int  = 0,
-    val orderCount     : Int  = 0,
-    val isOrdersLoading: Boolean = false,
+    val orders          : List<Order> = emptyList(),
+    val metrics         : DashboardMetrics = DashboardMetrics(),
+    val isOrdersLoading : Boolean = false,
     val isMissionLoading: Boolean = false,
-    val error          : String? = null,
-    val isRefreshing   : Boolean = false
+    val error           : String? = null,
+    val isRefreshing    : Boolean = false
 )
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
     private val orderRepository: OrderRepository,
     private val missionRepository: MissionRepository,
+    private val broadcastRepository: com.kavach.app.data.repository.BroadcastRepository,
+    private val userRepository: com.kavach.app.data.repository.UserManagementRepository,
+    private val aggregator: com.kavach.app.core.intelligence.PilotOpsAggregator,
     val sessionDataStore: SessionDataStore,
     private val wsManager: WebSocketManager,
     networkMonitor: NetworkMonitor
@@ -42,14 +52,22 @@ class DashboardViewModel @Inject constructor(
         .map { it.state }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), WebSocketManager.ConnectionState.DISCONNECTED)
 
-    private val _uiState = MutableStateFlow(DashboardUiState())
+    private val _isRefreshing = MutableStateFlow(false)
+
     val uiState: StateFlow<DashboardUiState> = combine(
-        orderRepository.getAllOrders(),
-        _uiState
-    ) { orders, state ->
-        state.copy(
-            orders = orders.filter { !it.isAcknowledged }.take(3),
-            isOrdersLoading = false
+        aggregator.intelligence,
+        _isRefreshing
+    ) { intel, refreshing ->
+        DashboardUiState(
+            metrics = DashboardMetrics(
+                personnelCount = intel.totalPersonnelCount,
+                incidentCount = intel.activeIncidentsCount,
+                broadcastCount = intel.unreadBroadcastsCount,
+                approvalCount = intel.pendingApprovalsCount,
+                orderCount = intel.unacknowledgedOrdersCount,
+                activePilots = intel.activeDevicesCount
+            ),
+            isRefreshing = refreshing
         )
     }.stateIn(
         scope = viewModelScope,
@@ -57,31 +75,15 @@ class DashboardViewModel @Inject constructor(
         initialValue = DashboardUiState()
     )
 
-    // Note: Automatic refresh removed from init for "Offline-First" stability.
-    // Dashboard will load from local Room cache immediately.
-    // UI can call refresh() manually or it can be triggered by a sync worker.
-
     fun refresh() = viewModelScope.launch {
-        _uiState.value = _uiState.value.copy(isRefreshing = true, isMissionLoading = true)
+        _isRefreshing.value = true
         
         // Parallel refresh from network to local cache
-        launch { 
-            orderRepository.refreshOrders() 
-        }
+        launch { orderRepository.refreshOrders() }
+        launch { broadcastRepository.refreshBroadcasts() }
+        launch { userRepository.refreshUsers() }
+        // Incident refresh logic can be added here once missionRepository is hardened
         
-        launch {
-            val incidents = missionRepository.getIncidents()
-            val broadcasts = missionRepository.getBroadcasts()
-            
-            val incCount = if (incidents is ApiResult.Success) incidents.data.size else 0
-            val brCount = if (broadcasts is ApiResult.Success) broadcasts.data.count { !it.acknowledged } else 0
-            
-            _uiState.value = _uiState.value.copy(
-                incidentCount = incCount,
-                broadcastCount = brCount,
-                isMissionLoading = false,
-                isRefreshing = false
-            )
-        }
+        _isRefreshing.value = false
     }
 }

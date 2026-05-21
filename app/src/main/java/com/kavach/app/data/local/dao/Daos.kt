@@ -30,34 +30,6 @@ interface QuizDao {
     suspend fun upsertAll(questions: List<QuizQuestionEntity>)
 }
 
-@Dao
-interface OrderDao {
-
-    @Query("SELECT * FROM orders ORDER BY id DESC")
-    fun getAllOrders(): Flow<List<OrderEntity>>
-
-    @Query("SELECT * FROM orders WHERE id = :id")
-    suspend fun getOrderById(id: String): OrderEntity?
-
-    @Upsert
-    suspend fun upsertAll(orders: List<OrderEntity>)
-
-    @Query("UPDATE orders SET isAcknowledged = 1 WHERE id = :id")
-    suspend fun markAcknowledged(id: String)
-}
-
-@Dao
-interface PendingAckDao {
-
-    @Query("SELECT * FROM pending_ack_queue")
-    suspend fun getAll(): List<PendingAckEntity>
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(entity: PendingAckEntity)
-
-    @Delete
-    suspend fun delete(entity: PendingAckEntity)
-}
 
 @Dao
 interface BehaviorEventDao {

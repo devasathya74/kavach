@@ -21,20 +21,24 @@ class KavachSyncWorker @AssistedInject constructor(
     @Assisted context                      : Context,
     @Assisted workerParams                 : WorkerParameters,
     private val behaviorTracker            : BehaviorTracker,
-    private val orderRepository            : OrderRepository
+    private val orderRepository            : OrderRepository,
+    private val broadcastRepository        : com.kavach.app.data.repository.BroadcastRepository
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
         var overallSuccess = true
 
         // ── 1. Sync order acknowledgments ──────────────────
-        when (orderRepository.syncPendingAcknowledgments()) {
+        com.kavach.app.data.remote.worker.OrderSyncWorker.schedule(applicationContext)
+
+        // ── 2. Sync behavior events ────────────────────────
+        when (behaviorTracker.syncToServer()) {
             is ApiResult.Error -> overallSuccess = false
             else              -> Unit
         }
 
-        // ── 2. Sync behavior events ────────────────────────
-        when (behaviorTracker.syncToServer()) {
+        // ── 3. Sync Broadcasts (Periodic Refresh) ──────────
+        when (broadcastRepository.refreshBroadcasts()) {
             is ApiResult.Error -> overallSuccess = false
             else              -> Unit
         }

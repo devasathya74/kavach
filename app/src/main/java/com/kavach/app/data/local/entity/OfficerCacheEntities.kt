@@ -2,7 +2,6 @@ package com.kavach.app.data.local.entity
 
 import androidx.room.Embedded
 import androidx.room.Entity
-import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 
@@ -10,15 +9,7 @@ enum class SyncState {
     SYNCED, STALE, DIRTY, FAILED, CONFLICT
 }
 
-@Entity(
-    tableName = "officer_cache",
-    indices = [
-        Index(value = ["unitCode"]),
-        Index(value = ["unitCode", "searchableName"]),  // composite: company dropdown query
-        Index(value = ["searchableName"]),
-        Index(value = ["searchablePno"])
-    ]
-)
+@Entity(tableName = "officer_cache")
 data class OfficerCacheEntity(
     @PrimaryKey val id: String,
     val pno: String,
@@ -29,12 +20,12 @@ data class OfficerCacheEntity(
     val searchableName: String = "",
     val searchablePno: String = "",
     val version: Int = 1,
-
+    
     // Conflict Detection & Consistency
     val revision: Long = 1,
     val syncedRevision: Long = 1,
     val isDirty: Boolean = false,
-
+    
     val lastSyncedAt: Long = System.currentTimeMillis(),
     val syncState: SyncState = SyncState.SYNCED,
     val etag: String? = null

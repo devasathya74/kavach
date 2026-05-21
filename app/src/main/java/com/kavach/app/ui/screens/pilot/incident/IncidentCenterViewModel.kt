@@ -5,9 +5,8 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kavach.app.data.local.db.KavachDatabase
-import com.kavach.app.data.local.entity.DraftSyncState
-import com.kavach.app.data.local.entity.EvidenceUploadEntity
-import com.kavach.app.data.local.entity.IncidentDraftEntity
+import com.kavach.app.data.local.entity.IncidentEntity
+import com.kavach.app.data.local.entity.IncidentAttachmentEntity
 import com.kavach.app.data.remote.api.KavachApiV2
 import com.kavach.app.data.remote.dto.incident.IncidentDto
 import com.kavach.app.data.remote.worker.IncidentSyncWorker
@@ -110,28 +109,34 @@ class IncidentCenterViewModel @Inject constructor(
                         }
                     }
                     
-                    val evidence = EvidenceUploadEntity(
+                    val attachment = IncidentAttachmentEntity(
                         localId = UUID.randomUUID().toString(),
                         incidentLocalId = localId,
-                        filePath = internalFile.absolutePath,
-                        mediaType = "IMAGE"
+                        localUri = Uri.fromFile(internalFile).toString(),
+                        mediaType = "IMAGE",
+                        status = "QUEUED",
+                        fileSize = internalFile.length()
                     )
-                    db.incidentDao().insertEvidence(evidence)
+                    db.incidentDao().insertAttachment(attachment)
                 }
 
-                // 2. Save Draft to Room
-                val draft = IncidentDraftEntity(
+                // 2. Save Incident to Room
+                val incident = IncidentEntity(
                     localId = localId,
-                    type = type,
+                    correlationId = UUID.randomUUID().toString(),
                     title = title,
                     summary = summary,
+                    type = type,
                     severity = severity,
-                    latitude = null, // TODO: Get current location
-                    longitude = null,
                     occurredAt = System.currentTimeMillis(),
-                    syncState = DraftSyncState.PENDING_SYNC
+                    createdAt = System.currentTimeMillis(),
+                    updatedAt = System.currentTimeMillis(),
+                    latitude = null,
+                    longitude = null,
+                    syncStatus = "PENDING_SYNC",
+                    isDirty = true
                 )
-                db.incidentDao().insertDraft(draft)
+                db.incidentDao().upsertIncident(incident)
 
                 // 3. Schedule Worker
                 IncidentSyncWorker.schedule(context)
@@ -139,7 +144,7 @@ class IncidentCenterViewModel @Inject constructor(
                 _state.update { it.copy(isLoading = false, error = null) }
                 Timber.d("Incident created and queued for sync: $localId")
                 
-                // Refresh list (might not show the new one until synced, but we could add a "pending" section)
+                // Refresh list
                 loadIncidents(isRefresh = true)
             } catch (e: Exception) {
                 Timber.e(e, "Failed to create incident draft")

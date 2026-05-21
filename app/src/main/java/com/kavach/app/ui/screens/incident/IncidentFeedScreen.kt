@@ -1,13 +1,12 @@
 package com.kavach.app.ui.screens.incident
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,9 +16,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kavach.app.data.remote.dto.incident.IncidentDto
-import com.kavach.app.ui.theme.*
+import com.kavach.app.domain.model.Incident
+import com.kavach.app.domain.model.IncidentStatus
+import com.kavach.app.utils.OperationalUiState
+import com.kavach.app.utils.OperationalActionState
+import com.kavach.app.ui.theme.DangerRed
+import com.kavach.app.ui.theme.GoldenYellow
+import com.kavach.app.ui.theme.NavyBlueDark
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,12 +30,34 @@ fun IncidentFeedScreen(
     onBack: () -> Unit,
     viewModel: IncidentFeedViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    // Effect for Action Feedback
+    LaunchedEffect(state.actionState) {
+        when (val action = state.actionState) {
+            is OperationalActionState.Success -> {
+                snackbarHostState.showSnackbar(action.message)
+                viewModel.clearActionState()
+            }
+            is OperationalActionState.Error -> {
+                snackbarHostState.showSnackbar("Error: ${action.message}")
+                viewModel.clearActionState()
+            }
+            else -> {}
+        }
+    }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text("घटना फीड (Incidents)", fontWeight = FontWeight.Bold, fontSize = 18.sp) },
+                title = { 
+                    Column {
+                        Text("INCIDENT FEED", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                        Text("Operational Awareness Layer", style = MaterialTheme.typography.labelSmall, color = Color.White.copy(alpha = 0.6f))
+                    }
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -44,7 +69,7 @@ fun IncidentFeedScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = NavyBlueDark,
+                    containerColor = Color(0xFF0F172A),
                     titleContentColor = Color.White,
                     navigationIconContentColor = Color.White,
                     actionIconContentColor = Color.White
@@ -56,54 +81,42 @@ fun IncidentFeedScreen(
         Column(modifier = Modifier.fillMaxSize().padding(padding)) {
             // Severity Filters
             SeverityFilterRow(
-                selectedSeverity = uiState.selectedSeverity,
+                selectedSeverity = state.selectedSeverity,
                 onSeveritySelected = { viewModel.setSeverityFilter(it) }
             )
 
-            if (uiState.isLoading) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = GoldenYellow)
-                }
-                if (uiState.error != null) {
-                    SyncDelayedBanner(message = uiState.error!!)
-                }
+            if (state.isRefreshing) {
+                LinearProgressIndicator(modifier = Modifier.fillMaxWidth(), color = GoldenYellow)
+            }
 
-                if (uiState.incidents.isEmpty() && !uiState.isLoading) {
-                    EmptyState("कोई घटना नहीं मिली")
-                } else {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        items(uiState.incidents, key = { it.id }) { incident ->
-                            IncidentCard(incident)
+            when (val uiState = state.uiState) {
+                is OperationalUiState.Loading -> {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(color = GoldenYellow)
+                    }
+                }
+                is OperationalUiState.Error -> {
+                    ErrorState(message = uiState.message, onRetry = { viewModel.loadIncidents(true) })
+                }
+                is OperationalUiState.Success -> {
+                    if (uiState.data.isEmpty()) {
+                        EmptyState("कोई घटना नहीं मिली")
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            items(uiState.data, key = { it.localId }) { incident ->
+                                IncidentCard(incident)
+                            }
                         }
                     }
                 }
+                is OperationalUiState.Idle -> {
+                    // Handled by VM init
+                }
             }
-        }
-    }
-}
-
-@Composable
-fun SyncDelayedBanner(message: String) {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        color = DangerRed.copy(alpha = 0.15f),
-        border = androidx.compose.foundation.BorderStroke(1.dp, DangerRed.copy(alpha = 0.3f))
-    ) {
-        Row(
-            modifier = Modifier.padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(Icons.Default.CloudOff, contentDescription = null, tint = DangerRed, modifier = Modifier.size(18.dp))
-            Spacer(Modifier.width(12.dp))
-            Text(
-                text = "Sync Delayed: Using cached data",
-                color = Color.White,
-                style = MaterialTheme.typography.labelMedium
-            )
         }
     }
 }
@@ -116,7 +129,7 @@ fun SeverityFilterRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         FilterChip(
@@ -125,8 +138,11 @@ fun SeverityFilterRow(
             label = { Text("सभी") },
             colors = FilterChipDefaults.filterChipColors(
                 selectedContainerColor = GoldenYellow,
-                selectedLabelColor = NavyBlueDark
-            )
+                selectedLabelColor = NavyBlueDark,
+                containerColor = Color.White.copy(alpha = 0.05f),
+                labelColor = Color.White.copy(alpha = 0.6f)
+            ),
+            border = null
         )
         FilterChip(
             selected = selectedSeverity == "HIGH",
@@ -150,18 +166,34 @@ fun SeverityFilterRow(
 }
 
 @Composable
-fun IncidentCard(incident: IncidentDto) {
+fun IncidentCard(incident: Incident) {
     val severityColor = when (incident.severity) {
         "HIGH" -> DangerRed
         "MEDIUM" -> Color(0xFFF59E0B)
         else -> Color(0xFF10B981)
     }
 
+    val syncIcon = when (incident.status) {
+        IncidentStatus.Draft -> Icons.Default.Edit
+        IncidentStatus.PendingSync -> Icons.Default.Schedule
+        IncidentStatus.Syncing -> Icons.Default.Sync
+        IncidentStatus.Active -> Icons.Default.CheckCircle
+        IncidentStatus.Failed -> Icons.Default.Error
+        else -> Icons.Default.CloudQueue
+    }
+
+    val syncColor = when (incident.status) {
+        IncidentStatus.Active -> Color(0xFF10B981)
+        IncidentStatus.Failed -> DangerRed
+        IncidentStatus.Syncing -> GoldenYellow
+        else -> Color.White.copy(alpha = 0.4f)
+    }
+
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF1E293B)),
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF1E293B).copy(alpha = 0.6f)),
+        shape = RoundedCornerShape(16.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, syncColor.copy(alpha = 0.1f))
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
@@ -169,16 +201,21 @@ fun IncidentCard(incident: IncidentDto) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = incident.title,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(syncIcon, contentDescription = null, tint = syncColor, modifier = Modifier.size(16.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = incident.title,
+                        color = Color.White,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 16.sp
+                    )
+                }
+                
                 Surface(
                     color = severityColor.copy(alpha = 0.1f),
-                    shape = RoundedCornerShape(4.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, severityColor)
+                    shape = RoundedCornerShape(8.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, severityColor.copy(alpha = 0.3f))
                 ) {
                     Text(
                         text = incident.severity,
@@ -189,26 +226,47 @@ fun IncidentCard(incident: IncidentDto) {
                     )
                 }
             }
+            
             Spacer(modifier = Modifier.height(8.dp))
+            
             Text(
-                text = incident.description ?: "",
+                text = incident.summary,
                 color = Color.White.copy(alpha = 0.7f),
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodySmall,
+                lineHeight = 18.sp
             )
-            Spacer(modifier = Modifier.height(12.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    Icons.Default.AccessTime,
-                    contentDescription = null,
-                    tint = Color.White.copy(alpha = 0.5f),
-                    modifier = Modifier.size(14.dp)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = incident.createdAt ?: "Unknown",
-                    color = Color.White.copy(alpha = 0.5f),
-                    style = MaterialTheme.typography.labelSmall
-                )
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        Icons.Default.AccessTime,
+                        contentDescription = null,
+                        tint = Color.White.copy(alpha = 0.4f),
+                        modifier = Modifier.size(12.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault()).format(java.util.Date(incident.occurredAt)),
+                        color = Color.White.copy(alpha = 0.4f),
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
+
+                if (incident.status == IncidentStatus.Syncing) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        CircularProgressIndicator(modifier = Modifier.size(12.dp), strokeWidth = 2.dp, color = GoldenYellow)
+                        Spacer(Modifier.width(8.dp))
+                        Text("Uploading...", color = GoldenYellow, style = MaterialTheme.typography.labelSmall)
+                    }
+                } else if (incident.status == IncidentStatus.Failed) {
+                    Text("Sync Failed - Tap to retry", color = DangerRed, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
+                }
             }
         }
     }
@@ -221,11 +279,11 @@ fun ErrorState(message: String, onRetry: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Icon(Icons.Default.Error, contentDescription = null, tint = DangerRed, modifier = Modifier.size(48.dp))
+        Icon(Icons.Default.CloudOff, contentDescription = null, tint = DangerRed, modifier = Modifier.size(48.dp))
         Spacer(modifier = Modifier.height(16.dp))
-        Text(message, color = Color.White)
-        Button(onClick = onRetry, colors = ButtonDefaults.buttonColors(containerColor = GoldenYellow)) {
-            Text("पुनः प्रयास करें", color = NavyBlueDark)
+        Text(message, color = Color.White, style = MaterialTheme.typography.bodyMedium)
+        Button(onClick = onRetry, modifier = Modifier.padding(top = 16.dp), colors = ButtonDefaults.buttonColors(containerColor = GoldenYellow)) {
+            Text("Retry Sync", color = NavyBlueDark)
         }
     }
 }
@@ -237,8 +295,8 @@ fun EmptyState(message: String) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Icon(Icons.Default.Inbox, contentDescription = null, tint = Color.White.copy(alpha = 0.3f), modifier = Modifier.size(64.dp))
+        Icon(Icons.Default.Inbox, contentDescription = null, tint = Color.White.copy(alpha = 0.2f), modifier = Modifier.size(64.dp))
         Spacer(modifier = Modifier.height(16.dp))
-        Text(message, color = Color.White.copy(alpha = 0.5f))
+        Text(message, color = Color.White.copy(alpha = 0.4f), style = MaterialTheme.typography.bodyMedium)
     }
 }
