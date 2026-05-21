@@ -98,3 +98,6 @@ class LockedVideoPlayerViewModel : androidx.lifecycle.ViewModel() {
         return "https://example.com/videos/$trainingId.mp4"
     }
 }
+
+import androidx.media3.common.Player
+import androidx.compose.foundation.layout.padding

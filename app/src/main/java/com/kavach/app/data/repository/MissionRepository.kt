@@ -93,10 +93,8 @@ class MissionRepository @Inject constructor(
     ): ApiResult<BroadcastDto> = safeApiCall {
         val request = CreateBroadcastRequest(
             title = title,
-            content = content,
-            priority = priority,
-            imageUrl = imageUrl,
-            targetedOfficers = targetedOfficerIds
+            message = content,
+            priority = priority
         )
         
         val response = api.createBroadcast(request)

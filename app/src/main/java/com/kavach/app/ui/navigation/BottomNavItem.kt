@@ -28,24 +28,24 @@ data class BottomNavItem(
 val bottomNavItems = listOf(
     BottomNavItem(
         label = "Home",
-        route = Screen.Home.route,
+        route = Screen.Dashboard.route,
         icon = Icons.Default.Home
     ),
     BottomNavItem(
         label = "Alerts",
-        route = Screen.Alerts.route,
+        route = Screen.IncidentCenter.route,
         // Notifications icon conveys general alerts, not only warnings.
         icon = Icons.Default.Notifications
     ),
     BottomNavItem(
         label = "Broadcast",
-        route = Screen.Broadcast.route,
+        route = Screen.BroadcastInbox.route,
         // Announcement icon provides an operational feel, avoiding consumer‑style imagery.
         icon = Icons.Default.Announcement
     ),
     BottomNavItem(
         label = "Units",
-        route = Screen.Units.route,
+        route = Screen.UserManagement.route,
         icon = Icons.Default.Groups
     ),
     BottomNavItem(

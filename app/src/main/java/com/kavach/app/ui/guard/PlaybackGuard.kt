@@ -19,7 +19,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.ProcessLifecycleOwner
-import com.google.android.exoplayer2.ExoPlayer
+import androidx.media3.exoplayer.ExoPlayer
 
 /**
  * PlaybackGuard – ensures session integrity by detecting tampering events.
@@ -111,7 +111,7 @@ fun PlaybackGuard(
     // ---------- Picture‑in‑Picture prevention ----------
     DisposableEffect(context) {
         val activity = context as? ComponentActivity
-        if (activity != null && activity.supportsPictureInPictureMode) {
+        if (activity != null && activity.packageManager.hasSystemFeature(android.content.pm.PackageManager.FEATURE_PICTURE_IN_PICTURE)) {
             // If the activity supports PiP, we still need to guard exit hint.
             // Unfortunately we cannot intercept onUserLeaveHint directly here, but
             // we can monitor lifecycle stop which already covers it.

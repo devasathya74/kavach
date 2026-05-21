@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.ExoPlayer.Builder
@@ -125,3 +125,7 @@ class TrainingPlayerViewModel : androidx.lifecycle.ViewModel() {
         // TODO: Implement immediate progress flush.
     }
 }
+
+import androidx.media3.common.Player
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.foundation.layout.padding

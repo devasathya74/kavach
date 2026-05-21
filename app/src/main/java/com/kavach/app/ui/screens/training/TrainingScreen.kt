@@ -57,3 +57,5 @@ fun TrainingScreen(
 class TrainingScreenViewModel : androidx.lifecycle.ViewModel() {
     val trainingTitle: String? = "Sample Training"
 }
+
+import androidx.compose.ui.Alignment
