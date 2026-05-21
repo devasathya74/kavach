@@ -74,6 +74,11 @@ data class BroadcastAttachmentEntity(
 
 /**
  * BroadcastDraftEntity — Process-death resilient draft persistence.
+ *
+ * IMPORTANT: attachmentLocalPath stores an app-private absolute path
+ * (e.g. /data/user/0/.../files/broadcast_drafts/<uuid>.jpg).
+ * It must NEVER store a content:// URI — those become invalid after reboot/process death.
+ * File must be copied to private storage via BroadcastFileManager BEFORE saving to DB.
  */
 @Entity(tableName = "broadcast_drafts")
 data class BroadcastDraftEntity(
@@ -82,8 +87,41 @@ data class BroadcastDraftEntity(
     val content: String,
     val priority: String,
     val type: String,
-    val selectedUserIdsJson: String, // JSON array of canonical User IDs
-    val updatedAt: Long = System.currentTimeMillis()
+    val selectedUserIdsJson: String, // JSON array of canonical User IDs (legacy — superseded by BroadcastDraftRecipientEntity)
+    val updatedAt: Long = System.currentTimeMillis(),
+
+    // Attachment — private storage path only
+    val attachmentLocalPath: String? = null,
+    val attachmentRemoteUrl: String? = null,
+    val attachmentMimeType: String? = null,
+
+    // Filter snapshot (captured at dispatch time)
+    val targetUnit: String? = null,
+    val targetCompany: String? = null,
+
+    // Delivery mode flags
+    val requireAck: Boolean = false,
+    val isHighPriority: Boolean = false,
+    val isEmergency: Boolean = false
+)
+
+/**
+ * BroadcastDraftRecipientEntity — Process-death safe recipient selection persistence.
+ *
+ * WHY: Set<String> in ViewModel memory is lost on process death / app kill.
+ * Recipients are persisted here immediately on selection toggle.
+ * BroadcastDispatchWorker reads from this table — not from ViewModel state.
+ *
+ * RULE: Store canonical officer ID only. NEVER store full OfficerWithProfile objects.
+ */
+@Entity(
+    tableName = "broadcast_draft_recipients",
+    indices = [Index(value = ["draftId"])]
+)
+data class BroadcastDraftRecipientEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val draftId: String,
+    val officerId: String   // canonical ID only
 )
 
 /**
