@@ -82,7 +82,13 @@ sealed class Screen(val route: String) {
     object CreateBroadcast  : Screen("route_create_broadcast")
     object FieldData        : Screen("route_field_data")
     object AuditCenter      : Screen("route_audit")
-
+// ----- New UI Routes -----
+object Home       : Screen("home")
+object Alerts     : Screen("alerts")
+object Broadcast  : Screen("broadcast")
+object Units      : Screen("units")
+object Profile    : Screen("profile")
+object TrainingScreen : Screen("training_screen")
     // ── ComingSoon placeholder routes ─────────────────────────────
     // Each module that is architecturally complete but not yet
     // backend-integrated gets its own route so navigation works.
