@@ -3,9 +3,12 @@ package com.kavach.app.di
 import android.content.Context
 import androidx.room.Room
 import com.kavach.app.BuildConfig
+import com.kavach.app.data.local.BroadcastFileManager
 import com.kavach.app.data.local.SessionDataStore
 import com.kavach.app.data.local.dao.*
 import com.kavach.app.data.local.db.KavachDatabase
+import com.kavach.app.data.local.db.KavachDatabase.Companion.MIGRATION_14_16
+import com.kavach.app.data.local.db.KavachDatabase.Companion.MIGRATION_15_16
 import com.kavach.app.data.remote.api.AuthRefreshApiService
 import com.kavach.app.data.remote.api.KavachApiService
 import com.kavach.app.data.remote.api.KavachApiV2
@@ -333,13 +336,16 @@ object AppModule {
             context,
             KavachDatabase::class.java,
             "kavach.db"
-        ).build()
+        )
+        .addMigrations(MIGRATION_14_16, MIGRATION_15_16)  // v14→16 (direct) + v15→16
+        .build()
 
     @Provides fun provideTrainingDao(db: KavachDatabase): TrainingDao             = db.trainingDao()
     @Provides fun provideQuizDao(db: KavachDatabase): QuizDao                     = db.quizDao()
     @Provides fun provideOrderDao(db: KavachDatabase): OrderDao                   = db.orderDao()
-    @Provides fun providePendingAckDao(db: KavachDatabase): PendingAckDao         = db.pendingAckDao()
     @Provides fun provideBehaviorEventDao(db: KavachDatabase): BehaviorEventDao   = db.behaviorEventDao()
     @Provides fun provideNavigationDao(db: KavachDatabase): NavigationDao         = db.navigationDao()
     @Provides fun provideOfficerDao(db: KavachDatabase): OfficerDao               = db.officerDao()
+    @Provides fun provideIncidentDao(db: KavachDatabase): IncidentDao             = db.incidentDao()
+    @Provides fun provideBroadcastDao(db: KavachDatabase): BroadcastDao           = db.broadcastDao()
 }

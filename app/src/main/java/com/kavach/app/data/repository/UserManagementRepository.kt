@@ -12,6 +12,7 @@ import com.kavach.app.utils.onFailure
 import com.kavach.app.utils.safeApiCall
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.firstOrNull
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -22,7 +23,8 @@ import javax.inject.Singleton
 @Singleton
 class UserManagementRepository @Inject constructor(
     private val api: KavachApiV2,
-    private val officerDao: OfficerDao
+    private val officerDao: OfficerDao,
+    @dagger.hilt.android.qualifiers.ApplicationContext private val context: android.content.Context
 ) {
 
     suspend fun getOfficers(
@@ -64,6 +66,12 @@ class UserManagementRepository @Inject constructor(
                 )
             }
         }
+
+    fun observeAllDevices(
+        search: String? = null,
+        status: String? = null
+    ): Flow<List<com.kavach.app.data.local.entity.OfficerDeviceCacheEntity>> =
+        officerDao.observeAllDevices(search, status)
 
     suspend fun refreshUsers(
         page: Int = 1,
@@ -132,14 +140,24 @@ class UserManagementRepository @Inject constructor(
     }
 
     suspend fun deleteUser(id: String): ApiResult<Unit> = safeApiCall {
-        val response = api.updateUser(id, UpdateUserRequest(isActive = false))
-        if (response.isSuccessful) {
-            // Update local status to avoid re-fetch wait
-            repositoryScope_updateLocalStatus(id, false)
-            ApiResult.Success(Unit)
-        } else {
-            ApiResult.Error("Deactivation failed")
+        // OPTIMISTIC: Queue first
+        officerDao.insertPersonnelAction(
+            com.kavach.app.data.local.entity.PersonnelActionEntity(
+                officerId = id,
+                actionType = "DELETE"
+            )
+        )
+        
+        // Update local status immediately
+        val current = officerDao.getAllOfficers().firstOrNull()?.find { it.id == id }
+        current?.let {
+            officerDao.insertOfficer(it.copy(isActive = false))
         }
+
+        // Schedule sync
+        com.kavach.app.data.remote.worker.PersonnelMutationWorker.schedule(context)
+        
+        ApiResult.Success(Unit)
     }
 
     private suspend fun repositoryScope_updateLocalStatus(id: String, active: Boolean) {
@@ -218,6 +236,27 @@ class UserManagementRepository @Inject constructor(
             Log.e("REJECT_CHANGE_FAIL", "Error: $errorBody")
             ApiResult.Error(response.body()?.message ?: errorBody ?: "Rejection failed")
         }
+    }
+
+    suspend fun performBulkAction(ids: List<String>, actionType: String): ApiResult<Unit> = safeApiCall {
+        val correlationId = java.util.UUID.randomUUID().toString()
+        
+        // Canonical IDs only
+        val targetIds = ids.joinToString(",")
+        
+        officerDao.insertBulkMutation(
+            com.kavach.app.data.local.entity.BulkMutationEntity(
+                correlationId = correlationId,
+                actionType = actionType,
+                targetIds = targetIds,
+                status = "QUEUED"
+            )
+        )
+        
+        // Schedule worker for chunked processing
+        com.kavach.app.data.remote.worker.BulkPersonnelMutationWorker.schedule(context)
+        
+        ApiResult.Success(Unit)
     }
 }
 
