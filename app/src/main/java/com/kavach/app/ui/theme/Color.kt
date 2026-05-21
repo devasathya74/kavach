@@ -40,6 +40,8 @@ val DangerRed = ColorError
 val SuccessGreen = ColorSuccess
 val WarningOrange = ColorWarning
 val NavyBlueLight = DarkPrimary
+val CyberGreen = Color(0xFF4ADE80)
+val NavyBlueDarker = Color(0xFF020617)
 
 // Missing legacy fallbacks
 val OfficialBackground = LightBackground

@@ -34,11 +34,15 @@ import com.kavach.app.data.local.entity.*
         BroadcastAttachmentEntity::class,
         BroadcastMutationEntity::class,
         BroadcastDraftEntity::class,
-        BroadcastDraftRecipientEntity::class,   // NEW: process-death safe selection
+        BroadcastDraftRecipientEntity::class,
         BroadcastDispatchQueueEntity::class,
-        BulkMutationEntity::class
+        BulkMutationEntity::class,
+        // ── v17: User Mission Execution ──────────────────
+        SosEntity::class,
+        UserIncidentDraftEntity::class,
+        UserIncidentAttachmentEntity::class
     ],
-    version = 16,
+    version = 17,
     exportSchema = false
 )
 abstract class KavachDatabase : RoomDatabase() {
@@ -50,6 +54,9 @@ abstract class KavachDatabase : RoomDatabase() {
     abstract fun officerDao()      : OfficerDao
     abstract fun incidentDao()     : IncidentDao
     abstract fun broadcastDao()    : BroadcastDao
+    // ── v17: User Mission Execution ──────────────────────
+    abstract fun sosDao()          : SosDao
+    abstract fun userIncidentDao() : UserIncidentDao
 
     companion object {
         /**
@@ -93,6 +100,79 @@ abstract class KavachDatabase : RoomDatabase() {
                 db.execSQL(
                     "CREATE INDEX IF NOT EXISTS index_officer_cache_unitCode_searchableName " +
                     "ON officer_cache(unitCode, searchableName)"
+                )
+            }
+        }
+
+        /**
+         * Migration 16 → 17
+         * Adds User Mission Execution tables:
+         * - sos_queue         : SOS priority signal pipeline
+         * - user_incident_drafts : Offline-capable field incident reports
+         * - user_incident_attachments : Photo attachments for reports
+         */
+        val MIGRATION_16_17 = object : Migration(16, 17) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // SOS queue — for priority SOS pipeline
+                db.execSQL("""
+                    CREATE TABLE IF NOT EXISTS sos_queue (
+                        localId TEXT NOT NULL PRIMARY KEY,
+                        correlationId TEXT NOT NULL,
+                        senderPno TEXT NOT NULL,
+                        senderUnit TEXT NOT NULL,
+                        latitude REAL,
+                        longitude REAL,
+                        message TEXT NOT NULL DEFAULT 'SOS — IMMEDIATE ASSISTANCE REQUIRED',
+                        status TEXT NOT NULL DEFAULT 'QUEUED',
+                        createdAt INTEGER NOT NULL,
+                        lastAttemptAt INTEGER,
+                        retryCount INTEGER NOT NULL DEFAULT 0,
+                        errorMessage TEXT,
+                        serverAckAt INTEGER
+                    )
+                """.trimIndent())
+                db.execSQL(
+                    "CREATE UNIQUE INDEX IF NOT EXISTS index_sos_queue_correlationId ON sos_queue(correlationId)"
+                )
+
+                // User incident drafts — offline field reports
+                db.execSQL("""
+                    CREATE TABLE IF NOT EXISTS user_incident_drafts (
+                        localId TEXT NOT NULL PRIMARY KEY,
+                        correlationId TEXT NOT NULL,
+                        reporterPno TEXT NOT NULL,
+                        reporterUnit TEXT NOT NULL,
+                        title TEXT NOT NULL,
+                        description TEXT NOT NULL,
+                        type TEXT NOT NULL DEFAULT 'FIELD_REPORT',
+                        severity TEXT NOT NULL DEFAULT 'MEDIUM',
+                        latitude REAL,
+                        longitude REAL,
+                        createdAt INTEGER NOT NULL,
+                        syncStatus TEXT NOT NULL DEFAULT 'DRAFT',
+                        retryCount INTEGER NOT NULL DEFAULT 0,
+                        serverId TEXT
+                    )
+                """.trimIndent())
+                db.execSQL(
+                    "CREATE UNIQUE INDEX IF NOT EXISTS index_user_incident_drafts_correlationId ON user_incident_drafts(correlationId)"
+                )
+
+                // User incident attachments — photos
+                db.execSQL("""
+                    CREATE TABLE IF NOT EXISTS user_incident_attachments (
+                        localId TEXT NOT NULL PRIMARY KEY,
+                        incidentLocalId TEXT NOT NULL,
+                        localPath TEXT NOT NULL,
+                        mimeType TEXT NOT NULL,
+                        checksum TEXT,
+                        uploadStatus TEXT NOT NULL DEFAULT 'PENDING',
+                        remoteUrl TEXT,
+                        createdAt INTEGER NOT NULL
+                    )
+                """.trimIndent())
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS index_user_incident_attachments_incidentLocalId ON user_incident_attachments(incidentLocalId)"
                 )
             }
         }

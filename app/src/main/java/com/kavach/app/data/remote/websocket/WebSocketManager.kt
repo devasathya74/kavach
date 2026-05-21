@@ -43,55 +43,61 @@ class WebSocketManager @Inject constructor(
     
     private var lastState: ConnectionState = ConnectionState.DISCONNECTED
 
-    // ── WebSocket Auth Refresh Hardening ─────────────────────
-    
+    // ── High-Fidelity Session Tracking ────────────────────────
+    private var currentSessionId: String = "IDLE"
+    private var socketGeneration: Int = 0
+
+    companion object {
+        private const val MAX_DEDUPE_CACHE = 128
+        private const val TAG_WS = "KAVACH_WS"
+    }
+
     fun connect(token: String) {
         if (currentToken == token && lastState == ConnectionState.CONNECTED) {
-            Log.d("WebSocket", "Already connected with this token. Skipping.")
+            Log.d(TAG_WS, "[$currentSessionId] Already connected. Skipping.")
             return
         }
         
-        Log.d("WebSocket", "Initiating explicit connection sequence...")
+        currentSessionId = "SES_${System.currentTimeMillis() % 10000}"
+        socketGeneration = 0
+        Log.i(TAG_WS, "[$currentSessionId] Initiating explicit connection sequence...")
         
-        // CRITICAL: Force clear existing state to prevent duplicates
-        forceCleanup()
+        forceCleanup("USER_CONNECT")
         
         currentToken = token
         isIntentionallyDisconnected = false
         reconnectAttempt = 0
         
-        internalConnect()
+        internalConnect("INITIAL_HANDSHAKE")
     }
 
     private val processedEventIds = LinkedHashSet<String>()
 
-    companion object {
-        private const val MAX_DEDUPE_CACHE = 128
-    }
-
-    private fun internalConnect() {
+    private fun internalConnect(reason: String) {
         if (webSocket != null) return
         val token = currentToken ?: return
 
-        updateState(ConnectionState.CONNECTING)
+        socketGeneration++
+        updateState(ConnectionState.CONNECTING, reason)
 
         val wsBase = com.kavach.app.KavachConfig.BASE_URL
             .replace("https://", "wss://")
             .replace("http://", "ws://")
         val wsUrl = "${wsBase}ws/live/?token=$token"
         
-        Log.i("WebSocket", "Attempting connection: $wsUrl")
+        Log.i(TAG_WS, "[$currentSessionId] Gen:$socketGeneration | Attempting connection ($reason): $wsUrl")
         
         val request = Request.Builder()
             .url(wsUrl)
             .addHeader("X-Kavach-Client", "Android-Pilot-v2")
+            .addHeader("X-Kavach-Session", currentSessionId)
             .build()
 
         webSocket = client.newWebSocket(request, object : WebSocketListener() {
             override fun onOpen(webSocket: WebSocket, response: Response) {
-                Log.i("WebSocket", "CONNECTED ✓")
+                Log.i(TAG_WS, "[$currentSessionId] Gen:$socketGeneration | CONNECTED ✓")
                 reconnectAttempt = 0
-                updateState(ConnectionState.CONNECTED)
+                updateState(ConnectionState.CONNECTED, "SERVER_OPEN")
             }
 
             override fun onMessage(webSocket: WebSocket, text: String) {
@@ -99,113 +105,141 @@ class WebSocketManager @Inject constructor(
                     val envelope = JSONObject(text)
                     val eventId = envelope.optString("event_id")
                     
-                    // 1. DEDUPLICATION: Prevent re-processing on reconnect replays
                     if (eventId.isNotEmpty()) {
                         synchronized(processedEventIds) {
                             if (processedEventIds.contains(eventId)) {
-                                Log.d("WebSocket", "DEDUPE: Event $eventId already processed. Skipping.")
+                                Log.d(TAG_WS, "[$currentSessionId] DEDUPE: $eventId. Skipping.")
                                 return
                             }
                             processedEventIds.add(eventId)
                             if (processedEventIds.size > MAX_DEDUPE_CACHE) {
-                                val first = processedEventIds.iterator().next()
-                                processedEventIds.remove(first)
+                                processedEventIds.remove(processedEventIds.iterator().next())
                             }
                         }
                     }
 
-                    // 2. CONTRACT PARSING: Extract type and payload
                     val type = envelope.optString("type")
-                    val payload = envelope.optJSONObject("payload") ?: envelope // Backward compatibility
+                    val payload = envelope.optJSONObject("payload") ?: envelope
                     
-                    Log.d("WebSocket", "EVENT: $type | ID: ${eventId.take(8)}...")
+                    Log.d(TAG_WS, "[$currentSessionId] EVENT: $type | ID: ${eventId.take(8)}")
 
                     when (type) {
                         "LIVE_START" -> emitEvent(WsEvent.LiveStart(payload.getString("streamUrl")))
                         "LIVE_END" -> emitEvent(WsEvent.LiveEnd)
                         "QNA_APPROVED" -> emitEvent(WsEvent.QnaApproved(payload.getString("sessionId")))
                         "NEW_ORDER" -> emitEvent(WsEvent.NewOrder(payload.getString("orderId"), payload.getString("content")))
+                        "NEW_INCIDENT" -> emitEvent(WsEvent.NewIncident(payload.getString("incidentId"), payload.optString("severity")))
+                        "NEW_BROADCAST" -> emitEvent(WsEvent.NewBroadcast(payload.getString("broadcastId")))
                         "PING" -> webSocket.send("{\"type\":\"PONG\"}")
-                        "INFO" -> Log.i("WebSocket", "System Message: ${payload.optString("message")}")
+                        "INFO" -> Log.i(TAG_WS, "[$currentSessionId] SYSTEM: ${payload.optString("message")}")
                     }
                 } catch (e: Exception) {
-                    Log.e("WebSocket", "Parsing Error: ${e.message}")
+                    Log.e(TAG_WS, "[$currentSessionId] Parsing Error: ${e.message}")
                 }
             }
 
             override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
-                Log.w("WebSocket", "CLOSING: $code / $reason")
+                Log.w(TAG_WS, "[$currentSessionId] CLOSING: $code / $reason")
             }
 
             override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-                Log.d("WebSocket", "CLOSED")
-                updateState(ConnectionState.DISCONNECTED)
+                Log.d(TAG_WS, "[$currentSessionId] CLOSED")
+                updateState(ConnectionState.DISCONNECTED, "SERVER_CLOSED")
                 this@WebSocketManager.webSocket = null
-                if (!isIntentionallyDisconnected) handleReconnect()
+                if (!isIntentionallyDisconnected) handleReconnect("CLOSED_BY_SERVER")
             }
 
             override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
                 val code = response?.code
-                Log.e("WebSocket", "FAILURE: Code=$code | Error=${t.message}")
+                Log.e(TAG_WS, "[$currentSessionId] FAILURE: Code=$code | Error=${t.message}")
                 
                 this@WebSocketManager.webSocket = null
                 
                 if (code == 403 || code == 401) {
-                    updateState(ConnectionState.AUTH_FAILED)
-                    Log.e("WebSocket", "Auth failed. Stopping reconnect.")
+                    updateState(ConnectionState.AUTH_FAILED, "TOKEN_EXPIRED")
                     return 
                 }
                 
-                updateState(ConnectionState.DISCONNECTED)
-                handleReconnect()
+                updateState(ConnectionState.DISCONNECTED, "NETWORK_FAILURE")
+                handleReconnect("FAILURE_RETRY")
             }
         })
     }
 
-    private fun handleReconnect() {
+    private fun handleReconnect(reason: String) {
         if (isIntentionallyDisconnected) return
         
         reconnectJob?.cancel()
-        updateState(ConnectionState.RECONNECT_WAIT)
+        updateState(ConnectionState.RECONNECT_WAIT, reason)
         
         reconnectJob = scope.launch {
             val baseDelay = (2000L * (1 shl reconnectAttempt)).coerceAtMost(60000L)
             val jitter = (0..2000).random().toLong()
             val totalDelay = baseDelay + jitter
             
-            Log.d("WebSocket", "Retrying in ${totalDelay}ms...")
+            Log.d(TAG_WS, "[$currentSessionId] Reconnect attempt $reconnectAttempt in ${totalDelay}ms (Reason: $reason)")
             delay(totalDelay)
             reconnectAttempt++
-            internalConnect()
+            internalConnect(reason)
         }
     }
 
-    private fun forceCleanup() {
+    private fun forceCleanup(reason: String) {
+        Log.w(TAG_WS, "[$currentSessionId] FORCE_CLEANUP: $reason")
         reconnectJob?.cancel()
-        webSocket?.close(1001, "Reconnecting/Cleanup")
+        webSocket?.close(1001, "Cleanup: $reason")
         webSocket = null
     }
 
     fun disconnect() {
         isIntentionallyDisconnected = true
-        forceCleanup()
+        forceCleanup("USER_DISCONNECT")
         currentToken = null
-        updateState(ConnectionState.DISCONNECTED)
+        updateState(ConnectionState.DISCONNECTED, "USER_LOGOUT")
     }
 
     fun send(message: String) {
         if (lastState == ConnectionState.CONNECTED) {
             webSocket?.send(message)
         } else {
-            Log.e("WebSocket", "Cannot send: State is $lastState")
+            Log.e(TAG_WS, "[$currentSessionId] Cannot send: State is $lastState")
         }
     }
 
-    private fun updateState(state: ConnectionState) {
+    fun isConnected(): Boolean = lastState == ConnectionState.CONNECTED
+
+    /**
+     * sendSosSignal — Priority SOS payload via WebSocket.
+     * Sends a structured JSON message to the server's WS handler.
+     */
+    fun sendSosSignal(
+        correlationId: String,
+        senderPno: String,
+        senderUnit: String,
+        message: String,
+        latitude: Double?,
+        longitude: Double?
+    ) {
+        val payload = buildString {
+            append("{")
+            append("\"type\":\"SOS\",")
+            append("\"correlation_id\":\"$correlationId\",")
+            append("\"sender_pno\":\"$senderPno\",")
+            append("\"sender_unit\":\"$senderUnit\",")
+            append("\"message\":\"$message\"")
+            if (latitude != null) append(",\"latitude\":$latitude")
+            if (longitude != null) append(",\"longitude\":$longitude")
+            append("}")
+        }
+        send(payload)
+        Log.i(TAG_WS, "[$currentSessionId] SOS_SIGNAL sent: correlationId=$correlationId")
+    }
+
+    private fun updateState(state: ConnectionState, reason: String) {
         lastState = state
         emitEvent(WsEvent.StateChanged(state))
+        Log.i(TAG_WS, "[$currentSessionId] STATE_CHANGE: ${state.name} | Reason: $reason")
         
-        // Bridge to global SystemEvent for UI reactivity
         when (state) {
             ConnectionState.CONNECTED -> eventBus.emit(SystemEvent.WebSocketConnected)
             ConnectionState.RECONNECT_WAIT -> eventBus.emit(SystemEvent.WebSocketReconnecting(reconnectAttempt))
@@ -226,4 +260,6 @@ sealed class WsEvent {
     data class QnaApproved(val sessionId: String) : WsEvent()
     object MuteAll : WsEvent()
     data class NewOrder(val orderId: String, val content: String) : WsEvent()
+    data class NewIncident(val incidentId: String, val severity: String) : WsEvent()
+    data class NewBroadcast(val broadcastId: String) : WsEvent()
 }

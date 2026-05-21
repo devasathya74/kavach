@@ -1,132 +1,142 @@
 package com.kavach.app.data.repository
 
-import com.kavach.app.data.local.SessionDataStore
+import android.content.Context
 import com.kavach.app.data.local.dao.OrderDao
-import com.kavach.app.data.local.dao.PendingAckDao
+import com.kavach.app.data.local.entity.OrderAckEntity
 import com.kavach.app.data.local.entity.OrderEntity
-import com.kavach.app.data.local.entity.PendingAckEntity
-import com.kavach.app.data.remote.api.KavachApiService
-import com.kavach.app.data.remote.dto.orders.AcknowledgeRequest
+import com.kavach.app.data.remote.api.KavachApiV2
+import com.kavach.app.data.remote.worker.OrderSyncWorker
 import com.kavach.app.domain.model.Order
+import com.kavach.app.domain.model.OrderStatus
 import com.kavach.app.utils.ApiResult
 import com.kavach.app.utils.safeApiCall
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import java.util.UUID
+import timber.log.Timber
+import com.kavach.app.utils.BehaviorTracker
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class OrderRepository @Inject constructor(
-    private val api           : KavachApiService,
-    private val orderDao      : OrderDao,
-    private val pendingAckDao : PendingAckDao,
-    private val sessionDataStore: SessionDataStore
+    @ApplicationContext private val context: Context,
+    private val orderDao: OrderDao,
+    private val api: KavachApiV2,
+    private val behaviorTracker: BehaviorTracker
 ) {
-    fun getAllOrders(): Flow<List<Order>> =
-        orderDao.getAllOrders().map { list -> list.map { it.toDomain() } }
+
+    fun observeOrders(): Flow<List<Order>> =
+        orderDao.observeAllOrders().map { entities ->
+            entities.map { it.toDomainModel() }
+        }
+
+    private fun isUuid(str: String): Boolean {
+        return try {
+            UUID.fromString(str)
+            true
+        } catch (_: IllegalArgumentException) {
+            false
+        }
+    }
+
+    suspend fun getOrderById(orderId: String): ApiResult<Order> {
+        val entity = if (isUuid(orderId)) {
+            orderDao.getOrderByLocalId(orderId)
+        } else {
+            orderDao.getOrderByServerId(orderId)
+        }
+        return if (entity != null) {
+            ApiResult.Success(entity.toDomainModel())
+        } else {
+            ApiResult.Error("Order not found")
+        }
+    }
+
+    suspend fun acknowledgeOrder(localId: String, readDuration: Long = 0L): ApiResult<Unit> {
+        val order = if (isUuid(localId)) {
+            orderDao.getOrderByLocalId(localId)
+        } else {
+            orderDao.getOrderByServerId(localId)
+        } ?: return ApiResult.Error("Order not found")
+        
+        // OPTIMISTIC: Update local DB first
+        orderDao.markAsAcknowledged(order.localId)
+        
+        // Compliance/Audit logging via Passive Behavior Tracker (preserves Room schema version safety)
+        behaviorTracker.log(
+            eventType = "ORDER_ACKNOWLEDGED",
+            trainingId = order.serverId ?: order.localId,
+            metadata = mapOf("read_duration_ms" to readDuration.toString())
+        )
+
+        // Queue for background sync
+        order.serverId?.let { serverId ->
+            orderDao.enqueueAck(OrderAckEntity(orderId = serverId))
+            OrderSyncWorker.schedule(context)
+        }
+        return ApiResult.Success(Unit)
+    }
+
+
+    suspend fun reconcileFromServer(serverId: String): ApiResult<Unit> = safeApiCall {
+        val response = api.getOrderDetail(serverId)
+        if (response.isSuccessful && response.body() != null) {
+            val dto = response.body()!!.data
+            if (dto != null) {
+                orderDao.reconcileOrder(dto.toEntity())
+                ApiResult.Success(Unit)
+            } else {
+                ApiResult.Error("Order data is null")
+            }
+        } else {
+            ApiResult.Error("Order reconciliation failed")
+        }
+    }
 
     suspend fun refreshOrders(): ApiResult<Unit> = safeApiCall {
-        val resp = api.getOrders()
-        if (resp.isSuccessful) {
-            val dtos = resp.body()?.data ?: emptyList()
-            dtos.forEach { dto ->
-                val existing = orderDao.getOrderById(dto.id)
-                val resolvedAck = when {
-                    existing?.isAcknowledged == true -> true
-                    dto.isAcknowledged               -> true
-                    else                             -> false
-                }
-                orderDao.upsertAll(listOf(
-                    OrderEntity(
-                        id             = dto.id,
-                        title          = dto.title,
-                        contentText    = dto.contentText,
-                        imageUrl       = dto.imageUrl,
-                        issuedBy       = dto.issuedBy ?: "Admin",
-                        createdAt      = dto.createdAt?.toLongOrNull() ?: System.currentTimeMillis(),
-                        isMandatory    = dto.isMandatory,
-                        isAcknowledged = resolvedAck,
-                        priority       = dto.priority,
-                        deadline       = dto.deadline
-                    )
-                ))
+        val response = api.getOrders()
+        if (response.isSuccessful && response.body() != null) {
+            response.body()!!.results.forEach { dto ->
+                orderDao.reconcileOrder(dto.toEntity())
             }
             ApiResult.Success(Unit)
         } else {
-            ApiResult.Error("Failed to fetch orders: ${resp.code()}", code = resp.code())
+            ApiResult.Error("Failed to refresh orders")
         }
     }
 
-    suspend fun getOrderById(id: String): ApiResult<Order> = safeApiCall {
-        val entity = orderDao.getOrderById(id)
-        if (entity != null) ApiResult.Success(entity.toDomain())
-        else ApiResult.Error("Order not found", code = 404)
-    }
-
-    suspend fun acknowledgeOrder(orderId: String, readDuration: Long): ApiResult<Unit> = safeApiCall {
-        val existing = orderDao.getOrderById(orderId)
-        if (existing?.isAcknowledged == true) {
-            return@safeApiCall ApiResult.Success(Unit)
-        }
-
-        val idempotencyKey = UUID.randomUUID().toString()
-        val timestamp = System.currentTimeMillis()
-        val deviceId = sessionDataStore.deviceId.firstOrNull() ?: "unknown"
-
-        orderDao.markAcknowledged(orderId)
-
-        val resp = api.acknowledgeOrder(
-            AcknowledgeRequest(
-                orderId        = orderId,
-                deviceId       = deviceId,
-                timestamp      = timestamp,
-                readDuration   = readDuration,
-                idempotencyKey = idempotencyKey
-            )
-        )
-        if (!resp.isSuccessful) {
-            pendingAckDao.insert(PendingAckEntity(
-                orderId = orderId, 
-                idempotencyKey = idempotencyKey,
-                deviceId = deviceId,
-                timestamp = timestamp,
-                readDuration = readDuration
-            ))
-        }
-        ApiResult.Success(Unit)
-    }
-
-    suspend fun syncPendingAcknowledgments(): ApiResult<Unit> = safeApiCall {
-        val pending = pendingAckDao.getAll()
-        for (item in pending) {
-            val resp = api.acknowledgeOrder(
-                AcknowledgeRequest(
-                    orderId        = item.orderId,
-                    deviceId       = item.deviceId,
-                    timestamp      = item.timestamp,
-                    readDuration   = item.readDuration,
-                    idempotencyKey = item.idempotencyKey
-                )
-            )
-            if (resp.isSuccessful || resp.code() == 409) {
-                pendingAckDao.delete(item)
-            }
-        }
-        ApiResult.Success(Unit)
-    }
-
-    private fun OrderEntity.toDomain() = Order(
-        id             = id,
-        title          = title,
-        contentText    = contentText,
-        imageUrl       = imageUrl,
-        issuedBy       = issuedBy,
-        createdAt      = createdAt,
-        isMandatory    = isMandatory,
-        isAcknowledged = isAcknowledged,
-        priority       = priority,
-        deadline       = deadline
+    private fun OrderEntity.toDomainModel() = Order(
+        id = localId,
+        serverId = serverId,
+        title = title,
+        content = content,
+        type = type,
+        status = when (status) {
+            "PENDING" -> OrderStatus.Pending
+            "ACKNOWLEDGED" -> OrderStatus.Acknowledged
+            "COMPLETED" -> OrderStatus.Completed
+            "EXPIRED" -> OrderStatus.Expired
+            else -> OrderStatus.Pending
+        },
+        issuedBy = issuedBy,
+        issuedAt = issuedAt,
+        receivedAt = receivedAt,
+        acknowledgedAt = acknowledgedAt,
+        isSyncing = isDirty
     )
 }
+
+// Extension mappers for DTO (Assuming DTOs exist or need to be created)
+fun com.kavach.app.data.remote.dto.v2.OrderDto.toEntity() = OrderEntity(
+    localId = UUID.randomUUID().toString(), // Will be reconciled by serverId
+    serverId = id,
+    title = title,
+    content = content,
+    type = type,
+    status = status,
+    issuedBy = issuedBy,
+    issuedAt = issuedAt,
+    expiresAt = expiresAt
+)

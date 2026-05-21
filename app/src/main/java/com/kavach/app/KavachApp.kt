@@ -17,6 +17,7 @@ class KavachApp : Application(), Configuration.Provider {
     @Inject lateinit var workerFactory      : HiltWorkerFactory
     @Inject lateinit var soundManager       : SoundManager
     @Inject lateinit var performanceMonitor : PerformanceMonitor
+    @Inject lateinit var operationalSyncController: com.kavach.app.core.reconciliation.OperationalSyncController
 
     override fun onCreate() {
         super.onCreate()
@@ -55,6 +56,9 @@ class KavachApp : Application(), Configuration.Provider {
         // ── Background Workers ──────────────────────────────────
         KavachSyncWorker.schedule(this)
         PersonnelSyncWorker.schedule(this)
+        com.kavach.app.data.remote.worker.IncidentSyncWorker.schedule(this)
+        com.kavach.app.data.remote.worker.PersonnelMutationWorker.schedule(this)
+        com.kavach.app.data.remote.worker.MediaCleanupWorker.schedule(this)
     }
 
     override fun onTrimMemory(level: Int) {

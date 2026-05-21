@@ -2,6 +2,7 @@ package com.kavach.app.ui.screens.incident
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
 import com.kavach.app.data.remote.dto.incident.IncidentDto
 import com.kavach.app.data.repository.MissionRepository
 import com.kavach.app.utils.ApiResult
@@ -12,58 +13,66 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+import com.kavach.app.data.repository.IncidentRepository
+import com.kavach.app.domain.model.Incident
+import com.kavach.app.utils.OperationalUiState
+import com.kavach.app.utils.OperationalActionState
+import kotlinx.coroutines.flow.*
+
 data class IncidentFeedUiState(
-    val incidents: List<IncidentDto> = emptyList(),
-    val isLoading: Boolean = false,
-    val error: String? = null,
+    val uiState: OperationalUiState<List<Incident>> = OperationalUiState.Idle,
+    val actionState: OperationalActionState = OperationalActionState.Idle,
     val isRefreshing: Boolean = false,
     val selectedSeverity: String? = null
 )
 
 @HiltViewModel
 class IncidentFeedViewModel @Inject constructor(
-    private val repository: MissionRepository
+    private val repository: IncidentRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(IncidentFeedUiState())
-    val uiState: StateFlow<IncidentFeedUiState> = _uiState.asStateFlow()
+    private val _state = MutableStateFlow(IncidentFeedUiState())
+    val state = _state.asStateFlow()
 
     init {
-        loadIncidents()
+        observeIncidents()
+    }
+
+    private fun observeIncidents() {
+        repository.observeIncidents()
+            .onEach { incidents ->
+                val filtered = if (_state.value.selectedSeverity != null) {
+                    incidents.filter { it.severity == _state.value.selectedSeverity }
+                } else incidents
+                
+                _state.update { 
+                    it.copy(uiState = OperationalUiState.Success(filtered)) 
+                }
+            }
+            .launchIn(viewModelScope)
     }
 
     fun loadIncidents(isRefreshing: Boolean = false) {
+        if (isRefreshing) {
+            _state.update { it.copy(isRefreshing = true) }
+        } else if (_state.value.uiState !is OperationalUiState.Success) {
+            _state.update { it.copy(uiState = OperationalUiState.Loading) }
+        }
+        
+        // Note: Actual sync is handled by background worker or explicit pull
+        // For now, we rely on the DB observation and background workers.
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(
-                isLoading = !isRefreshing,
-                isRefreshing = isRefreshing,
-                error = null
-            )
-            val result = repository.getIncidents(
-                severity = _uiState.value.selectedSeverity
-            )
-            when (result) {
-                is ApiResult.Success -> {
-                    _uiState.value = _uiState.value.copy(
-                        incidents = result.data,
-                        isLoading = false,
-                        isRefreshing = false
-                    )
-                }
-                is ApiResult.Error -> {
-                    _uiState.value = _uiState.value.copy(
-                        error = result.message,
-                        isLoading = false,
-                        isRefreshing = false
-                    )
-                }
-                else -> {}
-            }
+            // Simulated pull from server if needed
+            delay(500) 
+            _state.update { it.copy(isRefreshing = false) }
         }
     }
 
     fun setSeverityFilter(severity: String?) {
-        _uiState.value = _uiState.value.copy(selectedSeverity = severity)
-        loadIncidents()
+        _state.update { it.copy(selectedSeverity = severity) }
+    }
+
+    fun clearActionState() {
+        _state.update { it.copy(actionState = OperationalActionState.Idle) }
     }
 }

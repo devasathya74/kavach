@@ -26,28 +26,6 @@ data class QuizQuestionEntity(
     val correctOption : String
 )
 
-@Entity(tableName = "orders")
-data class OrderEntity(
-    @PrimaryKey val id             : String,
-    val title          : String,
-    val contentText    : String?,
-    val imageUrl       : String?,
-    val issuedBy       : String,
-    val createdAt      : Long,
-    val isMandatory    : Boolean,
-    val isAcknowledged : Boolean,
-    val priority       : String = "NORMAL",
-    val deadline       : String? = null
-)
-
-@Entity(tableName = "pending_ack_queue")
-data class PendingAckEntity(
-    @PrimaryKey val orderId        : String,
-    val idempotencyKey : String,    // UUID — ensures exactly-once delivery on retry
-    val deviceId       : String,
-    val timestamp      : Long,
-    val readDuration   : Long
-)
 
 /**
  * Local behavior event log.

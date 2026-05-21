@@ -86,4 +86,16 @@ data class OtaUpdateDto(
     @Json(name = "release_notes")     val releaseNotes: String? = null,
     @Json(name = "published_at")      val publishedAt: String? = null
 )
+// ── Order DTO ─────────────────────────────────────────────────────────────────
 
+@JsonClass(generateAdapter = true)
+data class OrderDto(
+    @Json(name = "id")          val id: String = "",
+    @Json(name = "title")       val title: String = "",
+    @Json(name = "content")     val content: String = "",
+    @Json(name = "type")        val type: String = "GENERAL",
+    @Json(name = "status")      val status: String = "PENDING",
+    @Json(name = "issued_by")   val issuedBy: String = "",
+    @Json(name = "issued_at")   val issuedAt: Long = 0L,
+    @Json(name = "expires_at")  val expiresAt: Long? = null
+)

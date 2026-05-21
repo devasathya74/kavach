@@ -12,10 +12,15 @@ import com.kavach.app.utils.onSuccess
 import com.kavach.app.utils.onFailure
 import com.kavach.app.data.remote.dto.v2.OfficerDeviceDto
 
+import com.kavach.app.utils.OperationalUiState
+import com.kavach.app.utils.OperationalActionState
+import com.kavach.app.domain.model.DeviceStatus
+import com.kavach.app.utils.onSuccess
+import com.kavach.app.utils.onFailure
+
 data class DeviceCenterState(
-    val devices: List<OfficerDeviceDto> = emptyList(),
-    val isLoading: Boolean = false,
-    val error: String? = null,
+    val uiState: OperationalUiState<List<DeviceListItemUiModel>> = OperationalUiState.Idle,
+    val actionState: OperationalActionState = OperationalActionState.Idle,
     val isRefreshing: Boolean = false,
     val searchQuery: String = "",
     val statusFilter: String? = null
@@ -30,41 +35,97 @@ class DeviceCenterViewModel @Inject constructor(
     val state = _state.asStateFlow()
 
     init {
-        loadDevices()
+        observeDevices()
+        syncDevices()
     }
 
-    fun loadDevices() {
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    private fun observeDevices() {
+        val filterFlow = _state.map { it.searchQuery to it.statusFilter }.distinctUntilChanged()
+        
+        filterFlow.flatMapLatest { (query, status) ->
+            repository.observeAllDevices(
+                search = query.ifBlank { null },
+                status = status
+            )
+        }.map { entities ->
+            val uiModels = entities.map { it.toUiModel() }
+            if (uiModels.isEmpty() && _state.value.uiState is OperationalUiState.Idle) {
+                OperationalUiState.Loading
+            } else {
+                OperationalUiState.Success(uiModels)
+            }
+        }.onEach { newState ->
+            _state.update { it.copy(uiState = newState) }
+        }.launchIn(viewModelScope)
+    }
+
+    fun syncDevices() {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
-            // Note: Repository needs getDevices implemented for the general dashboard
-            // For now, using a placeholder logic or updating repository
+            if (_state.value.uiState !is OperationalUiState.Success) {
+                _state.update { it.copy(uiState = OperationalUiState.Loading) }
+            }
+            
             repository.getDevices(
-                search = _state.value.searchQuery,
+                search = _state.value.searchQuery.ifBlank { null },
                 status = _state.value.statusFilter
-            ).onSuccess { devices ->
-                _state.update { it.copy(devices = devices, isLoading = false, error = null) }
+            ).onSuccess {
+                _state.update { it.copy(isRefreshing = false) }
             }.onFailure { e ->
-                _state.update { it.copy(isLoading = false, error = e.message) }
+                _state.update { 
+                    it.copy(
+                        uiState = OperationalUiState.Error(e.message ?: "Failed to sync devices"),
+                        isRefreshing = false
+                    ) 
+                }
             }
         }
     }
 
     fun onSearchChange(query: String) {
         _state.update { it.copy(searchQuery = query) }
-        loadDevices()
+    }
+
+    fun onFilterChange(status: String?) {
+        _state.update { it.copy(statusFilter = status) }
     }
 
     fun onRefresh() {
         _state.update { it.copy(isRefreshing = true) }
-        loadDevices()
-        _state.update { it.copy(isRefreshing = false) }
+        syncDevices()
+    }
+
+    fun clearActionState() {
+        _state.update { it.copy(actionState = OperationalActionState.Idle) }
     }
 
     fun revokeDevice(officerId: String, deviceId: String) {
         viewModelScope.launch {
-            repository.revokeDevice(officerId, deviceId).onSuccess {
-                loadDevices()
-            }
+            _state.update { it.copy(actionState = OperationalActionState.Processing) }
+            
+            repository.revokeDevice(officerId, deviceId)
+                .onSuccess {
+                    _state.update { it.copy(actionState = OperationalActionState.Success("Device revoked successfully")) }
+                    syncDevices()
+                }
+                .onFailure { e ->
+                    _state.update { it.copy(actionState = OperationalActionState.Error(e.message ?: "Revoke failed")) }
+                }
+        }
+    }
+
+    fun blockDevice(officerId: String, deviceId: String, reason: String) {
+        viewModelScope.launch {
+            _state.update { it.copy(actionState = OperationalActionState.Processing) }
+            
+            // Reusing UserManagement update for blocking logic (status = BLOCKED)
+            repository.updateUser(officerId, com.kavach.app.data.remote.dto.v2.UpdateUserRequest(isActive = false))
+                .onSuccess {
+                    _state.update { it.copy(actionState = OperationalActionState.Success("Device/User blocked")) }
+                }
+                .onFailure { e ->
+                    _state.update { it.copy(actionState = OperationalActionState.Error(e.message ?: "Block failed")) }
+                }
         }
     }
 }

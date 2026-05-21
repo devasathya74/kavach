@@ -6,368 +6,369 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kavach.app.data.local.BroadcastFileManager
 import com.kavach.app.data.local.dao.BroadcastDao
-import com.kavach.app.data.local.dao.UnitSummary
 import com.kavach.app.data.local.dao.OfficerDao
+import com.kavach.app.data.local.dao.UnitSummary
 import com.kavach.app.data.local.entity.BroadcastAttachmentEntity
 import com.kavach.app.data.local.entity.BroadcastDispatchQueueEntity
 import com.kavach.app.data.local.entity.BroadcastDraftEntity
 import com.kavach.app.data.local.entity.OfficerWithProfile
 import com.kavach.app.data.remote.worker.BroadcastDispatchWorker
 import com.kavach.app.data.remote.worker.UploadWorker
+import com.kavach.app.data.repository.BroadcastRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.UUID
 import javax.inject.Inject
 
-// ── Sealed state classes ──────────────────────────────────────────────────────
-
-sealed class AttachmentState {
-    object None : AttachmentState()
-    /** File copied to private storage, not yet uploaded */
-    data class Selected(val localPath: String, val mimeType: String) : AttachmentState()
-    object Uploading : AttachmentState()
-    data class Ready(val localPath: String, val remoteUrl: String) : AttachmentState()
-    data class Failed(val reason: String) : AttachmentState()
+/**
+ * Dispatch state machine for the Operational Order Dispatch Console.
+ *
+ * Transitions:
+ *   DRAFT → QUEUED (no attachment)
+ *   DRAFT → UPLOADING (with attachment) → QUEUED → DISPATCHING → SENT
+ *   Any state → FAILED (on error, can retry)
+ */
+enum class DispatchState {
+    DRAFT,       // Composing
+    UPLOADING,   // Image uploading via UploadWorker
+    QUEUED,      // In dispatch_queue, WorkManager pending
+    DISPATCHING, // Worker running
+    SENT,        // Dispatch confirmed
+    FAILED       // Error, retry available
 }
 
-sealed class DispatchState {
-    object Idle : DispatchState()
-    object Saving : DispatchState()
-    object Queued : DispatchState()
-    data class Failed(val reason: String) : DispatchState()
-}
-
-data class CreateBroadcastUiState(
-    val draftId: String = UUID.randomUUID().toString(),
+data class DispatchUiState(
+    // --- Title & Message ---
     val title: String = "",
     val content: String = "",
-    val priority: String = "NORMAL",
 
-    // Attachment — state machine, not raw URI
-    val attachmentState: AttachmentState = AttachmentState.None,
+    // --- Image Attachment ---
+    val attachmentLocalPath: String? = null,   // app-private absolute path
+    val attachmentMimeType: String? = null,
+    val attachmentRemoteUrl: String? = null,
+    val isImageCopying: Boolean = false,        // while copying content:// → private
 
-    // Filter — loaded from DB, not hard-coded
+    // --- Unit / Company Filter ---
     val availableUnits: List<UnitSummary> = emptyList(),
-    val selectedUnit: String? = null,
+    val selectedUnit: UnitSummary? = null,
     val availableCompanies: List<String> = emptyList(),
     val selectedCompany: String? = null,
 
-    // Search — debounced input
+    // --- Personnel Search ---
     val searchQuery: String = "",
-    val searchResults: List<OfficerWithProfile> = emptyList(),
-    val isSearching: Boolean = false,
+    val personnelList: List<OfficerWithProfile> = emptyList(),
+    val isPersonnelLoading: Boolean = false,
 
-    /**
-     * CANONICAL IDs ONLY — never store OfficerWithProfile objects here.
-     * Persisted to broadcast_draft_recipients table on every toggle.
-     * Survives process death via DB.
-     */
-    val selectedUserIds: Set<String> = emptySet(),
+    // --- Selection (IDs only — no object refs) ---
+    val selectedOfficerIds: Set<String> = emptySet(),
 
-    // Delivery mode
+    // --- Delivery Mode ---
     val requireAck: Boolean = false,
     val isHighPriority: Boolean = false,
     val isEmergency: Boolean = false,
 
-    // State
-    val dispatchState: DispatchState = DispatchState.Idle,
-    val validationError: String? = null
+    // --- Dispatch ---
+    val dispatchState: DispatchState = DispatchState.DRAFT,
+    val error: String? = null,
+
+    // --- Internal draft tracking ---
+    val draftId: String = UUID.randomUUID().toString()
 )
 
-@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+@OptIn(FlowPreview::class)
 @HiltViewModel
 class CreateBroadcastViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @ApplicationContext private val appContext: Context,
     private val broadcastDao: BroadcastDao,
     private val officerDao: OfficerDao,
+    private val broadcastRepository: BroadcastRepository,
     private val fileManager: BroadcastFileManager
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(CreateBroadcastUiState())
-    val uiState: StateFlow<CreateBroadcastUiState> = _uiState.asStateFlow()
+    private val _state = MutableStateFlow(DispatchUiState())
+    val uiState: StateFlow<DispatchUiState> = _state.asStateFlow()
 
-    // Separate flow for debounced search to avoid re-triggering on other state changes
+    // Debounce buffer for search
     private val _searchQuery = MutableStateFlow("")
 
     init {
-        observeAvailableUnits()
-        observeDebouncedSearch()
+        observeUnits()
+        observeSearchWithDebounce()
     }
 
-    // ── Initialization ────────────────────────────────────────────────────────
+    // ── Unit / Company Filter ─────────────────────────────────
 
-    private fun observeAvailableUnits() {
+    private fun observeUnits() {
         viewModelScope.launch {
-            broadcastDao.observeAvailableUnits().collectLatest { units ->
-                _uiState.update { it.copy(availableUnits = units) }
+            broadcastDao.observeAvailableUnits().collect { units ->
+                _state.value = _state.value.copy(availableUnits = units)
             }
         }
     }
 
-    private fun observeDebouncedSearch() {
-        viewModelScope.launch {
-            _searchQuery
-                .debounce(300L)
-                .distinctUntilChanged()
-                .flatMapLatest { query ->
-                    if (query.isBlank()) {
-                        // If no search query but unit/company selected → show filtered list
-                        val state = _uiState.value
-                        when {
-                            state.selectedCompany != null ->
-                                officerDao.observePersonnelByCompany(state.selectedCompany)
-                            state.selectedUnit != null ->
-                                officerDao.observePersonnelByUnit(state.selectedUnit)
-                            else -> flowOf(emptyList())
-                        }
-                    } else {
-                        _uiState.update { it.copy(isSearching = true) }
-                        officerDao.searchPersonnel(query)
-                    }
-                }
-                .collectLatest { results ->
-                    _uiState.update { it.copy(searchResults = results, isSearching = false) }
-                }
-        }
-    }
-
-    // ── Title / Content ───────────────────────────────────────────────────────
-
-    fun onTitleChange(title: String) {
-        _uiState.update { it.copy(title = title, validationError = null) }
-    }
-
-    fun onContentChange(content: String) {
-        _uiState.update { it.copy(content = content, validationError = null) }
-    }
-
-    fun onPriorityChange(priority: String) {
-        _uiState.update { it.copy(priority = priority) }
-    }
-
-    // ── Image Attachment ──────────────────────────────────────────────────────
-
-    /**
-     * Called immediately when user picks an image from the system picker.
-     * Copies content:// URI to app-private storage on IO dispatcher.
-     * NEVER stores content:// URI in state or DB.
-     */
-    fun onImagePicked(uri: Uri, mimeType: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val privatePath = fileManager.copyToPrivateStorage(uri, mimeType)
-                _uiState.update { it.copy(
-                    attachmentState = AttachmentState.Selected(privatePath, mimeType),
-                    validationError = null
-                )}
-                Timber.d("CreateBroadcastVM: Image copied to private storage: $privatePath")
-            } catch (e: Exception) {
-                Timber.e(e, "CreateBroadcastVM: Failed to copy image")
-                _uiState.update { it.copy(
-                    attachmentState = AttachmentState.Failed("Failed to load image: ${e.message}")
-                )}
-            }
-        }
-    }
-
-    fun onRemoveAttachment() {
-        val current = _uiState.value.attachmentState
-        _uiState.update { it.copy(attachmentState = AttachmentState.None) }
-        // Clean up private file
-        if (current is AttachmentState.Selected) {
-            viewModelScope.launch(Dispatchers.IO) {
-                fileManager.deletePrivateFile(current.localPath)
-            }
-        }
-    }
-
-    // ── Filter System ─────────────────────────────────────────────────────────
-
-    fun onUnitSelected(unitCode: String?) {
-        _uiState.update { it.copy(
-            selectedUnit = unitCode,
+    fun onUnitSelected(unit: UnitSummary?) {
+        _state.value = _state.value.copy(
+            selectedUnit = unit,
             selectedCompany = null,
             availableCompanies = emptyList(),
-            searchResults = emptyList()
-        )}
-        if (unitCode != null) {
-            observeCompaniesForUnit(unitCode)
-            // Re-trigger personnel list for selected unit
-            _searchQuery.value = _searchQuery.value
+            personnelList = emptyList()
+        )
+        if (unit != null) {
+            observeCompaniesForUnit(unit.unitCode)
+            loadPersonnelForUnit(unit.unitCode)
         }
     }
 
     private fun observeCompaniesForUnit(unitCode: String) {
         viewModelScope.launch {
-            broadcastDao.observeCompaniesForUnit(unitCode).collectLatest { companies ->
-                _uiState.update { it.copy(availableCompanies = companies) }
+            broadcastDao.observeCompaniesForUnit(unitCode).collect { companies ->
+                _state.value = _state.value.copy(availableCompanies = companies)
             }
         }
     }
 
     fun onCompanySelected(company: String?) {
-        _uiState.update { it.copy(selectedCompany = company, searchResults = emptyList()) }
-        _searchQuery.value = _searchQuery.value // re-trigger search flow
+        _state.value = _state.value.copy(selectedCompany = company)
+        val unit = _state.value.selectedUnit
+        if (company != null) {
+            loadPersonnelForCompany(company)
+        } else if (unit != null) {
+            loadPersonnelForUnit(unit.unitCode)
+        }
     }
 
-    // ── Search ────────────────────────────────────────────────────────────────
+    private fun loadPersonnelForUnit(unitCode: String) {
+        viewModelScope.launch {
+            _state.value = _state.value.copy(isPersonnelLoading = true)
+            officerDao.observePersonnelByUnit(unitCode)
+                .catch { Timber.e(it, "loadPersonnelForUnit failed") }
+                .collect { list ->
+                    _state.value = _state.value.copy(
+                        personnelList = list,
+                        isPersonnelLoading = false
+                    )
+                }
+        }
+    }
+
+    private fun loadPersonnelForCompany(companyName: String) {
+        viewModelScope.launch {
+            _state.value = _state.value.copy(isPersonnelLoading = true)
+            officerDao.observePersonnelByCompany(companyName)
+                .catch { Timber.e(it, "loadPersonnelForCompany failed") }
+                .collect { list ->
+                    _state.value = _state.value.copy(
+                        personnelList = list,
+                        isPersonnelLoading = false
+                    )
+                }
+        }
+    }
+
+    // ── Search (debounced, DB-backed) ─────────────────────────
+
+    private fun observeSearchWithDebounce() {
+        viewModelScope.launch {
+            _searchQuery
+                .debounce(300)
+                .distinctUntilChanged()
+                .flatMapLatest { query ->
+                    if (query.isBlank()) {
+                        // If unit/company selected, show those; else empty
+                        val unit = _state.value.selectedUnit
+                        val company = _state.value.selectedCompany
+                        when {
+                            company != null -> officerDao.observePersonnelByCompany(company)
+                            unit != null    -> officerDao.observePersonnelByUnit(unit.unitCode)
+                            else            -> flowOf(emptyList())
+                        }
+                    } else {
+                        officerDao.searchPersonnel(query)
+                    }
+                }
+                .catch { Timber.e(it, "search flow error") }
+                .collect { list ->
+                    _state.value = _state.value.copy(
+                        personnelList = list,
+                        isPersonnelLoading = false
+                    )
+                }
+        }
+    }
 
     fun onSearchQueryChange(query: String) {
-        _uiState.update { it.copy(searchQuery = query, isSearching = query.isNotBlank()) }
+        _state.value = _state.value.copy(searchQuery = query, isPersonnelLoading = query.isNotBlank())
         _searchQuery.value = query
     }
 
-    // ── Selection ─────────────────────────────────────────────────────────────
+    // ── Title / Content ───────────────────────────────────────
+
+    fun onTitleChange(title: String) {
+        _state.value = _state.value.copy(title = title, error = null)
+    }
+
+    fun onContentChange(content: String) {
+        _state.value = _state.value.copy(content = content, error = null)
+    }
+
+    // ── Image Attachment ──────────────────────────────────────
 
     /**
-     * Toggles officer selection and immediately persists to DB.
-     * Survives process death — WorkerManager reads from broadcast_draft_recipients table.
+     * Called when user picks an image from gallery.
+     * Copies content:// URI → app-private storage on IO thread.
+     * NEVER stores the raw content:// URI.
      */
-    fun toggleSelection(officerId: String) {
-        val current = _uiState.value.selectedUserIds.toMutableSet()
-        if (!current.remove(officerId)) current.add(officerId)
-        val updated = current.toSet()
-
-        _uiState.update { it.copy(selectedUserIds = updated, validationError = null) }
-
-        // Persist immediately to DB — process-death safe
-        viewModelScope.launch(Dispatchers.IO) {
-            broadcastDao.setDraftRecipients(_uiState.value.draftId, updated)
-        }
-    }
-
-    // ── Delivery Mode ─────────────────────────────────────────────────────────
-
-    fun onRequireAckChange(value: Boolean) {
-        _uiState.update { it.copy(requireAck = value) }
-    }
-
-    fun onHighPriorityChange(value: Boolean) {
-        _uiState.update { it.copy(isHighPriority = value) }
-    }
-
-    fun onEmergencyChange(value: Boolean) {
-        // Emergency implies high priority
-        _uiState.update { it.copy(isEmergency = value, isHighPriority = if (value) true else it.isHighPriority) }
-    }
-
-    // ── Dispatch ──────────────────────────────────────────────────────────────
-
-    /**
-     * Validates state, saves draft + attachment to DB, enqueues WorkManager job.
-     * NEVER calls API directly from ViewModel.
-     *
-     * Validation rules:
-     * - title required
-     * - at least one recipient required
-     * - content OR image required (not both mandatory)
-     */
-    fun dispatchBroadcast() {
-        val s = _uiState.value
-        val hasContent = s.content.isNotBlank()
-        val hasAttachment = s.attachmentState is AttachmentState.Selected
-                || s.attachmentState is AttachmentState.Ready
-
-        when {
-            s.title.isBlank() -> {
-                _uiState.update { it.copy(validationError = "Broadcast title is required") }
-                return
-            }
-            s.selectedUserIds.isEmpty() -> {
-                _uiState.update { it.copy(validationError = "Select at least one recipient") }
-                return
-            }
-            !hasContent && !hasAttachment -> {
-                _uiState.update { it.copy(validationError = "Add a message or upload an order image") }
-                return
-            }
-        }
-
-        _uiState.update { it.copy(dispatchState = DispatchState.Saving, validationError = null) }
-
-        viewModelScope.launch(Dispatchers.IO) {
+    fun onImageSelected(uri: Uri, mimeType: String) {
+        viewModelScope.launch {
+            _state.value = _state.value.copy(isImageCopying = true, error = null)
             try {
-                val state = _uiState.value
-                val dispatchId = UUID.randomUUID().toString()
-
-                // 1. Save draft to DB
-                val draft = BroadcastDraftEntity(
-                    draftId = state.draftId,
-                    title = state.title,
-                    content = state.content,
-                    priority = if (state.isEmergency) "CRITICAL"
-                               else if (state.isHighPriority) "URGENT"
-                               else state.priority,
-                    type = if (state.attachmentState != AttachmentState.None) "ORDER_IMAGE" else "TEXT",
-                    selectedUserIdsJson = "[]", // recipients stored in broadcast_draft_recipients table
-                    attachmentLocalPath = (state.attachmentState as? AttachmentState.Selected)?.localPath,
-                    attachmentMimeType = (state.attachmentState as? AttachmentState.Selected)?.mimeType,
-                    targetUnit = state.selectedUnit,
-                    targetCompany = state.selectedCompany,
-                    requireAck = state.requireAck,
-                    isHighPriority = state.isHighPriority,
-                    isEmergency = state.isEmergency
+                val privatePath = fileManager.copyToPrivateStorage(uri, mimeType)
+                _state.value = _state.value.copy(
+                    attachmentLocalPath = privatePath,
+                    attachmentMimeType = mimeType,
+                    attachmentRemoteUrl = null,
+                    isImageCopying = false
                 )
-                broadcastDao.saveDraft(draft)
-
-                // 2. Save attachment entity (if present)
-                val attachPath = (state.attachmentState as? AttachmentState.Selected)?.localPath
-                val attachMime = (state.attachmentState as? AttachmentState.Selected)?.mimeType
-                if (attachPath != null && attachMime != null) {
-                    broadcastDao.insertAttachment(
-                        BroadcastAttachmentEntity(
-                            localId = UUID.randomUUID().toString(),
-                            broadcastLocalId = state.draftId,
-                            uri = attachPath,             // app-private absolute path
-                            mimeType = attachMime,
-                            uploadStatus = "PENDING"
-                        )
-                    )
-                }
-
-                // 3. Enqueue dispatch job
-                broadcastDao.enqueueDispatch(
-                    BroadcastDispatchQueueEntity(
-                        dispatchId = dispatchId,
-                        draftId = state.draftId,
-                        correlationId = UUID.randomUUID().toString(),
-                        status = "QUEUED"
-                    )
-                )
-
-                // 4. Enqueue WorkManager chain
-                if (attachPath != null) {
-                    // Upload first → then dispatch
-                    UploadWorker.enqueue(context, dispatchId)
-                } else {
-                    // No attachment → dispatch directly
-                    BroadcastDispatchWorker.enqueue(context, dispatchId)
-                }
-
-                _uiState.update { it.copy(dispatchState = DispatchState.Queued) }
-                Timber.d("CreateBroadcastVM: Dispatch queued — dispatchId=$dispatchId")
-
+                Timber.d("Image copied to private storage: $privatePath")
             } catch (e: Exception) {
-                Timber.e(e, "CreateBroadcastVM: Failed to enqueue dispatch")
-                _uiState.update { it.copy(
-                    dispatchState = DispatchState.Failed("Failed to queue dispatch: ${e.message}")
-                )}
+                Timber.e(e, "Failed to copy image to private storage")
+                _state.value = _state.value.copy(
+                    isImageCopying = false,
+                    error = "Image copy failed: ${e.localizedMessage}"
+                )
             }
         }
+    }
+
+    fun onImageRemoved() {
+        val path = _state.value.attachmentLocalPath
+        if (path != null) {
+            fileManager.deletePrivateFile(path)
+        }
+        _state.value = _state.value.copy(
+            attachmentLocalPath = null,
+            attachmentMimeType = null,
+            attachmentRemoteUrl = null
+        )
+    }
+
+    // ── Selection (IDs only) ──────────────────────────────────
+
+    fun toggleOfficerSelection(officerId: String) {
+        val current = _state.value.selectedOfficerIds.toMutableSet()
+        if (!current.remove(officerId)) current.add(officerId)
+        _state.value = _state.value.copy(selectedOfficerIds = current)
+
+        // Persist selection to DB immediately (process-death safe)
+        viewModelScope.launch {
+            broadcastDao.setDraftRecipients(_state.value.draftId, current)
+        }
+    }
+
+    // ── Delivery Mode ─────────────────────────────────────────
+
+    fun onRequireAckChanged(v: Boolean) { _state.value = _state.value.copy(requireAck = v) }
+    fun onHighPriorityChanged(v: Boolean) { _state.value = _state.value.copy(isHighPriority = v) }
+    fun onEmergencyChanged(v: Boolean) { _state.value = _state.value.copy(isEmergency = v) }
+
+    // ── Dispatch ──────────────────────────────────────────────
+
+    /**
+     * DISPATCH FLOW:
+     *   1. Validate inputs
+     *   2. Save draft to DB (with all fields)
+     *   3. If attachment → save BroadcastAttachmentEntity, enqueue UploadWorker
+     *   4. If no attachment → enqueue BroadcastDispatchWorker directly
+     *   5. Update state → QUEUED
+     *
+     * WorkManager handles: network loss, app kill, reboot survival.
+     */
+    fun dispatch() {
+        val s = _state.value
+
+        // Validation
+        if (s.title.isBlank()) {
+            _state.value = s.copy(error = "Title is required")
+            return
+        }
+        if (s.content.isBlank() && s.attachmentLocalPath == null) {
+            _state.value = s.copy(error = "Message or image is required")
+            return
+        }
+
+        viewModelScope.launch {
+            val priority = when {
+                s.isEmergency    -> "EMERGENCY"
+                s.isHighPriority -> "HIGH"
+                else             -> "NORMAL"
+            }
+            val type = if (s.isEmergency) "EMERGENCY" else "GENERAL"
+
+            // 1. Persist recipients to DB
+            broadcastDao.setDraftRecipients(s.draftId, s.selectedOfficerIds)
+
+            // 2. Save draft
+            val draft = BroadcastDraftEntity(
+                draftId              = s.draftId,
+                title                = s.title,
+                content              = s.content,
+                priority             = priority,
+                type                 = type,
+                selectedUserIdsJson  = "[]", // superseded by broadcast_draft_recipients table
+                targetUnit           = s.selectedUnit?.unitCode,
+                targetCompany        = s.selectedCompany,
+                requireAck           = s.requireAck,
+                isHighPriority       = s.isHighPriority,
+                isEmergency          = s.isEmergency,
+                attachmentLocalPath  = s.attachmentLocalPath,
+                attachmentMimeType   = s.attachmentMimeType,
+                attachmentRemoteUrl  = s.attachmentRemoteUrl
+            )
+            broadcastRepository.saveDraft(draft)
+
+            // 3. Create dispatch queue entry
+            val dispatchId     = UUID.randomUUID().toString()
+            val correlationId  = UUID.randomUUID().toString()
+
+            val queueEntry = BroadcastDispatchQueueEntity(
+                dispatchId    = dispatchId,
+                draftId       = s.draftId,
+                correlationId = correlationId,
+                status        = "QUEUED"
+            )
+            broadcastRepository.enqueueDispatch(queueEntry)
+
+            // 4. If attachment exists → save attachment entity + enqueue UploadWorker
+            if (s.attachmentLocalPath != null && s.attachmentMimeType != null) {
+                val attachment = BroadcastAttachmentEntity(
+                    localId        = UUID.randomUUID().toString(),
+                    broadcastLocalId = s.draftId,
+                    uri            = s.attachmentLocalPath,
+                    mimeType       = s.attachmentMimeType,
+                    uploadStatus   = "PENDING"
+                )
+                broadcastRepository.saveAttachment(attachment)
+
+                _state.value = _state.value.copy(dispatchState = DispatchState.UPLOADING)
+                UploadWorker.enqueue(appContext, dispatchId)
+            } else {
+                // 5. No attachment → dispatch directly
+                _state.value = _state.value.copy(dispatchState = DispatchState.QUEUED)
+                BroadcastDispatchWorker.enqueue(appContext, dispatchId)
+            }
+
+            Timber.d("Broadcast queued: draftId=${s.draftId} dispatchId=$dispatchId")
+        }
+    }
+
+    // ── Cleanup ───────────────────────────────────────────────
+
+    override fun onCleared() {
+        super.onCleared()
+        // Note: Draft and recipients remain in DB until WorkManager completes or user cancels
     }
 }

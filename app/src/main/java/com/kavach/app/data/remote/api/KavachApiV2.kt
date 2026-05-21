@@ -81,6 +81,15 @@ interface KavachApiV2 {
 
     @POST("api/v2/auth/v2/broadcasts/")
     suspend fun createBroadcast(@Body data: CreateBroadcastRequest): Response<ApiResponse<BroadcastDto>>
+    
+    @Multipart
+    @POST("api/v2/auth/v2/broadcasts/upload/")
+    suspend fun uploadAttachment(
+        @Part file: MultipartBody.Part
+    ): Response<UploadAttachmentResponse>
+
+    @POST("api/v2/auth/v2/broadcasts/finalize/")
+    suspend fun finalizeBroadcast(@Body data: FinalizeBroadcastRequest): Response<ApiResponse<FinalizeBroadcastResponse>>
 
     @POST("api/v2/auth/v2/broadcasts/{id}/acknowledge/")
     suspend fun acknowledgeBroadcast(@Path("id") id: String): Response<ApiResponse<Unit>>
@@ -117,4 +126,14 @@ interface KavachApiV2 {
 
     @POST("api/v2/auth/v2/pending-changes/{id}/reject/")
     suspend fun rejectChange(@Path("id") id: String): Response<ApiResponse<Unit>>
+
+    // --- Order Management ---
+    @GET("api/v2/auth/v2/orders/")
+    suspend fun getOrders(): Response<PaginatedResponse<OrderDto>>
+
+    @GET("api/v2/auth/v2/orders/{id}/")
+    suspend fun getOrderDetail(@Path("id") id: String): Response<ApiResponse<OrderDto>>
+
+    @POST("api/v2/auth/v2/orders/{id}/acknowledge/")
+    suspend fun acknowledgeOrder(@Path("id") id: String): Response<ApiResponse<Unit>>
 }

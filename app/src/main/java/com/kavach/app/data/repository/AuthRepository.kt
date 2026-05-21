@@ -45,6 +45,7 @@ class AuthRepository @Inject constructor(
     private val sessionStore       : SessionDataStore,
     private val behaviorTracker    : BehaviorTracker,
     private val db                 : KavachDatabase,
+    private val webSocketManager   : com.kavach.app.data.remote.websocket.WebSocketManager,
     @ApplicationContext private val context: Context
 ) {
     /** 
@@ -207,6 +208,7 @@ class AuthRepository @Inject constructor(
 
     /** Clears all local session data and local cache */
     suspend fun logout() {
+        webSocketManager.disconnect()
         sessionStore.clearSession()
         with(kotlinx.coroutines.Dispatchers.IO) {
             db.clearAllTables()

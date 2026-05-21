@@ -15,6 +15,20 @@ import javax.inject.Inject
 import com.kavach.app.utils.onSuccess
 import com.kavach.app.utils.onFailure
 
+sealed interface PersonnelUiState {
+    object Idle : PersonnelUiState
+    object Loading : PersonnelUiState
+    data class Success(val users: List<PersonnelListItemUiModel>) : PersonnelUiState
+    data class Error(val message: String) : PersonnelUiState
+}
+
+sealed interface ActionState {
+    object Idle : ActionState
+    object Processing : ActionState
+    data class Success(val message: String) : ActionState
+    data class Error(val message: String) : ActionState
+}
+
 data class PersonnelQueryState(
     val query: String = "",
     val unitType: String? = null,
@@ -24,74 +38,133 @@ data class PersonnelQueryState(
 )
 
 data class PersonnelListState(
-    val users: List<PersonnelListItemUiModel> = emptyList(),
-    val isLoading: Boolean = false,
+    val uiState: PersonnelUiState = PersonnelUiState.Idle,
+    val actionState: ActionState = ActionState.Idle,
     val isRefreshing: Boolean = false,
-    val error: String? = null,
     val query: PersonnelQueryState = PersonnelQueryState(),
-    val endOfPaginationReached: Boolean = false
+    val endOfPaginationReached: Boolean = false,
+    val selectedIds: Set<String> = emptySet(),
+    val selectionMode: Boolean = false,
+    val bulkMutationQueue: List<com.kavach.app.data.local.entity.BulkMutationEntity> = emptyList()
 )
 
 @HiltViewModel
 class PersonnelListViewModel @Inject constructor(
-    private val repository: UserManagementRepository
+    private val repository: UserManagementRepository,
+    private val officerDao: com.kavach.app.data.local.dao.OfficerDao
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(PersonnelListState())
     val state = _state.asStateFlow()
 
+    private val pendingDeletions = MutableStateFlow<Set<String>>(emptySet())
     private var searchJob: Job? = null
+
+    fun toggleSelectionMode(enabled: Boolean) {
+        _state.update { it.copy(selectionMode = enabled, selectedIds = emptySet()) }
+    }
+
+    fun toggleUserSelection(id: String) {
+        _state.update { 
+            val newSelected = if (it.selectedIds.contains(id)) it.selectedIds - id else it.selectedIds + id
+            it.copy(selectedIds = newSelected)
+        }
+    }
+
+    fun bulkAction(actionType: String) {
+        val selected = _state.value.selectedIds
+        if (selected.isEmpty()) return
+
+        viewModelScope.launch {
+            _state.update { it.copy(actionState = ActionState.Processing) }
+            repository.performBulkAction(selected.toList(), actionType)
+                .onSuccess {
+                    _state.update { 
+                        it.copy(
+                            actionState = ActionState.Success("Bulk action $actionType initiated for ${selected.size} users"),
+                            selectedIds = emptySet(),
+                            selectionMode = false
+                        ) 
+                    }
+                }
+                .onFailure { e ->
+                    _state.update { it.copy(actionState = ActionState.Error(e.message ?: "Bulk action failed")) }
+                }
+        }
+    }
 
     init {
         observeUsers()
+        observeBulkQueue()
+    }
+
+    private fun observeBulkQueue() {
+        officerDao.observeBulkMutations()
+            .onEach { queue ->
+                _state.update { it.copy(bulkMutationQueue = queue) }
+            }.launchIn(viewModelScope)
     }
 
     @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
     private fun observeUsers() {
-        _state.map { it.query }.distinctUntilChanged().flatMapLatest { q ->
-            repository.observeUsers(q.unitType, q.query.ifBlank { null })
-        }.onEach { dtoList ->
-            val uiModels = dtoList.map { it.toUiModel() }
-            _state.update { it.copy(users = uiModels) }
+        val queryFlow = _state.map { it.query }.distinctUntilChanged()
+        
+        combine(
+            queryFlow.flatMapLatest { q ->
+                repository.observeUsers(q.unitType, q.query.ifBlank { null })
+            },
+            pendingDeletions
+        ) { dtoList, pending ->
+            val uiModels = dtoList
+                .map { it.toUiModel() }
+                .filter { it.id !in pending }
+            
+            if (uiModels.isEmpty() && _state.value.uiState is PersonnelUiState.Idle) {
+                PersonnelUiState.Loading
+            } else {
+                PersonnelUiState.Success(uiModels)
+            }
+        }.onEach { newState ->
+            _state.update { it.copy(uiState = newState) }
         }.launchIn(viewModelScope)
     }
 
     fun syncUsers(isRefresh: Boolean = false) {
         val currentState = _state.value
-        
-        // Pagination Guards
-        if (currentState.isLoading || currentState.isRefreshing) return
+        if (currentState.isRefreshing) return
         if (!isRefresh && currentState.endOfPaginationReached) return
 
         val nextPage = if (isRefresh) 1 else currentState.query.page + 1
-        android.util.Log.d("USER_FETCH", "Fetching Users: page=$nextPage, isRefresh=$isRefresh")
 
         viewModelScope.launch {
             if (isRefresh) {
                 _state.update { it.copy(isRefreshing = true, endOfPaginationReached = false) }
             } else {
-                _state.update { it.copy(isLoading = true) }
+                // If we are already success, don't show full screen loading, just a footer loading (not implemented yet in UI)
+                if (currentState.uiState !is PersonnelUiState.Success) {
+                    _state.update { it.copy(uiState = PersonnelUiState.Loading) }
+                }
             }
 
-            try {
-                repository.refreshUsers(
-                    page = nextPage,
-                    unitType = currentState.query.unitType,
-                    search = currentState.query.query.ifBlank { null }
-                ).onSuccess { hasNext ->
-                    android.util.Log.d("USER_FETCH", "Fetch Success: hasNext=$hasNext")
-                    _state.update { 
-                        it.copy(
-                            query = it.query.copy(page = nextPage),
-                            endOfPaginationReached = !hasNext
-                        )
-                    }
-                }.onFailure { e ->
-                    android.util.Log.e("USER_FETCH", "Fetch Failed: ${e.message}")
-                    _state.update { it.copy(error = e.message) }
+            repository.refreshUsers(
+                page = nextPage,
+                unitType = currentState.query.unitType,
+                search = currentState.query.query.ifBlank { null }
+            ).onSuccess { hasNext ->
+                _state.update { 
+                    it.copy(
+                        query = it.query.copy(page = nextPage),
+                        endOfPaginationReached = !hasNext,
+                        isRefreshing = false
+                    )
                 }
-            } finally {
-                _state.update { it.copy(isLoading = false, isRefreshing = false) }
+            }.onFailure { e ->
+                _state.update { 
+                    it.copy(
+                        uiState = PersonnelUiState.Error(e.message ?: "Failed to fetch users"),
+                        isRefreshing = false
+                    ) 
+                }
             }
         }
     }
@@ -110,71 +183,65 @@ class PersonnelListViewModel @Inject constructor(
         syncUsers(isRefresh = true)
     }
 
-    fun onCompanyFilterChange(company: String?) {
-        _state.update { it.copy(query = it.query.copy(company = company, page = 1)) }
-        syncUsers(isRefresh = true)
-    }
-
-    fun onPlatoonFilterChange(platoon: Int?) {
-        _state.update { it.copy(query = it.query.copy(platoon = platoon, page = 1)) }
-        syncUsers(isRefresh = true)
-    }
-
-    fun onRefresh() {
-        syncUsers(isRefresh = true)
+    fun clearActionState() {
+        _state.update { it.copy(actionState = ActionState.Idle) }
     }
 
     fun createUser(request: CreateUserRequest) {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, error = null) }
+            _state.update { it.copy(actionState = ActionState.Processing) }
             repository.createUser(request)
                 .onSuccess {
-                    _state.update { it.copy(isLoading = false) }
+                    _state.update { it.copy(actionState = ActionState.Success("User created successfully")) }
                     syncUsers(isRefresh = true)
                 }
                 .onFailure { e ->
-                    _state.update { it.copy(isLoading = false, error = e.message) }
+                    _state.update { it.copy(actionState = ActionState.Error(e.message ?: "Creation failed")) }
                 }
         }
     }
 
     fun updateUser(id: String, request: UpdateUserRequest) {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, error = null) }
+            _state.update { it.copy(actionState = ActionState.Processing) }
             repository.updateUser(id, request)
                 .onSuccess {
-                    _state.update { it.copy(isLoading = false) }
-                    syncUsers(isRefresh = true)
+                    _state.update { it.copy(actionState = ActionState.Success("User updated successfully")) }
                 }
                 .onFailure { e ->
-                    _state.update { it.copy(isLoading = false, error = e.message) }
+                    _state.update { it.copy(actionState = ActionState.Error(e.message ?: "Update failed")) }
                 }
         }
     }
 
     fun deleteUser(id: String) {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, error = null) }
+            // Optimistic update
+            pendingDeletions.update { it + id }
+            _state.update { it.copy(actionState = ActionState.Processing) }
+
             repository.deleteUser(id)
                 .onSuccess {
-                    _state.update { it.copy(isLoading = false) }
-                    syncUsers(isRefresh = true)
+                    _state.update { it.copy(actionState = ActionState.Success("User deactivated")) }
+                    pendingDeletions.update { it - id } // Confirmation: DB will handle it now
                 }
                 .onFailure { e ->
-                    _state.update { it.copy(isLoading = false, error = e.message) }
+                    // Rollback
+                    pendingDeletions.update { it - id }
+                    _state.update { it.copy(actionState = ActionState.Error(e.message ?: "Deactivation failed")) }
                 }
         }
     }
 
     fun resetPassword(id: String, password: String) {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, error = null) }
+            _state.update { it.copy(actionState = ActionState.Processing) }
             repository.resetPassword(id, ResetPasswordRequest(password))
                 .onSuccess {
-                    _state.update { it.copy(isLoading = false) }
+                    _state.update { it.copy(actionState = ActionState.Success("Password reset successfully")) }
                 }
                 .onFailure { e ->
-                    _state.update { it.copy(isLoading = false, error = e.message) }
+                    _state.update { it.copy(actionState = ActionState.Error(e.message ?: "Reset failed")) }
                 }
         }
     }

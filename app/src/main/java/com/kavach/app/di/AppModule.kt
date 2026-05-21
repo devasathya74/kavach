@@ -9,6 +9,7 @@ import com.kavach.app.data.local.dao.*
 import com.kavach.app.data.local.db.KavachDatabase
 import com.kavach.app.data.local.db.KavachDatabase.Companion.MIGRATION_14_16
 import com.kavach.app.data.local.db.KavachDatabase.Companion.MIGRATION_15_16
+import com.kavach.app.data.local.db.KavachDatabase.Companion.MIGRATION_16_17
 import com.kavach.app.data.remote.api.AuthRefreshApiService
 import com.kavach.app.data.remote.api.KavachApiService
 import com.kavach.app.data.remote.api.KavachApiV2
@@ -337,7 +338,7 @@ object AppModule {
             KavachDatabase::class.java,
             "kavach.db"
         )
-        .addMigrations(MIGRATION_14_16, MIGRATION_15_16)  // v14→16 (direct) + v15→16
+        .addMigrations(MIGRATION_14_16, MIGRATION_15_16, MIGRATION_16_17)  // v14→16 + v15→16 + v16→17
         .build()
 
     @Provides fun provideTrainingDao(db: KavachDatabase): TrainingDao             = db.trainingDao()
@@ -348,4 +349,7 @@ object AppModule {
     @Provides fun provideOfficerDao(db: KavachDatabase): OfficerDao               = db.officerDao()
     @Provides fun provideIncidentDao(db: KavachDatabase): IncidentDao             = db.incidentDao()
     @Provides fun provideBroadcastDao(db: KavachDatabase): BroadcastDao           = db.broadcastDao()
+    // ── v17: User Mission Execution ───────────────────────
+    @Provides fun provideSosDao(db: KavachDatabase): SosDao                       = db.sosDao()
+    @Provides fun provideUserIncidentDao(db: KavachDatabase): UserIncidentDao     = db.userIncidentDao()
 }
