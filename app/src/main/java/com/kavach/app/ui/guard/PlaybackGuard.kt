@@ -69,16 +69,7 @@ fun PlaybackGuard(
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-    // ---------- ProcessLifecycleOwner for whole‑process background ----------
-    DisposableEffect(Unit) {
-        val procObserver = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_STOP) {
-                handleTamper("PROCESS_BACKGROUND")
-            }
-        }
-        ProcessLifecycleOwner.get().lifecycle.addObserver(procObserver)
-        onDispose { ProcessLifecycleOwner.get().lifecycle.removeObserver(procObserver) }
-    }
+    // ProcessLifecycleOwner observer removed due to noisy false positives; activity lifecycle handling suffices.
 
     // ---------- Screen ON/OFF receiver ----------
     DisposableEffect(context) {
