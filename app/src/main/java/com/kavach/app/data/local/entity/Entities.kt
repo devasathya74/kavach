@@ -1,0 +1,52 @@
+package com.kavach.app.data.local.entity
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "trainings")
+data class TrainingEntity(
+    @PrimaryKey val id          : String,
+    val title       : String,
+    val description : String,
+    val videoUrl    : String,
+    val duration    : Int,
+    val isMandatory : Boolean,
+    val status      : String     // "PENDING" | "IN_PROGRESS" | "COMPLETED" | "FAILED"
+)
+
+@Entity(tableName = "quiz_questions")
+data class QuizQuestionEntity(
+    @PrimaryKey val id            : String,
+    val trainingId    : String,
+    val question      : String,
+    val optionA       : String,
+    val optionB       : String,
+    val optionC       : String,
+    val optionD       : String,
+    val correctOption : String
+)
+
+
+/**
+ * Local behavior event log.
+ * Events are batched here and flushed to server by BehaviorSyncWorker.
+ */
+@Entity(tableName = "behavior_events")
+data class BehaviorEventEntity(
+    @PrimaryKey(autoGenerate = true) val id          : Int = 0,
+    val eventType   : String,                // e.g. "SEEK_ATTEMPT", "APP_BACKGROUND"
+    val trainingId  : String?,
+    val timestampMs : Long,
+    val metadata    : String = "{}"          // JSON string of extra key-value pairs
+)
+
+@Entity(tableName = "pending_navigation")
+data class PendingNavigationEntity(
+    @PrimaryKey val notifId: String,
+    val screen: String,
+    val timestamp: Long,
+    val priority: Int = 0,        // 1 = CRITICAL, 0 = NORMAL
+    val isProcessed: Boolean = false,
+    val isProcessing: Boolean = false
+)
+

@@ -1,0 +1,929 @@
+﻿To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.4.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:generateDebugBuildConfig
+> Task :app:generateDebugResValues
+> Task :app:checkDebugAarMetadata
+> Task :app:mapDebugSourceSetPaths
+> Task :app:generateDebugResources
+> Task :app:packageDebugResources
+> Task :app:createDebugCompatibleScreenManifests
+> Task :app:extractDeepLinksDebug
+> Task :app:parseDebugLocalResources
+> Task :app:processDebugMainManifest
+> Task :app:processDebugManifest
+> Task :app:processDebugManifestForPackage
+> Task :app:mergeDebugResources
+> Task :app:processDebugResources
+> Task :app:kspDebugKotlin
+
+> Task :app:compileDebugKotlin
+.\gradlew : e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/core/reconciliation/Operationa
+lSyncController.kt:43:44 Unresolved reference 'reconcileFromServer'.
+At line:1 char:1
++ .\gradlew compileDebugKotlin --no-daemon --stacktrace > compile_log.t ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (e: file:///C:/U...ileFromServer'.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/data/remote/worker/IncidentMediaUploadWork
+er.kt:48:55 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 
+'com.kavach.app.data.remote.dto.v2.FieldDataDto?'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/data/repository/OrderRepository.kt:50:40 
+Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 
+'com.kavach.app.data.remote.dto.v2.OrderDto?'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/navigation/KavachNavHost.kt:30:44 
+Unresolved reference 'CreateBroadcastScreen'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/navigation/KavachNavHost.kt:450:70 
+Unresolved reference 'NavyBlueDark'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/navigation/KavachNavHost.kt:530:21 
+Unresolved reference 'CreateBroadcastScreen'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/broadcast/BroadcastInboxScreen.
+kt:117:33 None of the following candidates is applicable:
+fun Text(text: AnnotatedString, modifier: Modifier = ..., color: Color = ..., fontSize: TextUnit = ..., fontStyle: 
+FontStyle? = ..., fontWeight: FontWeight? = ..., fontFamily: FontFamily? = ..., letterSpacing: TextUnit = ..., 
+textDecoration: TextDecoration? = ..., textAlign: TextAlign? = ..., lineHeight: TextUnit = ..., overflow: TextOverflow 
+= ..., softWrap: Boolean = ..., maxLines: Int = ..., minLines: Int = ..., inlineContent: Map<String, 
+InlineTextContent> = ..., onTextLayout: (TextLayoutResult) -> Unit = ..., style: TextStyle = ...): Unit
+fun Text(text: String, modifier: Modifier = ..., color: Color = ..., fontSize: TextUnit = ..., fontStyle: FontStyle? = 
+..., fontWeight: FontWeight? = ..., fontFamily: FontFamily? = ..., letterSpacing: TextUnit = ..., textDecoration: 
+TextDecoration? = ..., textAlign: TextAlign? = ..., lineHeight: TextUnit = ..., overflow: TextOverflow = ..., 
+softWrap: Boolean = ..., maxLines: Int = ..., minLines: Int = ..., onTextLayout: ((TextLayoutResult) -> Unit)? = ..., 
+style: TextStyle = ...): Unit
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/dashboard/CommandCenterScreen.k
+t:85:21 Unresolved reference 'ConnStatusChip'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/dashboard/CommandCenterScreen.k
+t:130:54 Unresolved reference 'incidentCount'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/dashboard/CommandCenterScreen.k
+t:131:56 Unresolved reference 'incidentCount'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/dashboard/CommandCenterScreen.k
+t:132:57 Unresolved reference 'broadcastCount'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/dashboard/CommandCenterScreen.k
+t:144:17 Unresolved reference 'DashTile'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/dashboard/CommandCenterScreen.k
+t:149:17 Unresolved reference 'DashTile'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/dashboard/CommandCenterScreen.k
+t:154:17 Unresolved reference 'DashTile'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/dashboard/CommandCenterScreen.k
+t:159:17 Unresolved reference 'DashTile'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/dashboard/CommandCenterScreen.k
+t:164:17 Unresolved reference 'DashTile'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/dashboard/CommandCenterScreen.k
+t:169:17 Unresolved reference 'DashTile'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/dashboard/CommandCenterScreen.k
+t:182:17 Unresolved reference 'DashTile'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/dashboard/CommandCenterScreen.k
+t:187:17 Unresolved reference 'DashTile'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/dashboard/CommandCenterScreen.k
+t:192:17 Unresolved reference 'DashTile'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/dashboard/CommandCenterScreen.k
+t:197:17 Unresolved reference 'DashTile'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/dashboard/UnifiedDashboardScree
+n.kt:184:74 Unresolved reference 'incidentCount'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/dashboard/UnifiedDashboardScree
+n.kt:186:64 Unresolved reference 'broadcastCount'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/dashboard/admin/AdminDashboardS
+creen.kt:40:47 Unresolved reference 'Screen'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/dashboard/admin/AdminDashboardS
+creen.kt:93:44 Unresolved reference 'Screen'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/dashboard/admin/AdminDashboardS
+creen.kt:103:44 Unresolved reference 'Screen'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/dashboard/admin/AdminDashboardS
+creen.kt:113:44 Unresolved reference 'Screen'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/dashboard/admin/AdminDashboardS
+creen.kt:123:44 Unresolved reference 'Screen'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/dashboard/admin/AdminDashboardS
+creen.kt:141:44 Unresolved reference 'Screen'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/dashboard/admin/AdminDashboardS
+creen.kt:151:44 Unresolved reference 'Screen'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+6:8 Unresolved reference 'ExperimentalMaterial3Api'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+6:8 Annotation argument must be a compile-time constant.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+7:2 Unresolved reference 'Composable'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+10:16 Unresolved reference 'IncidentFeedViewModel'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+10:40 Unresolved reference 'hiltViewModel'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+12:28 Unresolved reference 'state'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+13:29 Unresolved reference 'remember'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+13:38 Unresolved reference 'SnackbarHostState'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+13:40 Unresolved reference 'SnackbarHostState'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+16:5 Unresolved reference 'LaunchedEffect'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+16:26 Unresolved reference 'actionState'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+17:34 Unresolved reference 'actionState'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+20:27 Unresolved reference 'clearActionState'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+24:27 Unresolved reference 'clearActionState'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+30:5 Unresolved reference 'Scaffold'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+31:24 Unresolved reference 'SnackbarHost'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+31:26 Unresolved reference 'SnackbarHost'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+32:18 Unresolved reference 'TopAppBar'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+33:13 Unresolved reference 'TopAppBar'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+34:25 Unresolved reference 'Column'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+35:21 Unresolved reference 'Column'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+35:28 Unresolved reference 'Text'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+36:25 Unresolved reference 'Text'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+36:60 Unresolved reference 'FontWeight'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+36:91 Unresolved reference 'sp'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+37:25 Unresolved reference 'Text'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+37:69 Unresolved reference 'MaterialTheme'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+37:114 Unresolved reference 'Color'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+40:34 Unresolved reference 'IconButton'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+41:21 Unresolved reference 'IconButton'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+41:50 Unresolved reference 'Icon'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+42:25 Unresolved reference 'Icon'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+42:30 Unresolved reference 'Icons'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+45:27 Unresolved reference 'IconButton'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+46:21 Unresolved reference 'IconButton'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+46:42 Unresolved reference 'loadIncidents'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+46:54 Unresolved reference 'loadIncidents'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+46:77 Unresolved reference 'Icon'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+47:25 Unresolved reference 'Icon'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+47:30 Unresolved reference 'Icons'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+50:26 Unresolved reference 'TopAppBarDefaults'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+51:38 Unresolved reference 'Color'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+52:41 Unresolved reference 'Color'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+53:50 Unresolved reference 'Color'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+54:46 Unresolved reference 'Color'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+58:26 Unresolved reference 'Color'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+59:9 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+60:9 Unresolved reference 'Column'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+60:27 Unresolved reference 'Modifier'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+63:42 Unresolved reference 'selectedSeverity'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+64:50 Unresolved reference 'setSeverityFilter'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+67:23 Unresolved reference 'isRefreshing'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+68:17 Unresolved reference 'LinearProgressIndicator'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+68:52 Unresolved reference 'Modifier'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+68:85 Unresolved reference 'GoldenYellow'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+71:39 Unresolved reference 'uiState'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+73:21 Unresolved reference 'Box'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+73:36 Unresolved reference 'Modifier'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+73:79 Unresolved reference 'Alignment'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+73:97 Unresolved reference 'CircularProgressIndicator'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+74:25 Unresolved reference 'CircularProgressIndicator'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+74:59 Unresolved reference 'GoldenYellow'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+78:81 Unresolved reference 'loadIncidents'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+80:20 One type argument expected. Use class 'Success' if you don't intend to pass type arguments.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+84:25 Unresolved reference 'LazyColumn'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+85:40 Unresolved reference 'Modifier'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+86:46 Unresolved reference 'PaddingValues'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+86:63 Unresolved reference 'dp'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+87:51 Unresolved reference 'Arrangement'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+87:75 Unresolved reference 'dp'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+88:27 Unresolved reference 'items'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+89:29 Unresolved reference 'items'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+89:55 Unresolved reference 'localId'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+89:57 Unresolved reference 'it'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+89:73 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+103:2 Unresolved reference 'Composable'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+108:5 Unresolved reference 'Row'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+109:20 Unresolved reference 'Modifier'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+111:38 Unresolved reference 'dp'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+111:55 Unresolved reference 'dp'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+112:33 Unresolved reference 'Arrangement'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+112:56 Unresolved reference 'dp'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+113:7 Unresolved reference 'FilterChip'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+114:9 Unresolved reference 'FilterChip'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+117:21 Unresolved reference 'Text'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+117:23 Unresolved reference 'Text'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+118:22 Unresolved reference 'FilterChipDefaults'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+119:42 Unresolved reference 'GoldenYellow'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+120:38 Unresolved reference 'NavyBlueDark'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+121:34 Unresolved reference 'Color'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+122:30 Unresolved reference 'Color'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+126:9 Unresolved reference 'FilterChip'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+129:21 Unresolved reference 'Text'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+129:23 Unresolved reference 'Text'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+130:22 Unresolved reference 'FilterChipDefaults'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+131:42 Unresolved reference 'DangerRed'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+132:38 Unresolved reference 'Color'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+135:9 Unresolved reference 'FilterChip'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+138:21 Unresolved reference 'Text'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+138:23 Unresolved reference 'Text'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+139:22 Unresolved reference 'FilterChipDefaults'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+140:42 Unresolved reference 'Color'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+141:38 Unresolved reference 'Color'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+147:2 Unresolved reference 'Composable'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+150:19 Unresolved reference 'DangerRed'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+151:21 Unresolved reference 'Color'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+152:17 Unresolved reference 'Color'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+156:33 Unresolved reference 'Icons'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+157:39 Unresolved reference 'Icons'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+158:35 Unresolved reference 'Icons'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+159:34 Unresolved reference 'Icons'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+160:34 Unresolved reference 'Icons'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+161:17 Unresolved reference 'Icons'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+165:34 Unresolved reference 'Color'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+166:34 Unresolved reference 'DangerRed'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+167:35 Unresolved reference 'GoldenYellow'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+168:17 Unresolved reference 'Color'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+171:5 Unresolved reference 'Card'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+172:20 Unresolved reference 'Modifier'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+173:18 Unresolved reference 'CardDefaults'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+173:59 Unresolved reference 'Color'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+174:17 Unresolved reference 'RoundedCornerShape'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+174:39 Unresolved reference 'dp'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+175:61 Unresolved reference 'dp'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+175:75 Unresolved reference 'copy'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+176:7 Unresolved reference 'Column'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+177:9 Unresolved reference 'Column'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+177:27 Unresolved reference 'Modifier'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+177:47 Unresolved reference 'dp'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+177:52 Unresolved reference 'Row'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+178:13 Unresolved reference 'Row'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+179:28 Unresolved reference 'Modifier'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+180:41 Unresolved reference 'Arrangement'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+181:37 Unresolved reference 'Alignment'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+182:15 Unresolved reference 'Surface'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+183:17 Unresolved reference 'Row'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+183:41 Unresolved reference 'Alignment'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+183:69 Unresolved reference 'Text'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+184:21 Unresolved reference 'Icon'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+184:92 Unresolved reference 'Modifier'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+184:109 Unresolved reference 'dp'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+185:21 Unresolved reference 'Spacer'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+185:28 Unresolved reference 'Modifier'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+185:45 Unresolved reference 'dp'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+186:21 Unresolved reference 'Text'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+188:33 Unresolved reference 'Color'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+189:38 Unresolved reference 'FontWeight'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+190:39 Unresolved reference 'sp'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+194:17 Unresolved reference 'Surface'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+195:43 Unresolved reference 'copy'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+196:29 Unresolved reference 'RoundedCornerShape'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+196:50 Unresolved reference 'dp'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+197:73 Unresolved reference 'dp'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+197:91 Unresolved reference 'copy'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+198:19 Unresolved reference 'Text'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+199:21 Unresolved reference 'Text'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+202:36 Unresolved reference 'Modifier'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+202:68 Unresolved reference 'dp'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+202:85 Unresolved reference 'dp'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+203:33 Unresolved reference 'MaterialTheme'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+204:38 Unresolved reference 'FontWeight'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+209:13 Unresolved reference 'Spacer'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+209:31 Unresolved reference 'Modifier'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+209:49 Unresolved reference 'dp'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+211:13 Unresolved reference 'Text'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+213:25 Unresolved reference 'Color'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+214:25 Unresolved reference 'MaterialTheme'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+215:33 Unresolved reference 'sp'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+218:13 Unresolved reference 'Spacer'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+218:31 Unresolved reference 'Modifier'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+218:50 Unresolved reference 'dp'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+220:13 Unresolved reference 'Row'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+221:28 Unresolved reference 'Modifier'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+222:41 Unresolved reference 'Arrangement'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+223:37 Unresolved reference 'Alignment'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+225:17 Unresolved reference 'Row'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+225:41 Unresolved reference 'Alignment'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+225:69 Unresolved reference 'Text'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+226:21 Unresolved reference 'Icon'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+227:25 Unresolved reference 'Icons'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+229:32 Unresolved reference 'Color'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+230:36 Unresolved reference 'Modifier'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+230:53 Unresolved reference 'dp'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+232:21 Unresolved reference 'Spacer'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+232:39 Unresolved reference 'Modifier'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+232:56 Unresolved reference 'dp'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+233:21 Unresolved reference 'Text'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+235:33 Unresolved reference 'Color'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+236:33 Unresolved reference 'MaterialTheme'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+241:21 Unresolved reference 'Row'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+241:45 Unresolved reference 'Alignment'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+241:73 Unresolved reference 'Text'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+242:25 Unresolved reference 'CircularProgressIndicator'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+242:62 Unresolved reference 'Modifier'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+242:79 Unresolved reference 'dp'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+242:100 Unresolved reference 'dp'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+242:112 Unresolved reference 'GoldenYellow'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+243:25 Unresolved reference 'Spacer'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+243:32 Unresolved reference 'Modifier'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+243:49 Unresolved reference 'dp'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+244:25 Unresolved reference 'Text'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+244:54 Unresolved reference 'GoldenYellow'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+244:76 Unresolved reference 'MaterialTheme'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+247:21 Unresolved reference 'Text'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+247:64 Unresolved reference 'DangerRed'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+247:83 Unresolved reference 'MaterialTheme'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+247:133 Unresolved reference 'FontWeight'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+254:2 Unresolved reference 'Composable'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+256:5 Unresolved reference 'Column'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+257:20 Unresolved reference 'Modifier'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+258:31 Unresolved reference 'Alignment'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+259:31 Unresolved reference 'Arrangement'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+260:7 Unresolved reference 'Button'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+261:9 Unresolved reference 'Icon'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+261:14 Unresolved reference 'Icons'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+261:72 Unresolved reference 'DangerRed'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+261:94 Unresolved reference 'Modifier'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+261:111 Unresolved reference 'dp'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+262:9 Unresolved reference 'Spacer'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+262:27 Unresolved reference 'Modifier'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+262:46 Unresolved reference 'dp'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+263:9 Unresolved reference 'Text'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+263:31 Unresolved reference 'Color'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+263:52 Unresolved reference 'MaterialTheme'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+264:9 Unresolved reference 'Button'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+264:46 Unresolved reference 'Modifier'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+264:72 Unresolved reference 'dp'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+264:86 Unresolved reference 'ButtonDefaults'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+264:131 Unresolved reference 'GoldenYellow'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+264:146 Unresolved reference 'Text'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+265:13 Unresolved reference 'Text'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+265:40 Unresolved reference 'NavyBlueDark'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+270:2 Unresolved reference 'Composable'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+272:5 Unresolved reference 'Column'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+273:20 Unresolved reference 'Modifier'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+274:31 Unresolved reference 'Alignment'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+275:31 Unresolved reference 'Arrangement'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+276:7 Unresolved reference 'Text'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+277:9 Unresolved reference 'Icon'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+277:14 Unresolved reference 'Icons'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+277:69 Unresolved reference 'Color'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+277:112 Unresolved reference 'Modifier'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+277:129 Unresolved reference 'dp'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+278:9 Unresolved reference 'Spacer'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+278:27 Unresolved reference 'Modifier'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+278:46 Unresolved reference 'dp'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+279:9 Unresolved reference 'Text'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+279:31 Unresolved reference 'Color'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedScreen.kt:
+279:71 Unresolved reference 'MaterialTheme'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/incident/IncidentFeedViewModel.
+kt:65:13 Unresolved reference 'delay'.
+e: 
+file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/orders/OrderFeedScreen.kt:53:29 
+None of the following candidates is applicable:
+fun CircularProgressIndicator(progress: () -> Float, modifier: Modifier = ..., color: Color = ..., strokeWidth: Dp = 
+..., trackColor: Color = ..., strokeCap: StrokeCap = ...): Unit
+fun CircularProgressIndicator(modifier: Modifier = ..., color: Color = ..., strokeWidth: Dp = ..., trackColor: Color = 
+..., strokeCap: StrokeCap = ...): Unit
+fun CircularProgressIndicator(progress: Float, modifier: Modifier = ..., color: Color = ..., strokeWidth: Dp = ..., 
+trackColor: Color = ..., strokeCap: StrokeCap = ...): Unit
+e: 
+file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/orders/OrderFeedScreen.kt:104:1 
+Conflicting overloads:
+fun OrderCard(order: Order, onClick: () -> Unit): Unit
+e: 
+file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/orders/OrderFeedScreen.kt:167:29 
+None of the following candidates is applicable:
+fun CircularProgressIndicator(progress: () -> Float, modifier: Modifier = ..., color: Color = ..., strokeWidth: Dp = 
+..., trackColor: Color = ..., strokeCap: StrokeCap = ...): Unit
+fun CircularProgressIndicator(modifier: Modifier = ..., color: Color = ..., strokeWidth: Dp = ..., trackColor: Color = 
+..., strokeCap: StrokeCap = ...): Unit
+
+> Task :app:compileDebugKotlin FAILED
+fun CircularProgressIndicator(progress: Float, modifier: Modifier = ..., color: Color = ..., strokeWidth: Dp = ..., 
+trackColor: Color = ..., strokeCap: StrokeCap = ...): Unit
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/orders/OrderScreens.kt:77:1 
+Conflicting overloads:
+fun OrderCard(order: Order, onAcknowledge: () -> Unit): Unit
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/orders/OrderScreens.kt:91:48 
+Unresolved reference 'isAcknowledged'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/orders/OrderScreens.kt:110:23 
+Unresolved reference 'isAcknowledged'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/orders/OrderScreens.kt:140:37 
+Unresolved reference 'contentText'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/orders/OrderScreens.kt:161:50 
+Unresolved reference 'isAcknowledged'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/orders/OrderScreens.kt:230:28 
+Unresolved reference 'isAcknowledged'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/orders/OrderScreens.kt:321:148 
+Unresolved reference 'createdAt'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/orders/OrderScreens.kt:332:35 
+Unresolved reference 'imageUrl'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/orders/OrderScreens.kt:334:47 
+Unresolved reference 'imageUrl'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/orders/OrderScreens.kt:342:36 
+Unresolved reference 'contentText'.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/orders/OrderScreens.kt:345:54 
+Unresolved reference 'contentText'.
+e: 
+file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/orders/OrderViewModels.kt:27:59 
+Unresolved reference 'getAllOrders'.
+e: 
+file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/orders/OrderViewModels.kt:28:10 
+Cannot infer type for this parameter. Please specify it explicitly.
+e: 
+file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/orders/OrderViewModels.kt:28:14 
+Cannot infer type for this parameter. Please specify it explicitly.
+e: 
+file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/orders/OrderViewModels.kt:66:39 
+Unresolved reference 'getOrderById'.
+e: 
+file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/orders/OrderViewModels.kt:67:16 
+One type argument expected. Use class 'Success' if you don't intend to pass type arguments.
+e: 
+file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/orders/OrderViewModels.kt:79:52 
+Too many arguments for 'suspend fun acknowledgeOrder(localId: String): Unit'.
+e: 
+file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/orders/OrderViewModels.kt:80:16 
+One type argument expected. Use class 'Success' if you don't intend to pass type arguments.
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/pilot/broadcast/BroadcastCenter
+Screen.kt:44:29 None of the following candidates is applicable:
+fun CircularProgressIndicator(progress: () -> Float, modifier: Modifier = ..., color: Color = ..., strokeWidth: Dp = 
+..., trackColor: Color = ..., strokeCap: StrokeCap = ...): Unit
+fun CircularProgressIndicator(modifier: Modifier = ..., color: Color = ..., strokeWidth: Dp = ..., trackColor: Color = 
+..., strokeCap: StrokeCap = ...): Unit
+fun CircularProgressIndicator(progress: Float, modifier: Modifier = ..., color: Color = ..., strokeWidth: Dp = ..., 
+trackColor: Color = ..., strokeCap: StrokeCap = ...): Unit
+e: file:///C:/Users/compac25/Desktop/kavach/app/src/main/java/com/kavach/app/ui/screens/pilot/devices/DeviceCenterScree
+n.kt:142:36 This material API is experimental and is likely to change or to be removed in the future.
+
+[Incubating] Problems report is available at: file:///C:/Users/compac25/Desktop/kavach/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileDebugKotlin'.
+> A failure occurred while executing 
+org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+* Exception is:
+org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':app:compileDebugKotlin'.
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.lambda$executeIfValid$1(ExecuteActionsTaskExecut
+er.java:135)
+	at org.gradle.internal.Try$Failure.ifSuccessfulOrElse(Try.java:288)
+	at 
+org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:133)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.execute(ExecuteActionsTaskExecuter.java:121)
+	at org.gradle.api.internal.tasks.execution.ProblemsTaskPathTrackingTaskExecuter.execute(ProblemsTaskPathTrackingTaskEx
+ecuter.java:41)
+	at org.gradle.api.internal.tasks.execution.ResolveTaskExecutionModeExecuter.execute(ResolveTaskExecutionModeExecuter.j
+ava:51)
+	at 
+org.gradle.api.internal.tasks.execution.FinalizePropertiesTaskExecuter.execute(FinalizePropertiesTaskExecuter.java:46)
+	at 
+org.gradle.api.internal.tasks.execution.SkipTaskWithNoActionsExecuter.execute(SkipTaskWithNoActionsExecuter.java:57)
+	at org.gradle.api.internal.tasks.execution.SkipOnlyIfTaskExecuter.execute(SkipOnlyIfTaskExecuter.java:74)
+	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:36)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.executeTask(EventFiringTaskExecuter.java:77)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:55)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:52)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperati
+onRunner.java:210)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperati
+onRunner.java:205)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter.execute(EventFiringTaskExecuter.java:52)
+	at org.gradle.execution.plan.DefaultNodeExecutor.executeLocalTaskNode(DefaultNodeExecutor.java:55)
+	at org.gradle.execution.plan.DefaultNodeExecutor.execute(DefaultNodeExecutor.java:34)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGrap
+h.java:355)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGrap
+h.java:343)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.lambda$execute$0(Defaul
+tTaskExecutionGraph.java:339)
+	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:84)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExec
+utionGraph.java:339)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExec
+utionGraph.java:328)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:459)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:376)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
+Caused by: org.gradle.workers.internal.DefaultWorkerExecutor$WorkExecutionException: A failure occurred while 
+executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+	at 
+org.gradle.workers.internal.DefaultWorkerExecutor$WorkItemExecution.waitForCompletion(DefaultWorkerExecutor.java:289)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.lambda$waitForItemsAndGatherFailures$2(DefaultAsyncWorkTracker.jav
+a:130)
+	at org.gradle.internal.Factories$1.create(Factories.java:30)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.lambda$withoutLocks$2(DefaultWorkerLeaseService.java:350)
+	at org.gradle.internal.work.ResourceLockStatistics$1.measure(ResourceLockStatistics.java:43)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLocks(DefaultWorkerLeaseService.java:348)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLocks(DefaultWorkerLeaseService.java:332)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLock(DefaultWorkerLeaseService.java:337)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForItemsAndGatherFailures(DefaultAsyncWorkTracker.java:126)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForItemsAndGatherFailures(DefaultAsyncWorkTracker.java:92)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForAll(DefaultAsyncWorkTracker.java:78)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForCompletion(DefaultAsyncWorkTracker.java:66)
+	at org.gradle.api.internal.tasks.execution.TaskExecution$3.run(TaskExecution.java:267)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:30)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:27)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.run(DefaultBuildOperationRunner.java:48)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeAction(TaskExecution.java:244)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeActions(TaskExecution.java:227)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeWithPreviousOutputFiles(TaskExecution.java:210)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.execute(TaskExecution.java:176)
+	at org.gradle.internal.execution.steps.ExecuteStep.executeInternal(ExecuteStep.java:167)
+	at org.gradle.internal.execution.steps.ExecuteStep.access$000(ExecuteStep.java:47)
+	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:137)
+	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:134)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperati
+onRunner.java:210)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperati
+onRunner.java:205)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:134)
+	at org.gradle.internal.execution.steps.ExecuteStep$Mutable.execute(ExecuteStep.java:80)
+	at org.gradle.internal.execution.steps.CancelExecutionStep.execute(CancelExecutionStep.java:42)
+	at org.gradle.internal.execution.steps.TimeoutStep.executeWithoutTimeout(TimeoutStep.java:75)
+	at org.gradle.internal.execution.steps.TimeoutStep.execute(TimeoutStep.java:55)
+	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:51)
+	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:29)
+	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.executeMutable(RemovePreviousOutputsStep.java:67)
+	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.executeMutable(RemovePreviousOutputsStep.java:39)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:42)
+	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:24)
+	at 
+org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:69)
+	at 
+org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:46)
+	at org.gradle.internal.execution.steps.ResolveInputChangesStep.executeMutable(ResolveInputChangesStep.java:39)
+	at org.gradle.internal.execution.steps.ResolveInputChangesStep.executeMutable(ResolveInputChangesStep.java:28)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.BuildCacheStep.executeWithoutCache(BuildCacheStep.java:189)
+	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$execute$1(BuildCacheStep.java:76)
+	at org.gradle.internal.Either$Right.fold(Either.java:176)
+	at org.gradle.internal.execution.caching.CachingState.fold(CachingState.java:62)
+	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:74)
+	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:49)
+	at org.gradle.internal.execution.steps.StoreExecutionStateStep.executeMutable(StoreExecutionStateStep.java:46)
+	at org.gradle.internal.execution.steps.StoreExecutionStateStep.executeMutable(StoreExecutionStateStep.java:35)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.executeBecause(SkipUpToDateStep.java:75)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.lambda$execute$2(SkipUpToDateStep.java:53)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:53)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:35)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishe
+dStep.java:37)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishe
+dStep.java:27)
+	at org.gradle.internal.execution.steps.ResolveMutableCachingStateStep.executeDelegate(ResolveMutableCachingStateStep.j
+ava:70)
+	at org.gradle.internal.execution.steps.ResolveMutableCachingStateStep.executeDelegate(ResolveMutableCachingStateStep.j
+ava:32)
+	at 
+org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:69)
+	at 
+org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:37)
+	at org.gradle.internal.execution.steps.ResolveChangesStep.executeMutable(ResolveChangesStep.java:63)
+	at org.gradle.internal.execution.steps.ResolveChangesStep.executeMutable(ResolveChangesStep.java:34)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.ValidateStep$Mutable.executeDelegate(ValidateStep.java:79)
+	at org.gradle.internal.execution.steps.ValidateStep$Mutable.executeDelegate(ValidateStep.java:65)
+	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:99)
+	at org.gradle.internal.execution.steps.ValidateStep$Mutable.execute(ValidateStep.java:65)
+	at org.gradle.internal.execution.steps.CaptureMutableStateBeforeExecutionStep.executeMutable(CaptureMutableStateBefore
+ExecutionStep.java:86)
+	at org.gradle.internal.execution.steps.CaptureMutableStateBeforeExecutionStep.execute(CaptureMutableStateBeforeExecuti
+onStep.java:65)
+	at org.gradle.internal.execution.steps.CaptureMutableStateBeforeExecutionStep.execute(CaptureMutableStateBeforeExecuti
+onStep.java:45)
+	at org.gradle.internal.execution.steps.SkipEmptyMutableWorkStep.executeWithNonEmptySources(SkipEmptyMutableWorkStep.ja
+va:210)
+	at org.gradle.internal.execution.steps.SkipEmptyMutableWorkStep.executeMutable(SkipEmptyMutableWorkStep.java:90)
+	at org.gradle.internal.execution.steps.SkipEmptyMutableWorkStep.executeMutable(SkipEmptyMutableWorkStep.java:53)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsStartedStep.execute(MarkSnapshottingInputsStartedS
+tep.java:38)
+	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.executeMutable(LoadPreviousExecutionStateStep.ja
+va:36)
+	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.executeMutable(LoadPreviousExecutionStateStep.ja
+va:23)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.executeMutable(HandleStaleOutputsStep.java:77)
+	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.executeMutable(HandleStaleOutputsStep.java:43)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.lambda$executeMutable$0(AssignMutableWorkspaceStep.j
+ava:34)
+	at org.gradle.api.internal.tasks.execution.TaskExecution$4.withWorkspace(TaskExecution.java:305)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.executeMutable(AssignMutableWorkspaceStep.java:30)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.executeMutable(AssignMutableWorkspaceStep.java:21)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:40)
+	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:23)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.lambda$execute$2(ExecuteWorkBuildOperationF
+iringStep.java:67)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep
+.java:67)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep
+.java:39)
+	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:46)
+	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:34)
+	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:56)
+	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:38)
+	at org.gradle.internal.execution.impl.DefaultExecutionEngine$1.execute(DefaultExecutionEngine.java:68)
+	at 
+org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:132)
+	... 30 more
+Caused by: org.jetbrains.kotlin.gradle.tasks.CompilationErrorException: Compilation error. See log for more details
+	at org.jetbrains.kotlin.gradle.tasks.TasksUtilsKt.throwExceptionIfCompilationFailed(tasksUtils.kt:21)
+	at org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWork.run(GradleKotlinCompilerWork.kt:119)
+	at org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction.execute(GradleCo
+mpilerRunnerWithWorkers.kt:76)
+	at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:68)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:64)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:61)
+	at org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:102)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.lambda$execute$0(NoIsolationWorkerFactory.java:61)
+	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:44)
+	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:41)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperati
+onRunner.java:210)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperati
+onRunner.java:205)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+	at org.gradle.workers.internal.AbstractWorker.executeWrappedInBuildOperation(AbstractWorker.java:41)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.execute(NoIsolationWorkerFactory.java:58)
+	at org.gradle.workers.internal.DefaultWorkerExecutor.lambda$submitWork$0(DefaultWorkerExecutor.java:176)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runExecution(DefaultConditionalExecutionQ
+ueue.java:194)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.access$700(DefaultConditionalExecutionQue
+ue.java:127)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner$1.run(DefaultConditionalExecutionQueue.ja
+va:169)
+	at org.gradle.internal.Factories$1.create(Factories.java:30)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.lambda$withLocksAcquired$0(DefaultWorkerLeaseService.java:275)
+	at org.gradle.internal.work.ResourceLockStatistics$1.measure(ResourceLockStatistics.java:43)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocksAcquired(DefaultWorkerLeaseService.java:273)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:265)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:128)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:133)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runBatch(DefaultConditionalExecutionQueue
+.java:164)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.run(DefaultConditionalExecutionQueue.java
+:133)
+	... 2 more
+
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.4.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+16 actionable tasks: 16 executed
+
+BUILD FAILED in 1m 1s

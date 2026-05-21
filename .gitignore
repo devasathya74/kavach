@@ -1,0 +1,39 @@
+# Android
+.gradle
+local.properties
+.idea/
+captures/
+/*.iml
+/build
+/*/build
+*.apk
+*.ap_
+*.dex
+
+# Kotlin
+/bin
+/gen
+
+# Backend (Django)
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+db.sqlite3
+/media
+/static
+
+# General
+.DS_Store
+node_modules/
+.venv/
+build_error*.log
+.kotlin/
+*.zip
+app/build_*/
+
+# Security
+*.keystore
+*.jks
+secrets.xml
+secrets.properties

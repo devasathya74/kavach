@@ -1,0 +1,41 @@
+name: Deploy Kavach Backend
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Zero Downtime Deploy
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www
+            
+            if [ -d kavach_v1 ]; then
+              NEW_DIR="kavach_v2"
+            else
+              NEW_DIR="kavach_v1"
+            fi
+            
+            git clone YOUR_REPO $NEW_DIR
+            cd $NEW_DIR
+            
+            python3 -m venv venv
+            source venv/bin/activate
+            pip install -r requirements.txt
+            
+            python manage.py migrate
+            python manage.py collectstatic --noinput
+            
+            # switch traffic
+            ln -sfn /var/www/$NEW_DIR /var/www/current
+            
+            sudo systemctl restart kavach

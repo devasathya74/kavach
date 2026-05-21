@@ -1,0 +1,568 @@
+INFO 2026-05-14 16:19:33,915 autoreload 9628 15528 Watching for file changes with StatReloader
+INFO 2026-05-14 16:19:39,028 autoreload 9628 15528 C:\Users\compac25\Desktop\kavach\backend\kavach_backend\urls.py changed, reloading.
+INFO 2026-05-14 16:19:40,504 autoreload 8444 1660 Watching for file changes with StatReloader
+INFO 2026-05-14 16:19:45,601 autoreload 8444 1660 C:\Users\compac25\Desktop\kavach\backend\apps\auth_app\urls_v2.py changed, reloading.
+INFO 2026-05-14 16:19:47,210 autoreload 16236 17816 Watching for file changes with StatReloader
+INFO 2026-05-14 16:20:40,496 runserver 16236 11248 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.01, 127.0.0.1:57403][0m
+INFO 2026-05-14 16:20:48,961 runserver 16236 11248 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.03, 127.0.0.1:57403][0m
+INFO 2026-05-14 16:20:54,947 runserver 16236 11248 [mHTTP GET /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 200 [0.01, 127.0.0.1:57403][0m
+INFO 2026-05-14 16:21:00,108 runserver 16236 11248 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:57403][0m
+ERROR 2026-05-14 16:21:01,696 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:21:01,696 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57403][0m
+ERROR 2026-05-14 16:21:03,114 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:21:03,114 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57403][0m
+ERROR 2026-05-14 16:21:05,584 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:21:05,586 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57403][0m
+ERROR 2026-05-14 16:21:06,002 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:21:06,002 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57403][0m
+ERROR 2026-05-14 16:21:07,441 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:21:07,444 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57403][0m
+ERROR 2026-05-14 16:21:09,898 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:21:09,898 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57403][0m
+ERROR 2026-05-14 16:21:10,342 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:21:10,343 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57403][0m
+ERROR 2026-05-14 16:21:11,760 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:21:11,760 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57403][0m
+ERROR 2026-05-14 16:21:14,223 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:21:14,224 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57403][0m
+ERROR 2026-05-14 16:21:14,636 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:21:14,636 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57403][0m
+WARNING 2026-05-14 16:21:16,051 log 16236 13476 Unauthorized: /api/v2/auth/users/
+WARNING 2026-05-14 16:21:16,051 runserver 16236 11248 [31;1mHTTP GET /api/v2/auth/users/?page=2 401 [0.00, 127.0.0.1:57403][0m
+WARNING 2026-05-14 16:21:17,024 log 16236 13476 Not Found: /auth/refresh
+WARNING 2026-05-14 16:21:17,024 runserver 16236 11248 [33mHTTP POST /auth/refresh 404 [0.08, 127.0.0.1:57403][0m
+WARNING 2026-05-14 16:21:17,764 log 16236 13476 Unauthorized: /api/v2/auth/users/
+WARNING 2026-05-14 16:21:17,764 runserver 16236 11248 [31;1mHTTP GET /api/v2/auth/users/?page=2 401 [0.00, 127.0.0.1:57403][0m
+WARNING 2026-05-14 16:21:18,180 log 16236 13476 Unauthorized: /api/v2/auth/users/
+WARNING 2026-05-14 16:21:18,180 runserver 16236 11248 [31;1mHTTP GET /api/v2/auth/users/?page=2 401 [0.00, 127.0.0.1:57403][0m
+WARNING 2026-05-14 16:21:18,596 log 16236 13476 Unauthorized: /api/v2/auth/users/
+INFO 2026-05-14 16:22:08,503 runserver 16236 11248 [mHTTP POST /api/v1/login/ 200 [0.38, 127.0.0.1:49706][0m
+INFO 2026-05-14 16:22:08,960 runserver 16236 11248 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:49706][0m
+INFO 2026-05-14 16:22:09,024 runserver 16236 11248 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:49706][0m
+INFO 2026-05-14 16:22:17,189 runserver 16236 11248 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.02, 127.0.0.1:49706][0m
+INFO 2026-05-14 16:22:30,845 runserver 16236 11248 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:49706][0m
+INFO 2026-05-14 16:23:24,123 runserver 16236 11248 [mHTTP POST /api/v2/auth/users/ 201 [0.40, 127.0.0.1:49706][0m
+ERROR 2026-05-14 16:23:24,511 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:23:24,511 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:49706][0m
+ERROR 2026-05-14 16:23:25,932 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:23:25,932 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:49706][0m
+INFO 2026-05-14 16:23:27,855 runserver 16236 11248 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.03, 127.0.0.1:49706][0m
+WARNING 2026-05-14 16:25:12,534 log 16236 13476 Bad Request: /api/v2/auth/v2/incidents/
+WARNING 2026-05-14 16:25:12,534 runserver 16236 11248 [31;1mHTTP POST /api/v2/auth/v2/incidents/ 400 [0.01, 127.0.0.1:54591][0m
+INFO 2026-05-14 16:25:17,271 runserver 16236 11248 [mHTTP GET /api/v2/auth/users/6cca40ed-b7a8-4ae3-99f1-8137932402df/ 200 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:25:22,226 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:25:22,226 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:25:23,631 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:25:23,631 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:25:26,074 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:25:26,074 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:25:26,479 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:25:26,498 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.03, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:25:27,785 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:25:27,787 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:25:30,146 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:25:30,146 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.00, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:25:30,565 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:25:30,566 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:25:31,961 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:25:31,962 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:25:34,297 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:25:34,297 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:25:34,681 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:25:34,681 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:25:36,070 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:25:36,071 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:25:38,618 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:25:38,619 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:25:38,997 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:25:38,997 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:25:40,384 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:25:40,384 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:25:42,784 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:25:42,784 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:25:43,160 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:25:43,160 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:25:44,541 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:25:44,542 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:25:46,936 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:25:46,936 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:25:47,227 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:25:47,227 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:25:48,610 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:25:48,611 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:25:51,087 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:25:51,088 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:25:51,457 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:25:51,457 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:25:52,853 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:25:52,856 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:25:55,277 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:25:55,277 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:25:55,687 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:25:55,687 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:25:57,077 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:25:57,077 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:25:59,481 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:25:59,482 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:25:59,881 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:25:59,882 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:01,274 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:01,275 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:03,670 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:03,671 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:04,081 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:04,081 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:05,474 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:05,474 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.00, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:07,877 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:07,877 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:08,250 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:08,250 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:09,650 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:09,650 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:12,016 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:12,019 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:12,405 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:12,406 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:13,796 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:13,796 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.00, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:16,152 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:16,153 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:16,541 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:16,541 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:17,908 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:17,909 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:20,297 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:20,297 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:20,700 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:20,701 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:22,150 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:22,150 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:24,553 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:24,554 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:24,942 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:24,942 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:26,351 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:26,352 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:28,792 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:28,792 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:29,170 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:29,171 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:30,594 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:30,595 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:33,022 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:33,022 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:33,416 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:33,417 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:34,810 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:34,810 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:37,323 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:37,323 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:37,726 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:37,727 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:39,132 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:39,134 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:41,567 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:41,567 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:41,973 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:41,974 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:43,360 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:43,360 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:45,750 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:45,750 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:46,128 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:46,128 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:47,516 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:47,517 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+INFO 2026-05-14 16:26:49,393 runserver 16236 11248 [mHTTP GET /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 200 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:26:49,923 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:26:49,924 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:27:07,272 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:27:07,272 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:27:08,710 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:27:08,710 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:27:11,144 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:27:11,144 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:27:11,592 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:27:11,592 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:27:13,019 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:27:13,019 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:27:15,438 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:27:15,440 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:27:15,860 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:27:15,861 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:27:17,273 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:27:17,273 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:27:19,746 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:27:19,752 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:27:20,256 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:27:20,256 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:27:24,160 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:27:24,160 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:27:26,618 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:27:26,618 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:27:27,071 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:27:27,071 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:27:28,539 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:27:28,540 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:27:30,973 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:27:30,973 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:27:31,364 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:27:31,369 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:27:32,884 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:27:32,884 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:27:35,269 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:27:35,269 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:27:35,751 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:27:35,755 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+ERROR 2026-05-14 16:27:37,179 log 16236 13476 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 16:27:37,179 runserver 16236 11248 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:54591][0m
+INFO 2026-05-14 16:32:17,345 runserver 16236 11248 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:49714][0m
+INFO 2026-05-14 17:22:08,457 autoreload 16236 17816 C:\Users\compac25\Desktop\kavach\backend\apps\auth_app\models\auth.py changed, reloading.
+INFO 2026-05-14 17:22:10,003 autoreload 19228 19288 Watching for file changes with StatReloader
+INFO 2026-05-14 17:22:13,816 autoreload 19228 19288 C:\Users\compac25\Desktop\kavach\backend\apps\auth_app\views_v2.py changed, reloading.
+INFO 2026-05-14 17:22:15,220 autoreload 10580 13424 Watching for file changes with StatReloader
+INFO 2026-05-14 17:26:11,219 runserver 10580 18564 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.01, 127.0.0.1:57389][0m
+WARNING 2026-05-14 17:26:11,232 log 10580 9192 Unauthorized: /api/v2/auth/v2/incidents/
+WARNING 2026-05-14 17:26:11,232 log 10580 13176 Unauthorized: /api/v2/auth/users/
+WARNING 2026-05-14 17:26:11,234 runserver 10580 18564 [31;1mHTTP POST /api/v2/auth/v2/incidents/ 401 [0.02, 127.0.0.1:57387][0m
+WARNING 2026-05-14 17:26:11,234 runserver 10580 18564 [31;1mHTTP GET /api/v2/auth/users/?page=1 401 [0.02, 127.0.0.1:57388][0m
+WARNING 2026-05-14 17:26:12,111 log 10580 13176 Not Found: /auth/refresh
+WARNING 2026-05-14 17:26:12,111 runserver 10580 18564 [33mHTTP POST /auth/refresh 404 [0.01, 127.0.0.1:57388][0m
+INFO 2026-05-14 17:26:31,659 runserver 10580 18564 [mHTTP POST /api/v1/login/ 200 [0.26, 127.0.0.1:57388][0m
+INFO 2026-05-14 17:26:32,079 runserver 10580 18564 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:57388][0m
+INFO 2026-05-14 17:26:32,148 runserver 10580 18564 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:57388][0m
+INFO 2026-05-14 17:26:36,206 runserver 10580 18564 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.02, 127.0.0.1:57388][0m
+INFO 2026-05-14 17:26:39,087 runserver 10580 18564 [mHTTP GET /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 200 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:26:40,761 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:26:40,761 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:26:42,111 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:26:42,111 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:26:44,513 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:26:44,514 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:26:44,920 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:26:44,921 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:26:46,299 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:26:46,299 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:26:48,732 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:26:48,732 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:26:49,142 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:26:49,142 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+INFO 2026-05-14 17:26:49,423 runserver 10580 18564 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:26:50,532 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:26:50,532 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:26:52,922 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:26:52,922 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:26:53,320 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:26:53,321 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:26:54,696 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:26:54,696 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:26:57,133 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:26:57,134 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:26:57,484 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:26:57,485 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:26:58,767 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:26:58,768 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:01,174 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:01,175 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:01,579 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:01,580 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:02,970 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:02,970 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:05,393 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:05,394 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:05,773 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:05,773 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:07,165 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:07,166 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:09,554 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:09,555 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:09,929 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:09,930 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:11,327 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:11,328 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:13,806 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:13,807 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:14,191 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:14,191 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:15,576 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:15,577 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:18,005 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:18,006 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:18,395 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:18,395 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:19,795 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:19,796 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.02, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:22,288 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:22,289 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:22,669 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:22,670 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:24,098 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:24,098 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:26,518 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:26,519 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:26,812 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:26,813 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:28,103 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:28,103 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:30,531 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:30,532 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:30,899 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:30,899 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:32,295 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:32,295 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:34,626 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:34,627 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:34,988 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:34,989 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:36,373 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:36,373 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:38,794 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:38,795 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:39,202 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:39,204 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:40,592 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:40,593 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:43,006 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:43,007 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:43,408 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:43,408 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.02, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:44,797 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:44,797 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:47,207 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:47,208 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:47,598 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:47,598 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.02, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:49,092 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:49,095 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.06, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:51,612 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:51,613 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:52,024 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:52,025 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:53,409 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:53,410 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:55,795 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:55,795 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:56,199 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:56,200 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2&search=1 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:27:57,595 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:27:57,595 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2&search=1 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:28:00,030 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:28:00,031 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2&search=1 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:28:00,527 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:28:00,528 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2&search=11 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:28:01,929 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:28:01,929 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2&search=11 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:28:04,304 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:28:04,305 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2&search=11 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:28:04,687 log 10580 9192 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:28:04,687 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2&search=1 500 [0.01, 127.0.0.1:57388][0m
+ERROR 2026-05-14 17:28:06,064 log 10580 13176 Internal Server Error: /api/v2/auth/users/
+ERROR 2026-05-14 17:28:06,065 runserver 10580 18564 [35;1mHTTP GET /api/v2/auth/users/?page=2&search=1 500 [0.01, 127.0.0.1:57388][0m
+INFO 2026-05-14 17:28:10,438 runserver 10580 18564 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:57388][0m
+INFO 2026-05-14 17:28:17,779 runserver 10580 18564 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.02, 127.0.0.1:57388][0m
+INFO 2026-05-14 17:28:27,051 runserver 10580 18564 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:57388][0m
+INFO 2026-05-14 17:28:27,230 runserver 10580 18564 [mHTTP GET /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 200 [0.01, 127.0.0.1:57388][0m
+INFO 2026-05-14 17:28:34,072 runserver 10580 18564 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.02, 127.0.0.1:57388][0m
+INFO 2026-05-14 17:28:45,321 runserver 10580 18564 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.02, 127.0.0.1:57388][0m
+INFO 2026-05-14 17:30:50,683 runserver 10580 18564 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:53670][0m
+WARNING 2026-05-14 17:31:06,040 log 10580 9192 Unauthorized: /api/v1/login/
+WARNING 2026-05-14 17:31:06,040 runserver 10580 18564 [31;1mHTTP POST /api/v1/login/ 401 [0.23, 127.0.0.1:53670][0m
+INFO 2026-05-14 17:31:11,583 runserver 10580 18564 [mHTTP POST /api/v1/login/ 200 [0.27, 127.0.0.1:53670][0m
+INFO 2026-05-14 17:31:11,972 runserver 10580 18564 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:53670][0m
+INFO 2026-05-14 17:31:12,034 runserver 10580 18564 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:53670][0m
+INFO 2026-05-14 17:31:27,159 runserver 10580 18564 [mHTTP GET /api/v1/profile/ 200 [0.02, 127.0.0.1:53670][0m
+INFO 2026-05-14 17:32:24,059 autoreload 10580 13424 C:\Users\compac25\Desktop\kavach\backend\apps\auth_app\views_v2.py changed, reloading.
+INFO 2026-05-14 17:32:26,792 autoreload 1320 7692 Watching for file changes with StatReloader
+INFO 2026-05-14 17:35:57,693 runserver 1320 4516 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.01, 127.0.0.1:57388][0m
+INFO 2026-05-14 17:36:03,966 runserver 1320 4516 [mHTTP GET /api/v1/profile/ 200 [0.03, 127.0.0.1:57388][0m
+INFO 2026-05-14 17:36:18,004 runserver 1320 4516 [mHTTP POST /api/v1/login/ 200 [0.55, 127.0.0.1:57388][0m
+INFO 2026-05-14 17:36:18,398 runserver 1320 4516 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.01, 127.0.0.1:57408][0m
+INFO 2026-05-14 17:36:18,408 runserver 1320 4516 [mHTTP GET /api/v1/profile/ 200 [0.02, 127.0.0.1:57388][0m
+INFO 2026-05-14 17:36:20,529 runserver 1320 4516 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.03, 127.0.0.1:57388][0m
+INFO 2026-05-14 17:36:33,494 runserver 1320 4516 [mHTTP GET /api/v1/profile/ 200 [0.02, 127.0.0.1:57388][0m
+INFO 2026-05-14 17:36:38,318 runserver 1320 4516 [mHTTP GET /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 200 [0.02, 127.0.0.1:57388][0m
+INFO 2026-05-14 17:44:52,909 runserver 1320 4516 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:61446][0m
+INFO 2026-05-14 17:44:59,747 runserver 1320 4516 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.03, 127.0.0.1:61446][0m
+INFO 2026-05-14 17:45:03,149 runserver 1320 4516 [mHTTP GET /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 200 [0.02, 127.0.0.1:61446][0m
+INFO 2026-05-14 17:45:12,129 runserver 1320 4516 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:61446][0m
+INFO 2026-05-14 17:45:20,310 runserver 1320 4516 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.02, 127.0.0.1:61446][0m
+WARNING 2026-05-14 20:07:31,662 log 1320 19212 Unauthorized: /api/v2/auth/v2/incidents/
+WARNING 2026-05-14 20:07:31,662 log 1320 3156 Unauthorized: /api/v2/auth/users/
+WARNING 2026-05-14 20:07:31,662 runserver 1320 4516 [31;1mHTTP POST /api/v2/auth/v2/incidents/ 401 [0.01, 127.0.0.1:64239][0m
+WARNING 2026-05-14 20:07:31,666 runserver 1320 4516 [31;1mHTTP GET /api/v2/auth/users/?page=1 401 [0.02, 127.0.0.1:64238][0m
+WARNING 2026-05-14 20:07:32,064 log 1320 19212 Unauthorized: /api/v2/auth/users/
+WARNING 2026-05-14 20:07:32,064 runserver 1320 4516 [31;1mHTTP GET /api/v2/auth/users/?page=1 401 [0.01, 127.0.0.1:64238][0m
+WARNING 2026-05-14 20:07:32,583 log 1320 19212 Not Found: /auth/refresh
+WARNING 2026-05-14 20:07:32,583 runserver 1320 4516 [33mHTTP POST /auth/refresh 404 [0.01, 127.0.0.1:64238][0m
+INFO 2026-05-14 20:07:48,889 runserver 1320 4516 [mHTTP POST /api/v1/login/ 200 [0.55, 127.0.0.1:64238][0m
+INFO 2026-05-14 20:07:49,983 runserver 1320 4516 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:64238][0m
+INFO 2026-05-14 20:07:50,502 runserver 1320 4516 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:64238][0m
+INFO 2026-05-14 20:07:57,573 runserver 1320 4516 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.03, 127.0.0.1:64238][0m
+INFO 2026-05-14 20:08:04,136 runserver 1320 4516 [mHTTP GET /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 200 [0.02, 127.0.0.1:64238][0m
+INFO 2026-05-14 20:08:11,207 runserver 1320 4516 [mHTTP GET /api/v1/profile/ 200 [0.02, 127.0.0.1:64238][0m
+INFO 2026-05-14 20:24:00,459 runserver 1320 4516 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.01, 127.0.0.1:51905][0m
+WARNING 2026-05-14 20:24:11,532 log 1320 3156 Unauthorized: /api/v2/auth/users/
+WARNING 2026-05-14 20:24:11,532 runserver 1320 4516 [31;1mHTTP GET /api/v2/auth/users/?page=1 401 [0.01, 127.0.0.1:51905][0m
+WARNING 2026-05-14 20:24:12,550 log 1320 3156 Not Found: /auth/refresh
+WARNING 2026-05-14 20:24:12,550 runserver 1320 4516 [33mHTTP POST /auth/refresh 404 [0.01, 127.0.0.1:51905][0m
+WARNING 2026-05-14 20:24:13,245 log 1320 19212 Unauthorized: /api/v2/auth/users/
+WARNING 2026-05-14 20:24:13,246 runserver 1320 4516 [31;1mHTTP GET /api/v2/auth/users/?page=2 401 [0.01, 127.0.0.1:51905][0m
+WARNING 2026-05-14 20:24:13,685 log 1320 3156 Unauthorized: /api/v2/auth/users/
+WARNING 2026-05-14 20:24:13,685 runserver 1320 4516 [31;1mHTTP GET /api/v2/auth/users/?page=2 401 [0.01, 127.0.0.1:51905][0m
+INFO 2026-05-14 20:24:48,644 runserver 1320 4516 [mHTTP POST /api/v1/login/ 200 [0.50, 127.0.0.1:51905][0m
+INFO 2026-05-14 20:24:49,297 runserver 1320 4516 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.01, 127.0.0.1:59720][0m
+INFO 2026-05-14 20:24:49,308 runserver 1320 4516 [mHTTP GET /api/v1/profile/ 200 [0.02, 127.0.0.1:51905][0m
+INFO 2026-05-14 20:25:00,795 runserver 1320 4516 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.03, 127.0.0.1:51905][0m
+INFO 2026-05-14 20:25:12,660 runserver 1320 4516 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:51905][0m
+INFO 2026-05-14 20:25:17,386 runserver 1320 4516 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.03, 127.0.0.1:51905][0m
+INFO 2026-05-14 20:25:18,915 runserver 1320 4516 [mHTTP GET /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 200 [0.02, 127.0.0.1:51905][0m
+INFO 2026-05-14 20:25:21,166 runserver 1320 4516 [mHTTP GET /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 200 [0.02, 127.0.0.1:51905][0m
+INFO 2026-05-14 20:25:34,234 runserver 1320 4516 [mHTTP PATCH /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 202 [0.08, 127.0.0.1:51905][0m
+INFO 2026-05-14 20:28:15,444 autoreload 1320 7692 C:\Users\compac25\Desktop\kavach\backend\apps\auth_app\security\roles.py changed, reloading.
+INFO 2026-05-14 20:28:18,748 autoreload 13100 9948 Watching for file changes with StatReloader
+INFO 2026-05-14 20:51:19,891 autoreload 13100 9948 C:\Users\compac25\Desktop\kavach\backend\apps\auth_app\views_v2.py changed, reloading.
+INFO 2026-05-14 20:51:23,320 autoreload 20164 8104 Watching for file changes with StatReloader
+INFO 2026-05-14 20:56:02,721 runserver 20164 16112 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.07, 127.0.0.1:51944][0m
+WARNING 2026-05-14 20:56:10,815 log 20164 11128 Unauthorized: /api/v2/auth/users/
+WARNING 2026-05-14 20:56:10,817 runserver 20164 16112 [31;1mHTTP GET /api/v2/auth/users/?page=1 401 [0.03, 127.0.0.1:51944][0m
+WARNING 2026-05-14 20:56:11,812 log 20164 11128 Not Found: /auth/refresh
+WARNING 2026-05-14 20:56:11,813 runserver 20164 16112 [33mHTTP POST /auth/refresh 404 [0.17, 127.0.0.1:51944][0m
+WARNING 2026-05-14 20:56:12,466 log 20164 11128 Unauthorized: /api/v2/auth/users/
+WARNING 2026-05-14 20:56:12,467 runserver 20164 16112 [31;1mHTTP GET /api/v2/auth/users/?page=2 401 [0.01, 127.0.0.1:51944][0m
+WARNING 2026-05-14 20:56:12,881 log 20164 11128 Unauthorized: /api/v2/auth/users/
+WARNING 2026-05-14 20:56:12,882 runserver 20164 16112 [31;1mHTTP GET /api/v2/auth/users/?page=2 401 [0.01, 127.0.0.1:51944][0m
+WARNING 2026-05-14 20:56:13,290 log 20164 11128 Unauthorized: /api/v2/auth/users/
+INFO 2026-05-14 20:56:47,424 runserver 20164 16112 [mHTTP POST /api/v1/login/ 200 [0.59, 127.0.0.1:51959][0m
+INFO 2026-05-14 20:56:48,072 runserver 20164 16112 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.01, 127.0.0.1:51960][0m
+INFO 2026-05-14 20:56:48,081 runserver 20164 16112 [mHTTP GET /api/v1/profile/ 200 [0.07, 127.0.0.1:51959][0m
+INFO 2026-05-14 20:56:57,909 runserver 20164 16112 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.04, 127.0.0.1:51959][0m
+INFO 2026-05-14 20:57:01,744 runserver 20164 16112 [mHTTP GET /api/v2/auth/users/6cca40ed-b7a8-4ae3-99f1-8137932402df/ 200 [0.03, 127.0.0.1:51959][0m
+INFO 2026-05-14 20:57:03,635 runserver 20164 16112 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.03, 127.0.0.1:51959][0m
+INFO 2026-05-14 20:57:11,054 runserver 20164 16112 [mHTTP GET /api/v1/profile/ 200 [0.02, 127.0.0.1:51960][0m
+INFO 2026-05-14 20:57:11,133 runserver 20164 16112 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.09, 127.0.0.1:51959][0m
+INFO 2026-05-14 20:57:15,454 runserver 20164 16112 [mHTTP GET /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 200 [0.02, 127.0.0.1:51959][0m
+INFO 2026-05-14 20:57:16,779 runserver 20164 16112 [mHTTP GET /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 200 [0.02, 127.0.0.1:51959][0m
+WARNING 2026-05-14 20:57:21,759 log 20164 11128 Bad Request: /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/
+WARNING 2026-05-14 20:57:21,760 runserver 20164 16112 [31;1mHTTP PATCH /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 400 [0.13, 127.0.0.1:51959][0m
+INFO 2026-05-14 20:57:31,360 runserver 20164 16112 [mHTTP PATCH /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 200 [0.10, 127.0.0.1:51959][0m
+INFO 2026-05-14 20:57:33,939 runserver 20164 16112 [mHTTP GET /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 200 [0.02, 127.0.0.1:51959][0m
+INFO 2026-05-14 20:57:37,601 runserver 20164 16112 [mHTTP PATCH /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 200 [0.04, 127.0.0.1:51959][0m
+INFO 2026-05-14 20:57:55,813 runserver 20164 16112 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.04, 127.0.0.1:51959][0m
+INFO 2026-05-14 20:57:59,357 runserver 20164 16112 [mHTTP GET /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 200 [0.03, 127.0.0.1:51959][0m
+INFO 2026-05-14 20:58:01,718 runserver 20164 16112 [mHTTP GET /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 200 [0.03, 127.0.0.1:51959][0m
+INFO 2026-05-14 20:58:15,923 runserver 20164 16112 [mHTTP PATCH /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 200 [0.10, 127.0.0.1:51959][0m
+INFO 2026-05-14 20:58:44,904 runserver 20164 16112 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.03, 127.0.0.1:51959][0m
+INFO 2026-05-14 20:59:23,337 runserver 20164 16112 [mHTTP POST /api/v1/login/ 200 [0.36, 127.0.0.1:51959][0m
+INFO 2026-05-14 20:59:23,973 runserver 20164 16112 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:51959][0m
+INFO 2026-05-14 20:59:24,309 runserver 20164 16112 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:51959][0m
+INFO 2026-05-14 20:59:35,850 runserver 20164 16112 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.02, 127.0.0.1:51959][0m
+INFO 2026-05-14 20:59:38,431 runserver 20164 16112 [mHTTP GET /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 200 [0.02, 127.0.0.1:51959][0m
+INFO 2026-05-14 20:59:48,300 runserver 20164 16112 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:51959][0m
+INFO 2026-05-14 20:59:51,167 runserver 20164 16112 [mHTTP GET /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 200 [0.02, 127.0.0.1:51959][0m
+WARNING 2026-05-14 21:00:09,747 log 20164 11128 Forbidden: /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/
+WARNING 2026-05-14 21:00:09,747 runserver 20164 16112 [31;1mHTTP PATCH /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 403 [0.01, 127.0.0.1:51959][0m
+WARNING 2026-05-14 21:00:23,441 log 20164 11128 Forbidden: /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/
+WARNING 2026-05-14 21:00:23,441 runserver 20164 16112 [31;1mHTTP PATCH /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 403 [0.01, 127.0.0.1:51959][0m
+WARNING 2026-05-14 21:00:31,616 log 20164 11128 Forbidden: /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/
+WARNING 2026-05-14 21:00:31,616 runserver 20164 16112 [31;1mHTTP PATCH /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 403 [0.01, 127.0.0.1:51959][0m
+WARNING 2026-05-14 21:00:36,999 log 20164 11128 Forbidden: /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/
+WARNING 2026-05-14 21:00:37,001 runserver 20164 16112 [31;1mHTTP PATCH /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 403 [0.01, 127.0.0.1:51959][0m
+WARNING 2026-05-14 21:00:42,117 log 20164 11128 Forbidden: /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/
+WARNING 2026-05-14 21:00:42,118 runserver 20164 16112 [31;1mHTTP PATCH /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 403 [0.01, 127.0.0.1:51959][0m
+INFO 2026-05-14 21:03:12,343 autoreload 19364 20020 Watching for file changes with StatReloader
+INFO 2026-05-14 21:04:33,991 autoreload 19364 20020 C:\Users\compac25\Desktop\kavach\backend\kavach_backend\session_security.py changed, reloading.
+INFO 2026-05-14 21:04:36,692 autoreload 3556 18772 Watching for file changes with StatReloader
+INFO 2026-05-14 21:04:49,406 autoreload 3556 18772 C:\Users\compac25\Desktop\kavach\backend\apps\auth_app\views_v2.py changed, reloading.
+INFO 2026-05-14 21:04:51,443 autoreload 19768 10596 Watching for file changes with StatReloader
+INFO 2026-05-14 21:14:02,088 runserver 19768 18444 [mHTTP GET /api/v1/profile/ 200 [0.04, 127.0.0.1:60696][0m
+INFO 2026-05-14 21:26:57,534 autoreload 19768 10596 C:\Users\compac25\Desktop\kavach\backend\apps\auth_app\models\auth.py changed, reloading.
+INFO 2026-05-14 21:27:00,345 autoreload 16164 1424 Watching for file changes with StatReloader
+INFO 2026-05-14 21:27:17,018 autoreload 16164 1424 C:\Users\compac25\Desktop\kavach\backend\apps\auth_app\views_v2.py changed, reloading.
+INFO 2026-05-14 21:27:19,599 autoreload 18284 10588 Watching for file changes with StatReloader
+INFO 2026-05-14 21:28:41,561 autoreload 18284 10588 C:\Users\compac25\Desktop\kavach\backend\apps\auth_app\views_v2.py changed, reloading.
+INFO 2026-05-14 21:28:44,454 autoreload 13504 17224 Watching for file changes with StatReloader
+INFO 2026-05-14 21:28:54,461 autoreload 13504 17224 C:\Users\compac25\Desktop\kavach\backend\apps\auth_app\models\governance.py changed, reloading.
+INFO 2026-05-14 21:28:57,008 autoreload 9724 20452 Watching for file changes with StatReloader
+INFO 2026-05-14 21:29:05,948 autoreload 9724 20452 C:\Users\compac25\Desktop\kavach\backend\apps\auth_app\permissions.py changed, reloading.
+INFO 2026-05-14 21:29:08,644 autoreload 19168 19512 Watching for file changes with StatReloader
+INFO 2026-05-14 21:31:02,668 autoreload 18788 19028 Watching for file changes with StatReloader
+INFO 2026-05-14 21:32:26,771 autoreload 18788 19028 C:\Users\compac25\Desktop\kavach\backend\apps\auth_app\views_v2.py changed, reloading.
+INFO 2026-05-14 21:32:29,269 autoreload 19900 3716 Watching for file changes with StatReloader
+INFO 2026-05-14 21:32:32,472 autoreload 19900 3716 C:\Users\compac25\Desktop\kavach\backend\apps\auth_app\permissions.py changed, reloading.
+INFO 2026-05-14 21:32:35,515 autoreload 20084 13492 Watching for file changes with StatReloader
+INFO 2026-05-14 21:33:46,947 runserver 20084 18752 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.01, 127.0.0.1:57197][0m
+WARNING 2026-05-14 21:33:49,691 log 20084 7680 Unauthorized: /api/v2/auth/users/
+WARNING 2026-05-14 21:33:49,692 runserver 20084 18752 [31;1mHTTP GET /api/v2/auth/users/?page=1 401 [0.02, 127.0.0.1:57197][0m
+WARNING 2026-05-14 21:33:50,777 log 20084 7680 Not Found: /auth/refresh
+WARNING 2026-05-14 21:33:50,777 runserver 20084 18752 [33mHTTP POST /auth/refresh 404 [0.01, 127.0.0.1:57197][0m
+WARNING 2026-05-14 21:33:51,488 log 20084 7680 Unauthorized: /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/
+WARNING 2026-05-14 21:33:51,490 runserver 20084 18752 [31;1mHTTP GET /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 401 [0.00, 127.0.0.1:57197][0m
+WARNING 2026-05-14 21:33:51,797 log 20084 7680 Unauthorized: /api/v2/auth/users/
+WARNING 2026-05-14 21:33:51,797 runserver 20084 18752 [31;1mHTTP GET /api/v2/auth/users/?page=2 401 [0.00, 127.0.0.1:57197][0m
+INFO 2026-05-14 21:34:44,947 runserver 20084 18752 [mHTTP POST /api/v1/login/ 200 [0.28, 127.0.0.1:57197][0m
+INFO 2026-05-14 21:34:45,360 runserver 20084 18752 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:57197][0m
+INFO 2026-05-14 21:34:45,414 runserver 20084 18752 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:59974][0m
+INFO 2026-05-14 21:34:59,230 runserver 20084 18752 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.02, 127.0.0.1:59974][0m
+INFO 2026-05-14 21:35:00,639 runserver 20084 18752 [mHTTP GET /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 200 [0.01, 127.0.0.1:59974][0m
+INFO 2026-05-14 21:35:02,056 runserver 20084 18752 [mHTTP GET /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 200 [0.01, 127.0.0.1:59974][0m
+INFO 2026-05-14 21:35:12,797 runserver 20084 18752 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:59974][0m
+WARNING 2026-05-14 21:35:14,270 log 20084 7680 Forbidden: /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/
+WARNING 2026-05-14 21:35:14,271 runserver 20084 18752 [31;1mHTTP PATCH /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 403 [0.01, 127.0.0.1:59974][0m
+INFO 2026-05-14 21:35:32,912 runserver 20084 18752 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.01, 127.0.0.1:59974][0m
+INFO 2026-05-14 21:35:41,584 runserver 20084 18752 [mHTTP GET /api/v2/auth/users/6cca40ed-b7a8-4ae3-99f1-8137932402df/ 200 [0.01, 127.0.0.1:59974][0m
+INFO 2026-05-14 21:35:48,698 runserver 20084 18752 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.01, 127.0.0.1:59974][0m
+INFO 2026-05-14 21:35:51,050 runserver 20084 18752 [mHTTP GET /api/v2/auth/users/cb59cc3a-d9e7-4a42-b153-653b7f7ea498/ 200 [0.01, 127.0.0.1:59974][0m
+INFO 2026-05-14 21:35:52,721 runserver 20084 18752 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.01, 127.0.0.1:59974][0m
+INFO 2026-05-14 21:35:54,262 runserver 20084 18752 [mHTTP GET /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 200 [0.01, 127.0.0.1:59974][0m
+INFO 2026-05-14 21:35:55,956 runserver 20084 18752 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.02, 127.0.0.1:59974][0m
+WARNING 2026-05-14 21:36:44,682 log 20084 7680 Forbidden: /api/v2/auth/users/
+WARNING 2026-05-14 21:36:44,682 runserver 20084 18752 [31;1mHTTP POST /api/v2/auth/users/ 403 [0.01, 127.0.0.1:59974][0m
+INFO 2026-05-14 21:37:08,154 runserver 20084 18752 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.01, 127.0.0.1:59974][0m
+INFO 2026-05-14 21:37:11,001 runserver 20084 18752 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:59974][0m
+INFO 2026-05-14 21:37:29,267 runserver 20084 18752 [mHTTP POST /api/v1/login/ 200 [0.29, 127.0.0.1:59974][0m
+INFO 2026-05-14 21:37:29,646 runserver 20084 18752 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:59974][0m
+INFO 2026-05-14 21:37:29,806 runserver 20084 18752 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:59974][0m
+INFO 2026-05-14 21:37:35,879 runserver 20084 18752 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.01, 127.0.0.1:59974][0m
+INFO 2026-05-14 21:37:37,569 runserver 20084 18752 [mHTTP GET /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 200 [0.01, 127.0.0.1:59974][0m
+INFO 2026-05-14 21:37:38,975 runserver 20084 18752 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.02, 127.0.0.1:59974][0m
+INFO 2026-05-14 21:38:15,173 runserver 20084 18752 [mHTTP POST /api/v1/login/ 200 [0.29, 127.0.0.1:59974][0m
+INFO 2026-05-14 21:38:15,651 runserver 20084 18752 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:64733][0m
+INFO 2026-05-14 21:38:15,656 runserver 20084 18752 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:59974][0m
+INFO 2026-05-14 21:38:32,211 runserver 20084 18752 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.02, 127.0.0.1:59974][0m
+INFO 2026-05-14 21:38:34,115 runserver 20084 18752 [mHTTP GET /api/v2/auth/users/55f0960e-dd52-4a0a-aa1b-4e842007fd72/ 200 [0.01, 127.0.0.1:59974][0m
+INFO 2026-05-14 21:38:35,612 runserver 20084 18752 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.02, 127.0.0.1:59974][0m
+INFO 2026-05-14 21:38:42,555 runserver 20084 18752 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:59974][0m
+INFO 2026-05-14 21:40:51,938 runserver 20084 18752 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:63803][0m
+WARNING 2026-05-14 21:41:19,018 log 20084 7680 Forbidden: /api/v2/auth/users/
+WARNING 2026-05-14 21:41:19,018 runserver 20084 18752 [31;1mHTTP POST /api/v2/auth/users/ 403 [0.01, 127.0.0.1:63803][0m
+INFO 2026-05-14 21:52:43,566 autoreload 16772 5180 Watching for file changes with StatReloader
+INFO 2026-05-14 22:00:05,173 autoreload 13184 9960 Watching for file changes with StatReloader
+INFO 2026-05-14 22:00:46,656 autoreload 13184 9960 C:\Users\compac25\Desktop\kavach\backend\apps\admin_panel\consumers.py changed, reloading.
+INFO 2026-05-14 22:00:48,186 autoreload 18448 15256 Watching for file changes with StatReloader
+INFO 2026-05-14 22:01:40,049 autoreload 18448 15256 C:\Users\compac25\Desktop\kavach\backend\apps\admin_panel\views.py changed, reloading.
+INFO 2026-05-14 22:01:41,639 autoreload 15672 5680 Watching for file changes with StatReloader
+INFO 2026-05-14 22:01:48,651 autoreload 15672 5680 C:\Users\compac25\Desktop\kavach\backend\apps\admin_panel\views.py changed, reloading.
+INFO 2026-05-14 22:01:50,072 autoreload 19124 5868 Watching for file changes with StatReloader
+INFO 2026-05-14 22:31:06,655 runserver 19124 19736 WebSocket HANDSHAKING /ws/live/ [127.0.0.1:62210]
+INFO 2026-05-14 22:31:06,684 runserver 19124 19736 WebSocket HANDSHAKING /ws/live/ [127.0.0.1:62211]
+INFO 2026-05-14 22:31:06,708 runserver 19124 19736 WebSocket REJECT /ws/live/ [127.0.0.1:62210]
+INFO 2026-05-14 22:31:06,709 runserver 19124 19736 WebSocket REJECT /ws/live/ [127.0.0.1:62211]
+INFO 2026-05-14 22:31:06,714 runserver 19124 19736 WebSocket DISCONNECT /ws/live/ [127.0.0.1:62210]
+INFO 2026-05-14 22:31:06,714 runserver 19124 19736 WebSocket DISCONNECT /ws/live/ [127.0.0.1:62211]
+INFO 2026-05-14 22:31:06,734 runserver 19124 19736 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.06, 127.0.0.1:62209][0m
+INFO 2026-05-14 22:31:49,562 runserver 19124 19736 [mHTTP POST /api/v1/login/ 200 [0.39, 127.0.0.1:62209][0m
+INFO 2026-05-14 22:31:50,078 runserver 19124 19736 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:62209][0m
+INFO 2026-05-14 22:31:50,150 runserver 19124 19736 [mHTTP GET /api/v1/app-version/?version_code=1 200 [0.00, 127.0.0.1:62209][0m
+INFO 2026-05-14 22:31:50,887 runserver 19124 19736 WebSocket HANDSHAKING /ws/live/ [127.0.0.1:53492]
+INFO 2026-05-14 22:31:51,835 runserver 19124 19736 WebSocket DISCONNECT /ws/live/ [127.0.0.1:53492]
+INFO 2026-05-14 22:31:57,306 runserver 19124 19736 WebSocket HANDSHAKING /ws/live/ [127.0.0.1:53494]
+INFO 2026-05-14 22:31:57,879 runserver 19124 19736 WebSocket DISCONNECT /ws/live/ [127.0.0.1:53494]
+INFO 2026-05-14 22:32:04,272 runserver 19124 19736 WebSocket HANDSHAKING /ws/live/ [127.0.0.1:53497]
+INFO 2026-05-14 22:32:04,920 runserver 19124 19736 WebSocket DISCONNECT /ws/live/ [127.0.0.1:53497]
+INFO 2026-05-14 22:32:11,056 runserver 19124 19736 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.03, 127.0.0.1:62209][0m
+INFO 2026-05-14 22:32:13,470 runserver 19124 19736 [mHTTP GET /api/v1/profile/ 200 [0.01, 127.0.0.1:62209][0m
+INFO 2026-05-14 22:32:13,911 runserver 19124 19736 [mHTTP GET /api/v2/auth/users/8e5c3ff0-3203-43fd-b817-c6276b046a92/ 200 [0.01, 127.0.0.1:62209][0m
+INFO 2026-05-14 22:32:15,908 runserver 19124 19736 WebSocket HANDSHAKING /ws/live/ [127.0.0.1:53498]
+INFO 2026-05-14 22:32:16,002 runserver 19124 19736 WebSocket DISCONNECT /ws/live/ [127.0.0.1:53498]
+INFO 2026-05-14 22:32:16,466 runserver 19124 19736 [mHTTP GET /api/v2/auth/users/?page=1 200 [0.01, 127.0.0.1:62209][0m

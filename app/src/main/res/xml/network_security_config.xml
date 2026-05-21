@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">pmsraebareli.online</domain>
+        <domain includeSubdomains="true">ngrok-free.app</domain>
+        <domain includeSubdomains="true">ngrok.io</domain>
+        <domain includeSubdomains="true">127.0.0.1</domain>
+        
+        <!-- 🔐 SSL Pinning: Replace with actual SHA-256 hashes of your production certificate -->
+
+    </domain-config>
+</network-security-config>
